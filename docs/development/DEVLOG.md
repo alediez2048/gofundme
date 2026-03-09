@@ -23,7 +23,7 @@ The following tickets are **required** to pass the MVP gate — three fully inte
 
 | Ticket | Title | MVP Role | Priority | Est. | Status |
 |--------|-------|----------|----------|------|--------|
-| FR-001 | Project Scaffold & Next.js Configuration | **Foundation** — nothing works without this | P0 | 2h | TODO |
+| FR-001 | Project Scaffold & Next.js Configuration | **Foundation** — nothing works without this | P0 | 2h | DONE |
 | FR-002 | Data Model & Seed Data | **Foundation** — typed entities + realistic population | P0 | 2h | TODO |
 | FR-003 | Zustand Store with Normalized Slices | **Foundation** — reactive cross-page state | P0 | 3h | TODO |
 | FR-004 | Fundraiser Page (`/f/[slug]`) | **Core** — conversion-optimized donation destination | P0 | 4h | TODO |
@@ -41,6 +41,48 @@ The following tickets are **required** to pass the MVP gate — three fully inte
 - FR-004 + FR-005 + FR-006 (Pages) → blocks FR-007 (Donation Flow), FR-008 (Navigation)
 - FR-009 (Responsive) can run in parallel with FR-007 + FR-008
 - FR-010 (Skeletons) depends on FR-004 + FR-005 + FR-006
+
+---
+
+## FR-001: Project Scaffold & Next.js Configuration ✅
+
+### Plain-English Summary
+- Next.js 14 app created at repo root with App Router, TypeScript strict, Tailwind (emerald-600 primary, stone palette).
+- Root layout has skip-nav link and semantic landmarks (header, main, footer). `app/`, `components/`, `lib/` exist alongside `docs/`.
+- ESLint (Next config), Prettier, `.nvmrc` (20), `engines` in package.json, `.env.example` with optional vars.
+
+### Metadata
+- **Status:** Complete
+- **Date:** 2026-03-09
+- **Ticket:** FR-001
+- **Branch:** develop
+
+### Scope
+- Scaffold only; no pages beyond homepage placeholder. Vercel connection is a manual step (see below).
+
+### Key Achievements
+- Build and lint pass. `npm run dev` starts dev server; `npm run build` succeeds.
+
+### Technical Implementation
+- Manual scaffold (no create-next-app) due to npm naming restrictions in directory name. package.json name: `fundright`. Paths: `@/*` → repo root.
+
+### Files Changed
+- **Created:** package.json, tsconfig.json, next.config.js, tailwind.config.ts, postcss.config.mjs, .eslintrc.json, .prettierrc, .nvmrc, next-env.d.ts, .env.example, app/layout.tsx, app/page.tsx, app/globals.css, components/.gitkeep, lib/.gitkeep
+- **Updated:** docs/development/DEVLOG.md — this entry
+
+### Acceptance Criteria
+- [x] Next.js 14 App Router + TypeScript strict
+- [x] Tailwind with emerald-600 primary, stone palette
+- [x] app/, components/, lib/ at repo root; docs alongside
+- [x] Root layout: skip-nav, header, main, footer
+- [x] ESLint + Prettier configured and passing
+- [x] .nvmrc Node 20, engines in package.json
+- [x] package-lock.json (from npm install)
+- [ ] Vercel project connected — **manual step for you** (see below)
+- [x] .env.example with OPENAI_API_KEY, NEXT_PUBLIC_ANALYTICS_ENABLED
+
+### Next Steps
+- FR-002 (Data Model & Seed Data), then FR-003 (Zustand Store).
 
 ---
 
@@ -158,7 +200,7 @@ Each ticket entry follows this standardized structure:
 
 | ID | Title | Phase | Priority | Est. | Status |
 |----|-------|-------|----------|------|--------|
-| FR-001 | Project Scaffold & Next.js Configuration | Phase 1 | P0 | 2h | TODO |
+| FR-001 | Project Scaffold & Next.js Configuration | Phase 1 | P0 | 2h | DONE |
 | FR-002 | Data Model & Seed Data | Phase 1 | P0 | 2h | TODO |
 | FR-003 | Zustand Store with Normalized Slices | Phase 1 | P0 | 3h | TODO |
 | FR-004 | Fundraiser Page | Phase 1 | P0 | 4h | TODO |

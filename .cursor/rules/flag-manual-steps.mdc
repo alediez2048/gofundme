@@ -1,0 +1,51 @@
+---
+description: Flag manual testing and external configuration the user must do
+alwaysApply: true
+---
+
+# Flag Manual Steps & External Config (MANDATORY)
+
+Whenever your work involves something the user must do themselves (not the agent), **call it out explicitly** so it is never missed.
+
+## When to Flag
+
+1. **Manual testing**
+   - Running the app (`npm run dev`) and checking a flow in the browser
+   - Clicking through donation flow, navigation, or a specific route
+   - Verifying responsive layout at 375px / 1440px
+   - Testing accessibility (keyboard nav, screen reader, focus trap)
+   - Running Lighthouse or other local audits
+   - Checking that a build succeeds (`npm run build`) or that a deploy preview works
+
+2. **External configuration**
+   - Adding or changing environment variables (e.g. `.env`, Vercel dashboard, GitHub Secrets)
+   - Connecting a Vercel project, linking a repo, or setting env vars in a hosted dashboard
+   - API keys (OpenAI, etc.) that must be created or pasted by the user
+   - Any third-party service signup, webhook URL, or domain/DNS change
+
+3. **One-time or local setup**
+   - Running a script the user must execute (e.g. `npm install`, seed script, codegen)
+   - Steps that differ by machine (e.g. SSH keys, Git config, Node version via nvm)
+
+## How to Flag
+
+- Use a clear, visible block in your reply. Prefer one of:
+  - **"Manual step for you:"** or **"You need to:"**
+  - A short **Checklist** or **Action required** section at the end of your message
+- Be specific: what to run, which URL to open, which dashboard and which field to set
+- If there are multiple manual steps, list them in order (e.g. 1) Run X, 2) Open Y and set Z, 3) Test in browser)
+
+## Do NOT
+
+- Assume the user will "just know" to test or configure something
+- Bury manual steps inside a long paragraph
+- Skip flagging because the ticket or README mentions it — still call it out in your response
+
+Example ending for a response that added a new page:
+
+```
+---
+**Manual steps for you**
+1. Run `npm run dev` and open http://localhost:3000/communities/watch-duty — confirm the page loads and the new section appears.
+2. If you use Vercel, redeploy or push to trigger a preview and confirm the route works there too.
+```
