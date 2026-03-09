@@ -28,7 +28,7 @@ The following tickets are **required** to pass the MVP gate — three fully inte
 | FR-003 | Zustand Store with Normalized Slices | **Foundation** — reactive cross-page state | P0 | 3h | DONE |
 | FR-004 | Fundraiser Page (`/f/[slug]`) | **Core** — conversion-optimized donation destination | P0 | 4h | DONE |
 | FR-005 | Community Page (`/communities/[slug]`) | **Core** — SEO powerhouse + discovery entry point | P0 | 4h | DONE |
-| FR-006 | Profile Page (`/u/[username]`) | **Core** — trust authority + organizer credibility | P0 | 4h | TODO |
+| FR-006 | Profile Page (`/u/[username]`) | **Core** — trust authority + organizer credibility | P0 | 4h | DONE |
 | FR-007 | Donation Flow & Modal | **Core** — cross-page state mutation via donation | P0 | 3h | TODO |
 | FR-008 | Cross-Page Navigation & Link Graph | **Core** — closed-loop internal linking | P0 | 2h | TODO |
 | FR-009 | Responsive Layout (Mobile + Desktop) | **Core** — responsive-concurrent at 375px–1440px | P0 | 4h | TODO |
@@ -238,6 +238,44 @@ The following tickets are **required** to pass the MVP gate — three fully inte
 
 ---
 
+## FR-006: Profile Page (/u/[username]) ✅
+
+### Plain-English Summary
+- Profile page at `/u/[username]` with data from Zustand store; server uses seed for generateMetadata and notFound.
+- Identity: avatar (next/image), display name (H1), verified badge, bio, join date.
+- Trust summary: “Why trust this organizer” — history (campaigns organized, amount raised), communities, total donated.
+- Impact summary: 2–3 sentence derived narrative from organizer stats (no API; Phase 2 can add AI).
+- Impact stats: total raised (as organizer), total donated, causes supported count (unique cause categories from donations).
+- Active fundraisers: cards linked to `/f/[slug]`. Community memberships: badges → `/communities/[slug]`.
+- Giving history: chronological list (amount, fundraiser name → `/f/[slug]`, date). All computed from store.
+
+### Metadata
+- **Status:** Complete
+- **Date:** 2026-03-09
+- **Ticket:** FR-006
+- **Branch:** feature/FR-006-profile-page
+
+### Scope
+- Profile page only; impact summary is data-derived (AI enhancement in Phase 2 if desired).
+
+### Files Changed
+- **Created:** app/u/[username]/page.tsx, components/ProfilePageContent.tsx
+- **Updated:** docs/development/DEVLOG.md — this entry
+
+### Acceptance Criteria
+- [x] Page at /u/[username] with data from store
+- [x] Identity: avatar, H1, verified badge, bio, join date
+- [x] Trust summary: history, communities, recent impact
+- [x] Impact summary: 2–3 sentences (derived from fundraising history)
+- [x] Impact stats: total raised (organizer), total donated, causes supported
+- [x] Active fundraisers → /f/[slug]; communities → /communities/[slug]
+- [x] Giving history: amount, fundraiser link, date; all computed from store
+
+### Next Steps
+- FR-007 (Donation Flow & Modal), FR-008 (Cross-Page Navigation).
+
+---
+
 ## Phase 2: Intelligence Layer (FR-011 → FR-018)
 
 AI features, structured data, and the analytics dashboard. After this phase, every page demonstrates AI integration, every page has valid JSON-LD, and `/analytics` visualizes all four instrumentation tiers.
@@ -357,7 +395,7 @@ Each ticket entry follows this standardized structure:
 | FR-003 | Zustand Store with Normalized Slices | Phase 1 | P0 | 3h | DONE |
 | FR-004 | Fundraiser Page | Phase 1 | P0 | 4h | DONE |
 | FR-005 | Community Page | Phase 1 | P0 | 4h | DONE |
-| FR-006 | Profile Page | Phase 1 | P0 | 4h | TODO |
+| FR-006 | Profile Page | Phase 1 | P0 | 4h | DONE |
 | FR-007 | Donation Flow & Modal | Phase 1 | P0 | 3h | TODO |
 | FR-008 | Cross-Page Navigation & Link Graph | Phase 1 | P0 | 2h | TODO |
 | FR-009 | Responsive Layout | Phase 1 | P0 | 4h | TODO |
