@@ -26,7 +26,7 @@ The following tickets are **required** to pass the MVP gate — three fully inte
 | FR-001 | Project Scaffold & Next.js Configuration | **Foundation** — nothing works without this | P0 | 2h | DONE |
 | FR-002 | Data Model & Seed Data | **Foundation** — typed entities + realistic population | P0 | 2h | DONE |
 | FR-003 | Zustand Store with Normalized Slices | **Foundation** — reactive cross-page state | P0 | 3h | DONE |
-| FR-004 | Fundraiser Page (`/f/[slug]`) | **Core** — conversion-optimized donation destination | P0 | 4h | TODO |
+| FR-004 | Fundraiser Page (`/f/[slug]`) | **Core** — conversion-optimized donation destination | P0 | 4h | DONE |
 | FR-005 | Community Page (`/communities/[slug]`) | **Core** — SEO powerhouse + discovery entry point | P0 | 4h | TODO |
 | FR-006 | Profile Page (`/u/[username]`) | **Core** — trust authority + organizer credibility | P0 | 4h | TODO |
 | FR-007 | Donation Flow & Modal | **Core** — cross-page state mutation via donation | P0 | 3h | TODO |
@@ -164,6 +164,39 @@ The following tickets are **required** to pass the MVP gate — three fully inte
 
 ---
 
+## FR-004: Fundraiser Page (/f/[slug]) ✅
+
+### Plain-English Summary
+- Fundraiser page at `/f/[slug]` reads from Zustand store; server uses seed for generateMetadata and notFound.
+- Above-the-fold: hero (next/image with blur placeholder), H1 title, organizer name → `/u/[username]`, progress bar (raised/goal), Donate CTA. Trust cues: verified badge, community count, community badge → `/communities/[slug]`.
+- Below-the-fold: story (paragraphs + **bold**), recent donors (top 5, avatars → profiles), updates timeline, parent community badge, related fundraisers (3 in same community → `/f/[slug]`).
+- SEO: generateMetadata sets title and description per fundraiser.
+
+### Metadata
+- **Status:** Complete
+- **Date:** 2026-03-09
+- **Ticket:** FR-004
+- **Branch:** feature/FR-004-fundraiser-page
+
+### Scope
+- Page and FundraiserPageContent only; Donate button present, modal in FR-007.
+
+### Files Changed
+- **Created:** app/f/[slug]/page.tsx, components/FundraiserPageContent.tsx
+- **Updated:** docs/development/DEVLOG.md — this entry
+
+### Acceptance Criteria
+- [x] Page at /f/[slug] with data from store by slug
+- [x] Hero (next/image blur), H1, organizer link, progress bar, Donate CTA
+- [x] Trust cues: verification, community context before/near CTA
+- [x] Story quality (seed has 300+ words); below-fold story, donor wall top 5, updates, community badge, related 3
+- [x] Progress from raisedAmount/goalAmount; all names/avatars link; title and meta for SEO
+
+### Next Steps
+- FR-005 (Community Page), FR-006 (Profile Page), then FR-007 (Donation Flow & Modal).
+
+---
+
 ## Phase 2: Intelligence Layer (FR-011 → FR-018)
 
 AI features, structured data, and the analytics dashboard. After this phase, every page demonstrates AI integration, every page has valid JSON-LD, and `/analytics` visualizes all four instrumentation tiers.
@@ -281,7 +314,7 @@ Each ticket entry follows this standardized structure:
 | FR-001 | Project Scaffold & Next.js Configuration | Phase 1 | P0 | 2h | DONE |
 | FR-002 | Data Model & Seed Data | Phase 1 | P0 | 2h | DONE |
 | FR-003 | Zustand Store with Normalized Slices | Phase 1 | P0 | 3h | DONE |
-| FR-004 | Fundraiser Page | Phase 1 | P0 | 4h | TODO |
+| FR-004 | Fundraiser Page | Phase 1 | P0 | 4h | DONE |
 | FR-005 | Community Page | Phase 1 | P0 | 4h | TODO |
 | FR-006 | Profile Page | Phase 1 | P0 | 4h | TODO |
 | FR-007 | Donation Flow & Modal | Phase 1 | P0 | 3h | TODO |
