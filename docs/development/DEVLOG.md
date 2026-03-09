@@ -24,7 +24,7 @@ The following tickets are **required** to pass the MVP gate — three fully inte
 | Ticket | Title | MVP Role | Priority | Est. | Status |
 |--------|-------|----------|----------|------|--------|
 | FR-001 | Project Scaffold & Next.js Configuration | **Foundation** — nothing works without this | P0 | 2h | DONE |
-| FR-002 | Data Model & Seed Data | **Foundation** — typed entities + realistic population | P0 | 2h | TODO |
+| FR-002 | Data Model & Seed Data | **Foundation** — typed entities + realistic population | P0 | 2h | DONE |
 | FR-003 | Zustand Store with Normalized Slices | **Foundation** — reactive cross-page state | P0 | 3h | TODO |
 | FR-004 | Fundraiser Page (`/f/[slug]`) | **Core** — conversion-optimized donation destination | P0 | 4h | TODO |
 | FR-005 | Community Page (`/communities/[slug]`) | **Core** — SEO powerhouse + discovery entry point | P0 | 4h | TODO |
@@ -83,6 +83,45 @@ The following tickets are **required** to pass the MVP gate — three fully inte
 
 ### Next Steps
 - FR-002 (Data Model & Seed Data), then FR-003 (Zustand Store).
+
+---
+
+## FR-002: Data Model & Seed Data ✅
+
+### Plain-English Summary
+- TypeScript interfaces added for User, Fundraiser, Community, and Donation (plus SocialLink, FundraiserUpdate).
+- Seed data: 2 communities (Watch Duty, Medical Relief Network), 5 fundraisers, 8 users, 30 donations. All entity relationships consistent; totalRaised and donationCount derived from donation records.
+
+### Metadata
+- **Status:** Complete
+- **Date:** 2026-03-09
+- **Ticket:** FR-002
+- **Branch:** feature/FR-002-data-model-seed
+
+### Scope
+- Types and seed in `lib/data/` only. No store (FR-003), no pages.
+
+### Key Achievements
+- Build and lint pass. Every fundraiser.organizerId maps to a user, every fundraiser.communityId to a community; every donation references valid donor and fundraiser. Computed fields built from donations.
+
+### Technical Implementation
+- `lib/data/types.ts`: User, Fundraiser, Community, Donation, SocialLink, FundraiserUpdate.
+- `lib/data/seed.ts`: Raw donations first; `buildFundraisers()` and `buildUsers()` / `buildCommunities()` derive totals and lists. Seed export: `seed`, `users`, `fundraisers`, `communities`, `donations`.
+- Fundraiser stories meet quality floor (problem, beneficiary, 300+ words) for demo happy path.
+
+### Files Changed
+- **Created:** lib/data/types.ts, lib/data/seed.ts, lib/data/index.ts
+- **Updated:** docs/development/DEVLOG.md — this entry
+
+### Acceptance Criteria
+- [x] TypeScript interfaces for User, Fundraiser, Community, Donation
+- [x] Seed: 2 communities, 5 fundraisers, 8 users, 30 donations
+- [x] Every field non-empty in seed (happy path)
+- [x] Entity relationships consistent (organizerId → user, communityId → community)
+- [x] totalRaised, donationCount derived from donation records
+
+### Next Steps
+- FR-003 (Zustand Store with normalized slices).
 
 ---
 
@@ -201,7 +240,7 @@ Each ticket entry follows this standardized structure:
 | ID | Title | Phase | Priority | Est. | Status |
 |----|-------|-------|----------|------|--------|
 | FR-001 | Project Scaffold & Next.js Configuration | Phase 1 | P0 | 2h | DONE |
-| FR-002 | Data Model & Seed Data | Phase 1 | P0 | 2h | TODO |
+| FR-002 | Data Model & Seed Data | Phase 1 | P0 | 2h | DONE |
 | FR-003 | Zustand Store with Normalized Slices | Phase 1 | P0 | 3h | TODO |
 | FR-004 | Fundraiser Page | Phase 1 | P0 | 4h | TODO |
 | FR-005 | Community Page | Phase 1 | P0 | 4h | TODO |
