@@ -1,9 +1,20 @@
 /**
  * FundRight seed data — 2 communities, 5 fundraisers, 8 users, 30 donations.
  * totalRaised and donationCount are derived from donation records, not hardcoded.
+ * Images use placeholder services (no local assets required): UI Avatars, Picsum.
  */
 
 import type { Community, Donation, Fundraiser, User } from "./types";
+
+/** Avatar URL from name (ui-avatars.com). No local image files needed. */
+function avatarUrl(name: string): string {
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=059669&color=fff&size=256`;
+}
+
+/** Deterministic placeholder image (picsum.photos) for heroes/banners. */
+function placeholderImage(seed: string, width = 800, height = 400): string {
+  return `https://picsum.photos/seed/${encodeURIComponent(seed)}/${width}/${height}`;
+}
 
 // ——— Users (8) ———
 const usersBase: Omit<User, "donationIds" | "totalDonated">[] = [
@@ -12,7 +23,7 @@ const usersBase: Omit<User, "donationIds" | "totalDonated">[] = [
     username: "janahan",
     name: "Janahan Selvakumaran",
     bio: "Wildfire safety advocate and community organizer. Helping families get real-time alerts when it matters most.",
-    avatar: "/assets/avatars/janahan.jpg",
+    avatar: avatarUrl("Janahan Selvakumaran"),
     verified: true,
     joinDate: "2023-06-15",
     socialLinks: [
@@ -26,7 +37,7 @@ const usersBase: Omit<User, "donationIds" | "totalDonated">[] = [
     username: "maya_chen",
     name: "Maya Chen",
     bio: "Emergency response volunteer. Focused on disaster preparedness and community resilience.",
-    avatar: "/assets/avatars/maya.jpg",
+    avatar: avatarUrl("Maya Chen"),
     verified: true,
     joinDate: "2023-08-01",
     socialLinks: [{ platform: "Instagram", url: "https://instagram.com/mayachen" }],
@@ -37,7 +48,7 @@ const usersBase: Omit<User, "donationIds" | "totalDonated">[] = [
     username: "david_okonkwo",
     name: "David Okonkwo",
     bio: "Former firefighter. Raising funds for equipment and training in underserved communities.",
-    avatar: "/assets/avatars/david.jpg",
+    avatar: avatarUrl("David Okonkwo"),
     verified: true,
     joinDate: "2023-09-10",
     socialLinks: [],
@@ -48,7 +59,7 @@ const usersBase: Omit<User, "donationIds" | "totalDonated">[] = [
     username: "sarah_lee",
     name: "Sarah Lee",
     bio: "Medical bills advocate. Helping families navigate healthcare costs and crowdfunding.",
-    avatar: "/assets/avatars/sarah.jpg",
+    avatar: avatarUrl("Sarah Lee"),
     verified: false,
     joinDate: "2024-01-05",
     socialLinks: [{ platform: "Facebook", url: "https://facebook.com/sarahlee" }],
@@ -59,7 +70,7 @@ const usersBase: Omit<User, "donationIds" | "totalDonated">[] = [
     username: "james_rivera",
     name: "James Rivera",
     bio: "Community health worker. Connecting people with resources for medical and housing needs.",
-    avatar: "/assets/avatars/james.jpg",
+    avatar: avatarUrl("James Rivera"),
     verified: true,
     joinDate: "2024-02-12",
     socialLinks: [],
@@ -70,7 +81,7 @@ const usersBase: Omit<User, "donationIds" | "totalDonated">[] = [
     username: "priya_sharma",
     name: "Priya Sharma",
     bio: "Donor and volunteer. Supporting wildfire relief and medical fundraisers.",
-    avatar: "/assets/avatars/priya.jpg",
+    avatar: avatarUrl("Priya Sharma"),
     verified: false,
     joinDate: "2024-03-01",
     socialLinks: [],
@@ -81,7 +92,7 @@ const usersBase: Omit<User, "donationIds" | "totalDonated">[] = [
     username: "alex_kim",
     name: "Alex Kim",
     bio: "Tech for good. Building tools that help organizers reach more donors.",
-    avatar: "/assets/avatars/alex.jpg",
+    avatar: avatarUrl("Alex Kim"),
     verified: false,
     joinDate: "2024-03-15",
     socialLinks: [{ platform: "GitHub", url: "https://github.com/alexkim" }],
@@ -92,7 +103,7 @@ const usersBase: Omit<User, "donationIds" | "totalDonated">[] = [
     username: "maria_garcia",
     name: "Maria Garcia",
     bio: "Neighbor helping neighbors. Focused on local wildfire and medical relief.",
-    avatar: "/assets/avatars/maria.jpg",
+    avatar: avatarUrl("Maria Garcia"),
     verified: true,
     joinDate: "2024-04-01",
     socialLinks: [],
@@ -108,7 +119,7 @@ const communitiesBase: Omit<Community, "totalRaised" | "donationCount" | "fundra
     name: "Watch Duty",
     description: "A community dedicated to wildfire safety, real-time alerts, and helping families and first responders stay safe during fire season.",
     causeCategory: "Disaster Relief & Wildfire Safety",
-    bannerImageUrl: "/assets/banners/watch-duty.jpg",
+    bannerImageUrl: placeholderImage("watch-duty", 1200, 400),
     memberIds: ["user-1", "user-2", "user-3", "user-6", "user-7"],
     fundraiserIds: ["fund-1", "fund-2", "fund-3"],
     faq: [
@@ -124,7 +135,7 @@ const communitiesBase: Omit<Community, "totalRaised" | "donationCount" | "fundra
     name: "Medical Relief Network",
     description: "Supporting families facing medical bills, treatment costs, and healthcare access. We fundraise together for those in need.",
     causeCategory: "Medical & Healthcare",
-    bannerImageUrl: "/assets/banners/medical-relief.jpg",
+    bannerImageUrl: placeholderImage("medical-relief", 1200, 400),
     memberIds: ["user-3", "user-4", "user-5", "user-6", "user-8"],
     fundraiserIds: ["fund-4", "fund-5"],
     faq: [
@@ -156,7 +167,7 @@ Thank you for helping us build a safer, more prepared community.`,
     goalAmount: 25000,
     organizerId: "user-1",
     communityId: "comm-1",
-    heroImageUrl: "/assets/fundraisers/wildfire-alerts.jpg",
+    heroImageUrl: placeholderImage("fund-1-wildfire", 800, 450),
     updates: [
       { id: "up-1-1", date: "2024-05-01", text: "Partnership confirmed with County Fire. Alert system pilot starts next month." },
       { id: "up-1-2", date: "2024-05-15", text: "First 50 go-bags distributed. Training session scheduled for June." },
@@ -178,7 +189,7 @@ Thank you for helping us build a safer, more prepared community.`,
     goalAmount: 15000,
     organizerId: "user-3",
     communityId: "comm-1",
-    heroImageUrl: "/assets/fundraisers/firefighter-equipment.jpg",
+    heroImageUrl: placeholderImage("fund-2-firefighter", 800, 450),
     updates: [
       { id: "up-2-1", date: "2024-04-20", text: "First department identified. Ordering first batch of gear." },
     ],
@@ -197,7 +208,7 @@ Thank you for helping us build a safer, more prepared community.`,
     goalAmount: 12000,
     organizerId: "user-2",
     communityId: "comm-1",
-    heroImageUrl: "/assets/fundraisers/evacuation-hub.jpg",
+    heroImageUrl: placeholderImage("fund-3-evacuation", 800, 450),
     updates: [
       { id: "up-3-1", date: "2024-05-10", text: "Location secured. Next step: supply list and volunteer sign-up." },
     ],
@@ -216,7 +227,7 @@ Thank you for helping us build a safer, more prepared community.`,
     goalAmount: 20000,
     organizerId: "user-4",
     communityId: "comm-2",
-    heroImageUrl: "/assets/fundraisers/martinez-family.jpg",
+    heroImageUrl: placeholderImage("fund-4-martinez", 800, 450),
     updates: [
       { id: "up-4-1", date: "2024-04-25", text: "Thank you to everyone who has given. We're about 40% of the way to our goal." },
       { id: "up-4-2", date: "2024-05-05", text: "Child is home and doing well. Family is incredibly grateful." },
@@ -236,7 +247,7 @@ Thank you for helping us build a safer, more prepared community.`,
     goalAmount: 30000,
     organizerId: "user-5",
     communityId: "comm-2",
-    heroImageUrl: "/assets/fundraisers/cancer-support.jpg",
+    heroImageUrl: placeholderImage("fund-5-cancer", 800, 450),
     updates: [
       { id: "up-5-1", date: "2024-05-01", text: "Fund is live. First applications under review." },
     ],
