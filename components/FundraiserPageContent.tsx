@@ -3,8 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { useFundRightStore } from "@/lib/store";
 import type { User, Community } from "@/lib/data";
+import DonationModal from "./DonationModal";
 
 function formatStory(text: string): React.ReactNode {
   return text.split(/\n\n+/).map((para, i) => (
@@ -50,6 +52,18 @@ function FundraiserBySlug({ slug }: { slug: string }) {
     .map((id) => donations[id]?.donorId)
     .filter(Boolean) as string[];
   const topDonors = topDonorIds.map((id) => users[id]).filter(Boolean) as User[];
+  const [modalOpen, setModalOpen] = useState(false);
+  const [toast, setToast] = useState<{ show: boolean; donorUsername: string | null }>({
+    show: false,
+    donorUsername: null,
+  });
+  const donateButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!toast.show) return;
+    const t = setTimeout(() => setToast((p) => ({ ...p, show: false })), 4000);
+    return () => clearTimeout(t);
+  }, [toast.show]);
 
   return (
     <article className="space-y-8">
@@ -136,10 +150,12 @@ function FundraiserBySlug({ slug }: { slug: string }) {
             {fundraiser.donationCount !== 1 ? "s" : ""}
           </p>
 
-          {/* Donate CTA — modal wired in FR-007 */}
+          {/* Donate CTA */}
           <div>
             <button
+              ref={donateButtonRef}
               type="button"
+              onClick={() => setModalOpen(true)}
               className="rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               aria-label="Donate to this fundraiser"
             >
@@ -147,6 +163,36 @@ function FundraiserBySlug({ slug }: { slug: string }) {
             </button>
           </div>
         </div>
+
+        <DonationModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          fundraiserId={fundraiser.id}
+          fundraiserTitle={fundraiser.title}
+          users={users}
+          triggerRef={donateButtonRef}
+          onSuccess={(donorUsername) =>
+            setToast({ show: true, donorUsername })
+          }
+        />
+
+        {toast.show && toast.donorUsername && (
+          <div
+            className="fixed bottom-4 right-4 z-50 max-w-sm rounded-lg border border-stone-200 bg-white px-4 py-3 shadow-lg"
+            role="status"
+            aria-live="polite"
+          >
+            <p className="text-stone-800">
+              Donation added!{" "}
+              <Link
+                href={`/u/${toast.donorUsername}`}
+                className="font-medium text-primary hover:underline"
+              >
+                View it on your profile →
+              </Link>
+            </p>
+          </div>
+        )}
 
         {/* Sidebar placeholder for lg sticky widget (FR-007/FR-009) */}
         <div className="lg:col-span-1" />

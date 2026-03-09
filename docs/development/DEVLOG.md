@@ -29,7 +29,7 @@ The following tickets are **required** to pass the MVP gate — three fully inte
 | FR-004 | Fundraiser Page (`/f/[slug]`) | **Core** — conversion-optimized donation destination | P0 | 4h | DONE |
 | FR-005 | Community Page (`/communities/[slug]`) | **Core** — SEO powerhouse + discovery entry point | P0 | 4h | DONE |
 | FR-006 | Profile Page (`/u/[username]`) | **Core** — trust authority + organizer credibility | P0 | 4h | DONE |
-| FR-007 | Donation Flow & Modal | **Core** — cross-page state mutation via donation | P0 | 3h | TODO |
+| FR-007 | Donation Flow & Modal | **Core** — cross-page state mutation via donation | P0 | 3h | DONE |
 | FR-008 | Cross-Page Navigation & Link Graph | **Core** — closed-loop internal linking | P0 | 2h | TODO |
 | FR-009 | Responsive Layout (Mobile + Desktop) | **Core** — responsive-concurrent at 375px–1440px | P0 | 4h | TODO |
 | FR-010 | Skeleton Loaders & Page Transitions | **Polish** — perceived performance + seamless navigation | P1 | 2h | TODO |
@@ -276,6 +276,40 @@ The following tickets are **required** to pass the MVP gate — three fully inte
 
 ---
 
+## FR-007: Donation Flow & Modal ✅
+
+### Plain-English Summary
+- Clicking "Donate" on the fundraiser page opens a modal overlay.
+- Modal: preset amount buttons ($25, $50, $100, $250), custom amount input, optional message, "Donating as" dropdown (when multiple users), Cancel/Confirm. On confirm, `addDonation()` runs, modal closes, focus returns to Donate button.
+- Progress bar already uses CSS transition 500ms ease-out; donor wall updates from store.
+- Toast: "Donation added! View it on your profile →" with link to `/u/[donorUsername]`, aria-live="polite", auto-dismiss 4s.
+- Modal: role="dialog", aria-modal="true", aria-labelledby; focus trap (Tab/Shift+Tab cycles, Escape closes).
+
+### Metadata
+- **Status:** Complete
+- **Date:** 2026-03-09
+- **Ticket:** FR-007
+- **Branch:** feature/FR-007-donation-flow-modal
+
+### Scope
+- DonationModal component and fundraiser-page wiring only.
+
+### Files Changed
+- **Created:** components/DonationModal.tsx
+- **Modified:** components/FundraiserPageContent.tsx (modal state, toast, Donate button ref + onClick)
+- **Updated:** docs/development/DEVLOG.md — this entry
+
+### Acceptance Criteria
+- [x] Donate opens modal overlay
+- [x] Modal: amount presets, custom input, optional message, Confirm
+- [x] On confirm: addDonation(), modal closes, progress animates (500ms), new donation at top of donor wall
+- [x] Toast with profile link; focus trap and Escape; ARIA dialog
+
+### Next Steps
+- FR-008 (Cross-Page Navigation & Link Graph), FR-009 (Responsive Layout).
+
+---
+
 ## Phase 2: Intelligence Layer (FR-011 → FR-018)
 
 AI features, structured data, and the analytics dashboard. After this phase, every page demonstrates AI integration, every page has valid JSON-LD, and `/analytics` visualizes all four instrumentation tiers.
@@ -396,7 +430,7 @@ Each ticket entry follows this standardized structure:
 | FR-004 | Fundraiser Page | Phase 1 | P0 | 4h | DONE |
 | FR-005 | Community Page | Phase 1 | P0 | 4h | DONE |
 | FR-006 | Profile Page | Phase 1 | P0 | 4h | DONE |
-| FR-007 | Donation Flow & Modal | Phase 1 | P0 | 3h | TODO |
+| FR-007 | Donation Flow & Modal | Phase 1 | P0 | 3h | DONE |
 | FR-008 | Cross-Page Navigation & Link Graph | Phase 1 | P0 | 2h | TODO |
 | FR-009 | Responsive Layout | Phase 1 | P0 | 4h | TODO |
 | FR-010 | Skeleton Loaders & Page Transitions | Phase 1 | P1 | 2h | TODO |
