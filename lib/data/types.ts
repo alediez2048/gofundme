@@ -43,6 +43,12 @@ export interface Fundraiser {
   updates: FundraiserUpdate[];
 }
 
+export interface FAQItem {
+  id: string;
+  question: string;
+  answer: string;
+}
+
 export interface Community {
   id: string;
   slug: string;
@@ -56,6 +62,7 @@ export interface Community {
   donationCount: number;
   fundraiserCount: number;
   memberCount: number;
+  faq?: FAQItem[];
 }
 
 export interface Donation {

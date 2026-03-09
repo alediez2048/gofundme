@@ -27,7 +27,7 @@ The following tickets are **required** to pass the MVP gate — three fully inte
 | FR-002 | Data Model & Seed Data | **Foundation** — typed entities + realistic population | P0 | 2h | DONE |
 | FR-003 | Zustand Store with Normalized Slices | **Foundation** — reactive cross-page state | P0 | 3h | DONE |
 | FR-004 | Fundraiser Page (`/f/[slug]`) | **Core** — conversion-optimized donation destination | P0 | 4h | DONE |
-| FR-005 | Community Page (`/communities/[slug]`) | **Core** — SEO powerhouse + discovery entry point | P0 | 4h | TODO |
+| FR-005 | Community Page (`/communities/[slug]`) | **Core** — SEO powerhouse + discovery entry point | P0 | 4h | DONE |
 | FR-006 | Profile Page (`/u/[username]`) | **Core** — trust authority + organizer credibility | P0 | 4h | TODO |
 | FR-007 | Donation Flow & Modal | **Core** — cross-page state mutation via donation | P0 | 3h | TODO |
 | FR-008 | Cross-Page Navigation & Link Graph | **Core** — closed-loop internal linking | P0 | 2h | TODO |
@@ -197,6 +197,47 @@ The following tickets are **required** to pass the MVP gate — three fully inte
 
 ---
 
+## FR-005: Community Page (/communities/[slug]) ✅
+
+### Plain-English Summary
+- Community page at `/communities/[slug]` with data from Zustand store; server uses seed for generateMetadata and notFound.
+- Header: banner (next/image blur), H1, cause category badge, aggregate stats (total raised, donation count, fundraiser count, member count) from store.
+- Fundraiser directory: grid of cards (image, title, progress bar, organizer name) sorted by most recent activity (donation count); each links to `/f/[slug]`.
+- Guided discovery: “Most urgent”, “Most momentum”, “Closest to goal” with links to campaigns.
+- Direct-answer: “About this cause”, “How can I help?”, “Where does the money go?”.
+- Members: avatar grid first 8 linked to `/u/[username]`, “+X more” overflow.
+- FAQ: expandable accordion (3–5 questions) from Community.faq in seed.
+- FAQItem type and faq added to Community (optional) and seed for both communities.
+
+### Metadata
+- **Status:** Complete
+- **Date:** 2026-03-09
+- **Ticket:** FR-005
+- **Branch:** feature/FR-005-community-page
+
+### Scope
+- Community page + FAQ data only; no AI cause intelligence (FR-011).
+
+### Files Changed
+- **Created:** app/communities/[slug]/page.tsx, components/CommunityPageContent.tsx
+- **Modified:** lib/data/types.ts (FAQItem, Community.faq), lib/data/seed.ts (faq per community)
+- **Updated:** docs/development/DEVLOG.md — this entry
+
+### Acceptance Criteria
+- [x] Page at /communities/[slug] with data from store
+- [x] Header: banner, H1, cause badge, aggregate stats (from store)
+- [x] Fundraiser directory: grid, cards with image/title/progress/organizer, sorted by activity, links to /f/[slug]
+- [x] Guided discovery (urgency, momentum, closest to goal)
+- [x] Direct-answer content (cause, how to help)
+- [x] Members: 8 avatars → /u/[username], “+X more”
+- [x] FAQ accordion 3–5 questions
+- [x] Stats computed from store; SEO title/description
+
+### Next Steps
+- FR-006 (Profile Page), then FR-007 (Donation Flow & Modal).
+
+---
+
 ## Phase 2: Intelligence Layer (FR-011 → FR-018)
 
 AI features, structured data, and the analytics dashboard. After this phase, every page demonstrates AI integration, every page has valid JSON-LD, and `/analytics` visualizes all four instrumentation tiers.
@@ -315,7 +356,7 @@ Each ticket entry follows this standardized structure:
 | FR-002 | Data Model & Seed Data | Phase 1 | P0 | 2h | DONE |
 | FR-003 | Zustand Store with Normalized Slices | Phase 1 | P0 | 3h | DONE |
 | FR-004 | Fundraiser Page | Phase 1 | P0 | 4h | DONE |
-| FR-005 | Community Page | Phase 1 | P0 | 4h | TODO |
+| FR-005 | Community Page | Phase 1 | P0 | 4h | DONE |
 | FR-006 | Profile Page | Phase 1 | P0 | 4h | TODO |
 | FR-007 | Donation Flow & Modal | Phase 1 | P0 | 3h | TODO |
 | FR-008 | Cross-Page Navigation & Link Graph | Phase 1 | P0 | 2h | TODO |

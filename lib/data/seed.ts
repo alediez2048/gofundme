@@ -111,6 +111,12 @@ const communitiesBase: Omit<Community, "totalRaised" | "donationCount" | "fundra
     bannerImageUrl: "/assets/banners/watch-duty.jpg",
     memberIds: ["user-1", "user-2", "user-3", "user-6", "user-7"],
     fundraiserIds: ["fund-1", "fund-2", "fund-3"],
+    faq: [
+      { id: "faq-1-1", question: "What is Watch Duty?", answer: "Watch Duty is a community focused on wildfire safety, real-time alerts, and supporting families and first responders during fire season. We fundraise for alert systems, equipment, and evacuation resources." },
+      { id: "faq-1-2", question: "How can I help?", answer: "You can donate to any active fundraiser in this community, start your own campaign, or share fundraisers to spread awareness. Every contribution helps deploy alerts and resources where they're needed." },
+      { id: "faq-1-3", question: "Where does the money go?", answer: "Funds go directly to the campaigns you choose: alert system deployment, firefighter equipment, evacuation hubs, and community training. Organizers publish updates so you can see impact." },
+      { id: "faq-1-4", question: "Is my donation tax-deductible?", answer: "Tax treatment depends on the recipient organization. Check each fundraiser for details; many campaigns are run by 501(c)(3) nonprofits." },
+    ],
   },
   {
     id: "comm-2",
@@ -121,6 +127,12 @@ const communitiesBase: Omit<Community, "totalRaised" | "donationCount" | "fundra
     bannerImageUrl: "/assets/banners/medical-relief.jpg",
     memberIds: ["user-3", "user-4", "user-5", "user-6", "user-8"],
     fundraiserIds: ["fund-4", "fund-5"],
+    faq: [
+      { id: "faq-2-1", question: "What is the Medical Relief Network?", answer: "We're a community that rallies around families facing medical bills, treatment costs, and healthcare access. We pool donations and support vetted campaigns so funds reach those in need." },
+      { id: "faq-2-2", question: "How can I get help with medical bills?", answer: "Browse active fundraisers or start one for yourself or someone you know. Organizers share their story and goals; donors give directly to the campaign." },
+      { id: "faq-2-3", question: "How are campaigns verified?", answer: "We rely on organizer profiles, updates, and community oversight. Look for verified organizers and read campaign updates before giving." },
+      { id: "faq-2-4", question: "Are there fees?", answer: "FundRight charges no platform fee on donations. Payment processors may apply a small percentage; check the donation flow for details." },
+    ],
   },
 ];
 
