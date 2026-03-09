@@ -25,7 +25,7 @@ The following tickets are **required** to pass the MVP gate — three fully inte
 |--------|-------|----------|----------|------|--------|
 | FR-001 | Project Scaffold & Next.js Configuration | **Foundation** — nothing works without this | P0 | 2h | DONE |
 | FR-002 | Data Model & Seed Data | **Foundation** — typed entities + realistic population | P0 | 2h | DONE |
-| FR-003 | Zustand Store with Normalized Slices | **Foundation** — reactive cross-page state | P0 | 3h | TODO |
+| FR-003 | Zustand Store with Normalized Slices | **Foundation** — reactive cross-page state | P0 | 3h | DONE |
 | FR-004 | Fundraiser Page (`/f/[slug]`) | **Core** — conversion-optimized donation destination | P0 | 4h | TODO |
 | FR-005 | Community Page (`/communities/[slug]`) | **Core** — SEO powerhouse + discovery entry point | P0 | 4h | TODO |
 | FR-006 | Profile Page (`/u/[username]`) | **Core** — trust authority + organizer credibility | P0 | 4h | TODO |
@@ -122,6 +122,45 @@ The following tickets are **required** to pass the MVP gate — three fully inte
 
 ### Next Steps
 - FR-003 (Zustand Store with normalized slices).
+
+---
+
+## FR-003: Zustand Store with Normalized Slices ✅
+
+### Plain-English Summary
+- Zustand store in `lib/store/` with normalized slices: users, fundraisers, communities, donations (each `Record<id, Entity>`).
+- `addDonation(fundraiserId, amount, donorId, message?)` atomically: creates donation, updates fundraiser raisedAmount/donationCount/donationIds, updates donor donationIds/totalDonated, updates community totalRaised/donationCount.
+- Persist middleware (localStorage, key `fundright-store`); initial state from seed; rehydration from localStorage on subsequent loads.
+- `getStore()` lazy singleton and `useFundRightStore(selector)` for component subscriptions to specific fields.
+
+### Metadata
+- **Status:** Complete
+- **Date:** 2026-03-09
+- **Ticket:** FR-003
+- **Branch:** feature/FR-003-zustand-store
+
+### Scope
+- Store and hooks only; no page or UI changes.
+
+### Key Achievements
+- Build and lint pass. addDonation is atomic; community aggregate updates when fundraiser has communityId.
+
+### Technical Implementation
+- `lib/store/index.ts`: createFundRightStore() with persist(partialize: entities only). getStore(), useFundRightStore(selector). New donation id: `don-${Date.now()}-${random}`.
+
+### Files Changed
+- **Created:** lib/store/index.ts
+- **Updated:** package.json (zustand), docs/development/DEVLOG.md — this entry
+
+### Acceptance Criteria
+- [x] Normalized slices: users, fundraisers, communities, donations
+- [x] addDonation atomically updates donation, fundraiser, donor, community
+- [x] Persist to localStorage via zustand persist
+- [x] useFundRightStore(selector) for selective subscriptions
+- [x] Hydrates from seed first load, localStorage thereafter
+
+### Next Steps
+- FR-004 (Fundraiser Page), FR-005 (Community Page), FR-006 (Profile Page).
 
 ---
 
@@ -241,7 +280,7 @@ Each ticket entry follows this standardized structure:
 |----|-------|-------|----------|------|--------|
 | FR-001 | Project Scaffold & Next.js Configuration | Phase 1 | P0 | 2h | DONE |
 | FR-002 | Data Model & Seed Data | Phase 1 | P0 | 2h | DONE |
-| FR-003 | Zustand Store with Normalized Slices | Phase 1 | P0 | 3h | TODO |
+| FR-003 | Zustand Store with Normalized Slices | Phase 1 | P0 | 3h | DONE |
 | FR-004 | Fundraiser Page | Phase 1 | P0 | 4h | TODO |
 | FR-005 | Community Page | Phase 1 | P0 | 4h | TODO |
 | FR-006 | Profile Page | Phase 1 | P0 | 4h | TODO |
