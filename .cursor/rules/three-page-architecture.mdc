@@ -1,0 +1,33 @@
+---
+description: Three-page closed-loop architecture (Profile, Community, Fundraiser)
+alwaysApply: true
+---
+
+# Three-Page Closed-Loop Architecture
+
+FundRight’s product model: three page types that form one donor journey. Each page has a clear role; they must link to each other and share state.
+
+## Roles
+
+- **Profile (`/u/[username]`)** — Trust layer. Answers: who is this organizer, what have they done, why trust them?
+- **Community (`/communities/[slug]`)** — Discovery and belonging. Answers: what is this cause, which fundraiser should I support, how does this fit the larger movement?
+- **Fundraiser (`/f/[slug]`)** — Conversion layer. Answers: what is this campaign, how much is raised, why give now?
+
+## Closed Loop
+
+```
+Profile ──────► Community ──────► Fundraiser
+   ▲                                    │
+   └────────────────────────────────────┘
+```
+
+- Profile → Community: "What causes does this person support?"
+- Community → Fundraiser: "Which campaign should I support?"
+- Fundraiser → Profile: "Why should I trust this organizer?"
+
+## Implementation Rules
+
+- **Internal linking:** Every page type must link to the other two with clear, contextual anchors (e.g. organizer name → Profile, community name → Community, related fundraisers → Fundraiser).
+- **Shared state:** Zustand store is the single source of truth. A donation on a Fundraiser must update progress there and be visible on the organizer’s Profile and the Community’s aggregate stats without a full reload.
+- **Routes:** Use the canonical paths: `/u/[username]`, `/f/[slug]`, `/communities/[slug]`. Do not introduce alternate URL shapes for these entities.
+- **Navigation:** Donation flow, "View organizer profile," "Back to community," and "Related fundraisers" must use these routes and shared state so the evaluator can see the full loop in one session.

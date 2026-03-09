@@ -1,0 +1,42 @@
+---
+description: Mandatory context loading before starting any ticket work
+alwaysApply: true
+---
+
+# Context Loading (MANDATORY)
+
+## Before Writing ANY Code
+
+Read these in order before making changes:
+
+1. **PRD & ticket** — `docs/product/FundRight-PRD.md`
+   - Find the ticket (e.g. FR-001, FR-004) and read the full acceptance criteria and Definition of Done
+   - Note which files or areas are in scope; do not assume scope
+
+2. **DEVLOG** — `docs/development/DEVLOG.md`
+   - See what’s already done and current ticket status
+   - Confirm prerequisite tickets are complete before starting a dependent ticket
+
+3. **Architecture & readme** — `readme.md`
+   - Project structure (`app/`, `components/`, `lib/`), routes, and three-page roles (Profile / Community / Fundraiser)
+   - Use this to avoid creating files in the wrong place
+
+4. **Files you are about to modify** — read them in full before editing
+   - Never edit a file you haven’t read first
+   - Understand existing components and data flow before adding to them
+
+5. **Types and data** — `lib/data/` and any shared types
+   - Understand entity shapes (fundraiser, community, user, donation) and store shape
+   - Do not change shared types unless the ticket explicitly requires it
+
+## During Implementation
+
+- If the PRD or ticket references other docs (e.g. docs/seo/SEO.md, docs/audits/lighthouse-audit.md), read those when relevant
+- If you need to understand a component or function, read its implementation — do not guess
+
+## Do NOT
+
+- Start coding before reading the PRD section for the current ticket
+- Assume file contents or APIs without reading them
+- Guess at prop types, store shape, or route params
+- Skip the DEVLOG — it records prior decisions and blocking dependencies

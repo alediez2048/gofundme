@@ -1,0 +1,31 @@
+---
+description: SEO schema and four-tier instrumentation for FundRight
+alwaysApply: true
+---
+
+# SEO & Instrumentation
+
+## JSON-LD Schema (Per Page Type)
+
+- **Profile:** `Person`, `ProfilePage`, `ItemList`, `BreadcrumbList` — index + follow
+- **Fundraiser:** `DonateAction`, `MonetaryAmount`, `BreadcrumbList` — index + follow
+- **Community:** `Organization`/`NGO`, `FAQPage`, `BreadcrumbList`, `AggregateRating` — index + follow
+
+Schema must be valid (no required fields missing); use custom generators in `lib/schema/`, not hand-written invalid JSON-LD. Inject per page in layout or page component (e.g. via SchemaInjector or equivalent).
+
+## Four-Tier Instrumentation
+
+1. **Tier 1 — Performance:** TTFB, LCP, CLS, INP, TBT; target LCP ≤ 1.8s, TBT ≤ 200ms, CLS ≤ 0.1. Use Performance Observer / Core Web Vitals where applicable.
+2. **Tier 2 — Conversion funnel:** Events such as `session_start`, `community_view`, `fundraiser_view`, `donate_intent`, `donation_complete`, `profile_view_from_fundraiser`, `fundraiser_click_from_profile`, `recommended_fundraiser_click`. Implement with a custom event layer; dispatch via Beacon API (non-blocking).
+3. **Tier 3 — SEO health:** Schema validation status, indexability, heading hierarchy. Can be build-time or dev overlay.
+4. **Tier 4 — Attribution:** Session-level paths (e.g. organic → community → fundraiser → donation, referral → fundraiser → profile_view → donation). Store and display in the analytics dashboard.
+
+## Analytics Dashboard
+
+- Route: `/analytics`. Must surface the four tiers so reviewers can see metrics without opening DevTools.
+- No third-party analytics SDKs; keep a single custom layer to avoid the performance cost of multiple scripts.
+
+## Constraints
+
+- Do not add Google Analytics, Amplitude, FullStory, or other third-party trackers unless explicitly required by the PRD.
+- Event names and payloads must match the instrumentation strategy in the PRD and readme so the dashboard and attribution remain consistent.

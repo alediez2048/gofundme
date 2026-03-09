@@ -1,0 +1,51 @@
+---
+description: Git branching and commit workflow for ticket implementation
+alwaysApply: true
+---
+
+# Git Workflow (MANDATORY)
+
+## Branch-Per-Ticket Rule
+
+**NEVER commit directly to `main`.** Every ticket uses a dedicated feature branch.
+
+Before writing ANY code for a ticket:
+
+1. Ensure you are on `main` and up to date:
+   ```
+   git switch main && git pull
+   ```
+2. Create a feature branch named after the ticket:
+   ```
+   git switch -c feature/FR-XXX-short-description
+   ```
+   Examples:
+   - `feature/FR-001-scaffold-nextjs`
+   - `feature/FR-004-fundraiser-page`
+   - `feature/FR-015-event-tracking`
+
+3. Do ALL work on this branch. Do not switch back to `main` to commit.
+
+## Commit Conventions
+
+- Use Conventional Commits: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`
+- Commit in small increments (e.g. scaffold first, then components, then wiring)
+- Reference the ticket ID in the first commit message:
+  ```
+  feat(FR-001): add Next.js 14 app with App Router and Tailwind
+  ```
+
+## When Done With a Ticket
+
+1. Push the feature branch:
+   ```
+   git push -u origin feature/FR-XXX-short-description
+   ```
+2. Open a PR against `main` (or inform the user to review)
+3. Do not merge to `main` yourself — wait for review
+
+## What NOT to Do
+
+- Do not commit to `main` directly
+- Do not skip creating a branch "to save time"
+- Do not force-push or rebase without explicit user approval

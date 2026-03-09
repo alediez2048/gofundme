@@ -1,0 +1,46 @@
+---
+description: Mandatory verification before committing or marking a ticket done
+alwaysApply: true
+---
+
+# Verify Before Done (MANDATORY)
+
+## Before EVERY Commit
+
+Run these checks and confirm they pass. Do NOT commit if any check fails.
+
+1. **Build succeeds:**
+   ```
+   npm run build
+   ```
+   - Fix any TypeScript or build errors before committing
+
+2. **Lint is clean:**
+   ```
+   npm run lint
+   ```
+   - Resolve ESLint errors and warnings; do not disable rules without justification
+
+3. **Tests pass** (when present):
+   ```
+   npm run test
+   ```
+   - All tests must pass; do not skip or delete failing tests to pass the gate
+
+4. **No unintended files staged:**
+   - Run `git status` before committing
+   - Do not stage `.env`, `.env.local`, credentials, `node_modules/`, `.next/`, or `.DS_Store`
+   - Only stage files related to the current ticket
+
+## Before Marking a Ticket Complete
+
+- Verify every item in the ticket’s acceptance criteria (in docs/product/FundRight-PRD.md) is satisfied
+- Update docs/development/DEVLOG.md with the ticket’s status (e.g. DONE) and any brief notes
+- Confirm the build and lint still pass after your changes
+- If the ticket includes deployment (e.g. FR-001 Vercel), confirm the feature branch is pushed and (if applicable) that a preview deploy works
+
+## If Build or Tests Fail
+
+- Do not commit with a broken build or failing tests
+- Do not delete or skip tests to make the suite pass
+- Do not mark the ticket complete until the failure is fixed or explicitly deferred with a documented reason

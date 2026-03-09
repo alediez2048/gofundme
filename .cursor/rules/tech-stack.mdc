@@ -1,0 +1,23 @@
+---
+description: Enforce FundRight tech stack and versions
+alwaysApply: true
+---
+
+# Tech Stack — Version Pinning
+
+- **Framework:** Next.js 14 (App Router)
+- **UI:** React 18
+- **Language:** TypeScript (strict mode)
+- **Styling:** Tailwind CSS (custom tokens: emerald-600 primary, stone palette)
+- **State:** Zustand + persist middleware (normalized entity store, localStorage)
+- **Data:** In-memory seed data (typed); no backend — demo-complete schema
+- **AI:** OpenAI API (build-time cause intelligence; optional live Story Generator via `OPENAI_API_KEY`)
+- **Schema/SEO:** Custom JSON-LD generators (DonateAction, Person, Organization, FAQPage, BreadcrumbList)
+- **Analytics:** Custom event layer (Beacon API, in-memory store, zero third-party SDKs)
+- **Charts:** Recharts (lazy-loaded, dashboard only)
+- **Images:** next/image + WebP assets, blur placeholders, responsive srcset
+- **Testing:** Vitest (unit) + Lighthouse (performance/accessibility gates)
+- **Node:** Node 20 (enforced via `.nvmrc` and `package.json` engines)
+- **Deployment:** Vercel (auto-deploy on `main`)
+
+Do NOT add LangChain, LlamaIndex, or GoFundMe’s multi-SDK analytics stack. Keep a single custom analytics layer.

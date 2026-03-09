@@ -1,0 +1,31 @@
+---
+description: Code patterns and conventions for FundRight
+alwaysApply: true
+---
+
+# Code Patterns & Conventions
+
+## Module Ownership
+
+- **Routes & layouts:** `app/` — `layout.tsx`, `page.tsx`, `u/[username]/`, `f/[slug]/`, `communities/[slug]/`, `analytics/`
+- **UI components:** `components/` — DonationWidget, FundraiserCard, CommunityLeaderboard, ProfileBadge, CauseIntelligence, StoryGenerator, SchemaInjector, AnalyticsDashboard
+- **JSON-LD schema builders:** `lib/schema/` — Person, DonateAction, FAQPage, Organization, BreadcrumbList
+- **Analytics:** `lib/analytics/` — event emitter, Beacon API dispatcher, attribution tracker
+- **AI integration:** `lib/ai/` — story generation, cause intelligence, recommendations
+- **Data & store:** `lib/data/` — seed data, types; Zustand store (normalized slices) in a dedicated store module
+- **Assets:** `public/assets/`
+
+File structure is at **repo root**: `app/`, `components/`, `lib/` sit alongside `docs/` (see docs/README.md for PRD, DEVLOG, research, SEO, audits).
+
+## Coding Standards
+
+- TypeScript strict mode; avoid `any`; use explicit types for props, state, and API shapes
+- Use semantic HTML and landmarks (header, main, footer); root layout includes skip-nav link
+- All cross-page state changes go through Zustand; mutations must be atomic and visible across Profile, Fundraiser, and Community
+- Environment variables via `.env` / `.env.example`; never hardcode `OPENAI_API_KEY` or secrets
+- Images: `next/image` with blur placeholders and lazy loading; prefer WebP
+
+## Three-Page Contract
+
+- Profile = trust layer; Community = discovery/belonging; Fundraiser = conversion. Every page must link meaningfully to the other two (closed-loop link graph).
+- Donation flow must update shared state so that a donation is reflected on Fundraiser, Profile, and Community views without a full reload.

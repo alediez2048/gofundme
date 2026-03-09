@@ -1,0 +1,32 @@
+---
+description: Test and quality methodology for FundRight
+alwaysApply: true
+---
+
+# Test & Quality
+
+## Before Implementing Features
+
+1. Prefer tests or acceptance criteria first when the ticket defines them (e.g. PRD acceptance criteria).
+2. Implement the minimum code to satisfy the criteria.
+3. Refactor only after behavior is correct.
+
+## What to Test
+
+- **Zustand store:** Mutations (e.g. donation) produce expected state; cross-slice updates are consistent
+- **Routes:** Key routes render without error (`/`, `/u/[username]`, `/f/[slug]`, `/communities/[slug]`, `/analytics`)
+- **Donation flow:** Donation modal and state update propagate to fundraiser progress and any dependent UI
+- **Schema:** JSON-LD output validates (structure and required fields for DonateAction, Person, FAQPage, etc.)
+- **Analytics:** Event names and payloads match the four-tier instrumentation spec (performance, funnel, SEO health, attribution)
+
+## Performance & Accessibility Gates
+
+- Run Lighthouse for performance, accessibility, best practices, SEO when making layout or asset changes
+- Targets: LCP ≤ 1.8s, TBT ≤ 200ms, CLS ≤ 0.1, Lighthouse score ≥ 90 where feasible
+- Do not add heavy third-party scripts; keep analytics to the custom Beacon-based layer
+
+## Tooling
+
+- **Unit/integration:** Vitest
+- **Lint/format:** ESLint + Prettier (must pass before commit)
+- **Build:** `npm run build` must succeed

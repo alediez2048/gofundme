@@ -1,0 +1,35 @@
+---
+description: Strict scope control to prevent unauthorized changes
+alwaysApply: true
+---
+
+# Scope Control (MANDATORY)
+
+## Only Do What the Ticket Asks
+
+- Read the PRD section for the current ticket in `docs/product/FundRight-PRD.md` (e.g. FR-004) before writing any code
+- Implement ONLY the deliverables and acceptance criteria listed for that ticket
+- If the ticket says "modify component X", only modify component X
+- If the ticket says "add schema for Y", only add the schema work specified
+
+## Do NOT
+
+- Refactor code that isn’t part of the current ticket
+- Add docstrings, comments, or "cleanup" in files you didn’t need to change for the ticket
+- Rename variables or components outside the ticket scope
+- "Clean up" imports or formatting in unrelated files
+- Add features, helpers, or dependencies not specified in the ticket
+- Modify Vercel config, env, or tooling unless the ticket explicitly requires it
+- Implement or depend on tickets that are not yet done (respect DEVLOG dependency order)
+
+## When You Find Issues Outside Your Scope
+
+- Do not fix bugs in other modules as a side effect
+- Do not refactor code that "could be better" unless it’s in scope
+- Note the issue in the commit message or for a follow-up ticket
+- Let the project owner decide whether to create a new ticket
+
+## File and Phase Boundaries
+
+- Only touch files that are required to meet the ticket’s acceptance criteria
+- Do not add Phase 2 or Phase 3 features (e.g. AI, full analytics dashboard) in Phase 1 tickets unless the ticket explicitly includes them
