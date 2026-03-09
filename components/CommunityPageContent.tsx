@@ -5,13 +5,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useState } from "react";
 import { useFundRightStore } from "@/lib/store";
-import type { Community, Fundraiser, User } from "@/lib/data";
-
-const blurPlaceholder =
-  "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiNlN2U1ZTMiLz48L3N2Zz4=";
+import { BLUR_DATA_URL, calculateProgress, formatCurrency } from "@/lib/utils";
+import type { Fundraiser, User } from "@/lib/data";
+import ProgressBar from "./ProgressBar";
+import UserAvatar from "./UserAvatar";
 
 function FundraiserCard({ f, organizer }: { f: Fundraiser; organizer: User | undefined }) {
-  const pct = Math.min(100, Math.round((f.raisedAmount / f.goalAmount) * 100));
   return (
     <Link
       href={`/f/${f.slug}`}
@@ -25,7 +24,7 @@ function FundraiserCard({ f, organizer }: { f: Fundraiser; organizer: User | und
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
           placeholder="blur"
-          blurDataURL={blurPlaceholder}
+          blurDataURL={BLUR_DATA_URL}
         />
       </div>
       <div className="p-4">
@@ -33,21 +32,11 @@ function FundraiserCard({ f, organizer }: { f: Fundraiser; organizer: User | und
         {organizer && (
           <p className="mt-1 text-sm text-stone-600">By {organizer.name}</p>
         )}
-        <div
-          className="mt-3 h-2 rounded-full bg-stone-200 overflow-hidden"
-          role="progressbar"
-          aria-valuenow={f.raisedAmount}
-          aria-valuemin={0}
-          aria-valuemax={f.goalAmount}
-          aria-label="Progress"
-        >
-          <div
-            className="h-full bg-primary"
-            style={{ width: `${pct}%` }}
-          />
+        <div className="mt-3">
+          <ProgressBar raised={f.raisedAmount} goal={f.goalAmount} height="h-2" animate={false} />
         </div>
         <p className="mt-2 text-sm font-medium text-stone-700">
-          ${f.raisedAmount.toLocaleString()} of ${f.goalAmount.toLocaleString()}
+          {formatCurrency(f.raisedAmount)} of {formatCurrency(f.goalAmount)}
         </p>
       </div>
     </Link>
@@ -68,9 +57,10 @@ function FAQAccordion({ faq }: { faq: { id: string; question: string; answer: st
             onClick={() => setOpenId(openId === item.id ? null : item.id)}
             className="w-full flex items-center justify-between px-4 py-3 text-left font-medium text-stone-900 hover:bg-stone-50"
             aria-expanded={openId === item.id}
+            aria-label={`${openId === item.id ? "Collapse" : "Expand"}: ${item.question}`}
           >
             {item.question}
-            <span className="text-stone-400 shrink-0 ml-2">
+            <span className="text-stone-400 shrink-0 ml-2" aria-hidden="true">
               {openId === item.id ? "−" : "+"}
             </span>
           </button>
@@ -107,14 +97,41 @@ function CommunityBySlug({ slug }: { slug: string }) {
   const overflowCount = members.length - 8;
   const faqList = community.faq ?? [];
 
-  const closestToGoal = [...sortedFundraisers].sort(
-    (a, b) =>
-      b.raisedAmount / b.goalAmount - a.raisedAmount / a.goalAmount
-  )[0];
-  const mostMomentum = sortedFundraisers[0];
-  const mostUrgent = [...sortedFundraisers].sort(
-    (a, b) => a.raisedAmount / a.goalAmount - b.raisedAmount / b.goalAmount
-  )[0];
+  const pctOf = (f: Fundraiser) => calculateProgress(f.raisedAmount, f.goalAmount);
+
+  const mostMomentum = sortedFundraisers[0] ?? null;
+  const closestToGoal = [...sortedFundraisers].sort((a, b) => pctOf(b) - pctOf(a))[0] ?? null;
+  const mostUrgent = [...sortedFundraisers].sort((a, b) => pctOf(a) - pctOf(b))[0] ?? null;
+
+  const seen = new Set<string>();
+  const featured: { label: string; color: string; item: Fundraiser; detail: string }[] = [];
+  if (mostUrgent && !seen.has(mostUrgent.id)) {
+    seen.add(mostUrgent.id);
+    featured.push({
+      label: "Most urgent",
+      color: "border-amber-200 bg-amber-50/50 text-amber-800",
+      item: mostUrgent,
+      detail: `${pctOf(mostUrgent)}% to goal`,
+    });
+  }
+  if (mostMomentum && !seen.has(mostMomentum.id)) {
+    seen.add(mostMomentum.id);
+    featured.push({
+      label: "Most momentum",
+      color: "border-emerald-200 bg-emerald-50/50 text-emerald-800",
+      item: mostMomentum,
+      detail: `${mostMomentum.donationCount} donations`,
+    });
+  }
+  if (closestToGoal && !seen.has(closestToGoal.id)) {
+    seen.add(closestToGoal.id);
+    featured.push({
+      label: "Closest to goal",
+      color: "border-stone-200 bg-stone-50 text-stone-600",
+      item: closestToGoal,
+      detail: `${formatCurrency(closestToGoal.goalAmount - closestToGoal.raisedAmount)} to go`,
+    });
+  }
 
   return (
     <article className="space-y-8">
@@ -128,7 +145,7 @@ function CommunityBySlug({ slug }: { slug: string }) {
             className="object-cover"
             sizes="(max-width: 1024px) 100vw, 1024px"
             placeholder="blur"
-            blurDataURL={blurPlaceholder}
+            blurDataURL={BLUR_DATA_URL}
           />
         </div>
       </section>
@@ -142,7 +159,7 @@ function CommunityBySlug({ slug }: { slug: string }) {
         <div>
           <dt className="text-sm text-stone-500">Total raised</dt>
           <dd className="text-xl font-semibold text-stone-900">
-            ${community.totalRaised.toLocaleString()}
+            {formatCurrency(community.totalRaised)}
           </dd>
         </div>
         <div>
@@ -178,60 +195,26 @@ function CommunityBySlug({ slug }: { slug: string }) {
       </section>
 
       {/* Guided discovery */}
-      {(closestToGoal || mostMomentum || mostUrgent) && (
+      {featured.length > 0 && (
         <section>
           <h2 className="text-xl font-semibold text-stone-900 mb-4">
             Find a campaign to support
           </h2>
           <div className="grid gap-4 sm:grid-cols-3">
-            {mostUrgent && mostUrgent.id !== mostMomentum?.id && (
-              <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-4">
-                <p className="text-xs font-semibold uppercase text-amber-800 tracking-wide">
-                  Most urgent
+            {featured.map((f) => (
+              <div key={f.item.id} className={`rounded-lg border p-4 ${f.color}`}>
+                <p className="text-xs font-semibold uppercase tracking-wide">
+                  {f.label}
                 </p>
                 <Link
-                  href={`/f/${mostUrgent.slug}`}
+                  href={`/f/${f.item.slug}`}
                   className="mt-1 font-medium text-stone-900 hover:text-primary block"
                 >
-                  {mostUrgent.title}
+                  {f.item.title}
                 </Link>
-                <p className="text-sm text-stone-600 mt-1">
-                  {Math.round((mostUrgent.raisedAmount / mostUrgent.goalAmount) * 100)}% to goal
-                </p>
+                <p className="text-sm text-stone-600 mt-1">{f.detail}</p>
               </div>
-            )}
-            {mostMomentum && (
-              <div className="rounded-lg border border-emerald-200 bg-emerald-50/50 p-4">
-                <p className="text-xs font-semibold uppercase text-emerald-800 tracking-wide">
-                  Most momentum
-                </p>
-                <Link
-                  href={`/f/${mostMomentum.slug}`}
-                  className="mt-1 font-medium text-stone-900 hover:text-primary block"
-                >
-                  {mostMomentum.title}
-                </Link>
-                <p className="text-sm text-stone-600 mt-1">
-                  {mostMomentum.donationCount} donations
-                </p>
-              </div>
-            )}
-            {closestToGoal && closestToGoal.id !== mostMomentum?.id && (
-              <div className="rounded-lg border border-stone-200 bg-stone-50 p-4">
-                <p className="text-xs font-semibold uppercase text-stone-600 tracking-wide">
-                  Closest to goal
-                </p>
-                <Link
-                  href={`/f/${closestToGoal.slug}`}
-                  className="mt-1 font-medium text-stone-900 hover:text-primary block"
-                >
-                  {closestToGoal.title}
-                </Link>
-                <p className="text-sm text-stone-600 mt-1">
-                  ${(closestToGoal.goalAmount - closestToGoal.raisedAmount).toLocaleString()} to go
-                </p>
-              </div>
-            )}
+            ))}
           </div>
         </section>
       )}
@@ -241,13 +224,17 @@ function CommunityBySlug({ slug }: { slug: string }) {
         <h2 className="text-xl font-semibold text-stone-900 mb-4">
           Active fundraisers
         </h2>
-        <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {sortedFundraisers.map((f) => (
-            <li key={f.id}>
-              <FundraiserCard f={f} organizer={users[f.organizerId]} />
-            </li>
-          ))}
-        </ul>
+        {sortedFundraisers.length === 0 ? (
+          <p className="text-stone-600 text-sm">No fundraisers yet. Be the first to start one.</p>
+        ) : (
+          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {sortedFundraisers.map((f) => (
+              <li key={f.id}>
+                <FundraiserCard f={f} organizer={users[f.organizerId]} />
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
       {/* Members */}
@@ -263,15 +250,7 @@ function CommunityBySlug({ slug }: { slug: string }) {
                   href={`/u/${u.username}`}
                   className="flex items-center gap-2 text-stone-700 hover:text-primary"
                 >
-                  <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-stone-200">
-                    <Image
-                      src={u.avatar}
-                      alt=""
-                      fill
-                      className="object-cover"
-                      sizes="40px"
-                    />
-                  </span>
+                  <UserAvatar src={u.avatar} size={40} />
                   <span className="text-sm font-medium">{u.name}</span>
                 </Link>
               </li>

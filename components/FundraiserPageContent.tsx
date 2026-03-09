@@ -5,8 +5,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useFundRightStore } from "@/lib/store";
+import { BLUR_DATA_URL, formatCurrency } from "@/lib/utils";
 import type { User, Community } from "@/lib/data";
 import DonationModal from "./DonationModal";
+import ProgressBar from "./ProgressBar";
+import UserAvatar from "./UserAvatar";
 
 function formatStory(text: string): React.ReactNode {
   return text.split(/\n\n+/).map((para, i) => (
@@ -41,14 +44,9 @@ function FundraiserBySlug({ slug }: { slug: string }) {
         (f) => f.communityId === fundraiser.communityId && f.id !== fundraiser.id
       ).slice(0, 3)
     : [];
-  const progressPct = Math.min(
-    100,
-    Math.round((fundraiser.raisedAmount / fundraiser.goalAmount) * 100)
-  );
   const topDonorIds = fundraiser.donationIds
-    .slice()
+    .slice(-5)
     .reverse()
-    .slice(0, 5)
     .map((id) => donations[id]?.donorId)
     .filter(Boolean) as string[];
   const topDonors = topDonorIds.map((id) => users[id]).filter(Boolean) as User[];
@@ -77,7 +75,7 @@ function FundraiserBySlug({ slug }: { slug: string }) {
             className="object-cover"
             sizes="(max-width: 1024px) 100vw, 1024px"
             placeholder="blur"
-            blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiNlN2U1ZTMiLz48L3N2Zz4="
+            blurDataURL={BLUR_DATA_URL}
           />
         </div>
       </section>
@@ -128,22 +126,10 @@ function FundraiserBySlug({ slug }: { slug: string }) {
           </div>
 
           {/* Progress bar */}
-          <div
-            className="rounded-full bg-stone-200 h-3 overflow-hidden"
-            role="progressbar"
-            aria-valuenow={fundraiser.raisedAmount}
-            aria-valuemin={0}
-            aria-valuemax={fundraiser.goalAmount}
-            aria-label="Amount raised"
-          >
-            <div
-              className="h-full bg-primary transition-all duration-500 ease-out"
-              style={{ width: `${progressPct}%` }}
-            />
-          </div>
+          <ProgressBar raised={fundraiser.raisedAmount} goal={fundraiser.goalAmount} />
           <p className="text-lg font-semibold text-stone-900">
-            ${fundraiser.raisedAmount.toLocaleString()} raised of $
-            {fundraiser.goalAmount.toLocaleString()} goal
+            {formatCurrency(fundraiser.raisedAmount)} raised of{" "}
+            {formatCurrency(fundraiser.goalAmount)} goal
           </p>
           <p className="text-sm text-stone-500">
             {fundraiser.donationCount} donation
@@ -219,15 +205,7 @@ function FundraiserBySlug({ slug }: { slug: string }) {
                   href={`/u/${u.username}`}
                   className="flex items-center gap-2 text-stone-700 hover:text-primary"
                 >
-                  <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-stone-200">
-                    <Image
-                      src={u.avatar}
-                      alt=""
-                      fill
-                      className="object-cover"
-                      sizes="40px"
-                    />
-                  </span>
+                  <UserAvatar src={u.avatar} size={40} />
                   <span className="font-medium">{u.name}</span>
                 </Link>
               </li>
@@ -284,8 +262,8 @@ function FundraiserBySlug({ slug }: { slug: string }) {
                 >
                   <p className="font-semibold text-stone-900">{f.title}</p>
                   <p className="mt-1 text-sm text-stone-600">
-                    ${f.raisedAmount.toLocaleString()} of $
-                    {f.goalAmount.toLocaleString()}
+                    {formatCurrency(f.raisedAmount)} of{" "}
+                    {formatCurrency(f.goalAmount)}
                   </p>
                 </Link>
               </li>

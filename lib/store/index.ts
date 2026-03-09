@@ -53,8 +53,9 @@ export const createFundRightStore = () => {
       (set) => ({
         ...getInitialState(),
 
-        addDonation: (fundraiserId, amount, donorId, message = "") => {
-          let donationId: string | null = null;
+        addDonation: (fundraiserId, amount, donorId, message) => {
+          if (amount <= 0) return null;
+          const donationId = generateDonationId();
           const createdAt = new Date().toISOString();
 
           set((state) => {
@@ -62,15 +63,13 @@ export const createFundRightStore = () => {
             const donor = state.users[donorId];
             if (!fundraiser || !donor) return state;
 
-            donationId = generateDonationId();
-
             const donation: Donation = {
               id: donationId,
               amount,
               donorId,
               fundraiserId,
-              message,
               createdAt,
+              ...(message ? { message } : {}),
             };
 
             const communityId = fundraiser.communityId;

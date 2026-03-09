@@ -1,13 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useFundRightStore } from "@/lib/store";
+import { formatCurrency } from "@/lib/utils";
 import type { User, Fundraiser, Community, Donation } from "@/lib/data";
-
-const blurPlaceholder =
-  "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiNlN2U1ZTMiLz48L3N2Zz4=";
+import UserAvatar from "./UserAvatar";
 
 function buildImpactSummary(
   user: User,
@@ -18,12 +16,12 @@ function buildImpactSummary(
   const parts: string[] = [];
   if (organizerCount > 0 && totalRaisedAsOrganizer > 0) {
     parts.push(
-      `${user.name} has organized ${organizerCount} campaign${organizerCount !== 1 ? "s" : ""} and raised $${totalRaisedAsOrganizer.toLocaleString()} for their communities.`
+      `${user.name} has organized ${organizerCount} campaign${organizerCount !== 1 ? "s" : ""} and raised ${formatCurrency(totalRaisedAsOrganizer)} for their communities.`
     );
   }
   if (user.totalDonated > 0) {
     parts.push(
-      `As a donor, they've given $${user.totalDonated.toLocaleString()} to support others.`
+      `As a donor, they've given ${formatCurrency(user.totalDonated)} to support others.`
     );
   }
   if (causesSupportedCount > 0) {
@@ -84,17 +82,7 @@ function ProfileByUsername({ username }: { username: string }) {
     <article className="space-y-8">
       {/* Identity */}
       <section className="flex flex-wrap items-start gap-6">
-        <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full bg-stone-200">
-          <Image
-            src={user.avatar}
-            alt=""
-            fill
-            className="object-cover"
-            sizes="96px"
-            placeholder="blur"
-            blurDataURL={blurPlaceholder}
-          />
-        </div>
+        <UserAvatar src={user.avatar} size={96} />
         <div className="min-w-0 flex-1">
           <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-2">
             {user.name}
@@ -124,15 +112,15 @@ function ProfileByUsername({ username }: { username: string }) {
           {organizerFundraisers.length > 0 && (
             <li>
               Organized {organizerFundraisers.length} campaign
-              {organizerFundraisers.length !== 1 ? "s" : ""} · $
-              {totalRaisedAsOrganizer.toLocaleString()} raised
+              {organizerFundraisers.length !== 1 ? "s" : ""} ·{" "}
+              {formatCurrency(totalRaisedAsOrganizer)} raised
             </li>
           )}
           {userCommunities.length > 0 && (
             <li>Member of {userCommunities.length} communit{userCommunities.length !== 1 ? "ies" : "y"}</li>
           )}
           {user.totalDonated > 0 && (
-            <li>Donated ${user.totalDonated.toLocaleString()} to other campaigns</li>
+            <li>Donated {formatCurrency(user.totalDonated)} to other campaigns</li>
           )}
         </ul>
       </section>
@@ -150,13 +138,13 @@ function ProfileByUsername({ username }: { username: string }) {
         <div>
           <dt className="text-sm text-stone-500">Total raised (as organizer)</dt>
           <dd className="text-xl font-semibold text-stone-900">
-            ${totalRaisedAsOrganizer.toLocaleString()}
+            {formatCurrency(totalRaisedAsOrganizer)}
           </dd>
         </div>
         <div>
           <dt className="text-sm text-stone-500">Total donated</dt>
           <dd className="text-xl font-semibold text-stone-900">
-            ${user.totalDonated.toLocaleString()}
+            {formatCurrency(user.totalDonated)}
           </dd>
         </div>
         <div>
@@ -182,8 +170,8 @@ function ProfileByUsername({ username }: { username: string }) {
                 >
                   <p className="font-semibold text-stone-900">{f.title}</p>
                   <p className="mt-1 text-sm text-stone-600">
-                    ${f.raisedAmount.toLocaleString()} of $
-                    {f.goalAmount.toLocaleString()}
+                    {formatCurrency(f.raisedAmount)} of{" "}
+                    {formatCurrency(f.goalAmount)}
                   </p>
                 </Link>
               </li>
@@ -231,7 +219,7 @@ function ProfileByUsername({ username }: { username: string }) {
                   className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-stone-100 bg-stone-50/50 px-4 py-3"
                 >
                   <span className="font-semibold text-stone-900">
-                    ${d.amount.toLocaleString()}
+                    {formatCurrency(d.amount)}
                   </span>
                   {f ? (
                     <Link

@@ -3,8 +3,19 @@
  * Used by seed data and Zustand store (FR-003). All IDs are strings for consistency.
  */
 
+export type SocialPlatform =
+  | "Twitter"
+  | "LinkedIn"
+  | "Instagram"
+  | "Facebook"
+  | "GitHub";
+
+export type CauseCategory =
+  | "Disaster Relief & Wildfire Safety"
+  | "Medical & Healthcare";
+
 export interface SocialLink {
-  platform: string;
+  platform: SocialPlatform;
   url: string;
 }
 
@@ -54,7 +65,7 @@ export interface Community {
   slug: string;
   name: string;
   description: string;
-  causeCategory: string;
+  causeCategory: CauseCategory;
   bannerImageUrl: string;
   memberIds: string[];
   fundraiserIds: string[];
@@ -70,6 +81,6 @@ export interface Donation {
   amount: number;
   donorId: string;
   fundraiserId: string;
-  message: string;
+  message?: string;
   createdAt: string;
 }

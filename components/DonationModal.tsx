@@ -77,7 +77,7 @@ export default function DonationModal({
     const numAmount = typeof amount === "number" ? amount : Number(amount) || 0;
     if (numAmount <= 0 || !effectiveDonorId) return;
     const store = getStore().getState();
-    store.addDonation(fundraiserId, numAmount, effectiveDonorId, message);
+    store.addDonation(fundraiserId, numAmount, effectiveDonorId, message || undefined);
     if (selectedDonor) onSuccess(selectedDonor.username);
     onClose();
     triggerRef?.current?.focus();
