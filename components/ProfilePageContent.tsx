@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { useFundRightStore } from "@/lib/store";
 import { formatCurrency } from "@/lib/utils";
 import type { User, Fundraiser, Community, Donation } from "@/lib/data";
+import Breadcrumbs from "./Breadcrumbs";
 import UserAvatar from "./UserAvatar";
 
 function buildImpactSummary(
@@ -78,8 +79,14 @@ function ProfileByUsername({ username }: { username: string }) {
     causesSupportedCount
   );
 
+  const breadcrumbItems = [
+    { label: "Home", href: "/" },
+    { label: user.name },
+  ];
+
   return (
     <article className="space-y-8">
+      <Breadcrumbs items={breadcrumbItems} />
       {/* Identity */}
       <section className="flex flex-wrap items-start gap-6">
         <UserAvatar src={user.avatar} size={96} />

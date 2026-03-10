@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "FundRight — AI-Powered Fundraising",
@@ -21,21 +23,11 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        <header className="border-b border-stone-200 bg-white" role="banner">
-          <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3" aria-label="Main">
-            <a href="/" className="font-semibold text-primary">
-              FundRight
-            </a>
-          </nav>
-        </header>
+        <Header />
         <main id="main-content" className="mx-auto max-w-6xl px-4 py-8" role="main">
           {children}
         </main>
-        <footer className="border-t border-stone-200 bg-stone-100 py-6" role="contentinfo">
-          <div className="mx-auto max-w-6xl px-4 text-center text-sm text-stone-600">
-            FundRight — AI-Powered Fundraising Platform
-          </div>
-        </footer>
+        <Footer />
       </body>
     </html>
   );

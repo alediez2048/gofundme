@@ -7,30 +7,40 @@ import { useState } from "react";
 import { useFundRightStore } from "@/lib/store";
 import { BLUR_DATA_URL, calculateProgress, formatCurrency } from "@/lib/utils";
 import type { Fundraiser, User } from "@/lib/data";
+import Breadcrumbs from "./Breadcrumbs";
 import ProgressBar from "./ProgressBar";
 import UserAvatar from "./UserAvatar";
 
 function FundraiserCard({ f, organizer }: { f: Fundraiser; organizer: User | undefined }) {
   return (
-    <Link
-      href={`/f/${f.slug}`}
-      className="block rounded-xl border border-stone-200 bg-white overflow-hidden hover:border-primary/30 transition-colors"
-    >
-      <div className="relative aspect-[16/10] w-full bg-stone-200">
-        <Image
-          src={f.heroImageUrl}
-          alt=""
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          placeholder="blur"
-          blurDataURL={BLUR_DATA_URL}
-        />
-      </div>
-      <div className="p-4">
-        <h3 className="font-semibold text-stone-900 line-clamp-2">{f.title}</h3>
+    <div className="rounded-xl border border-stone-200 bg-white overflow-hidden hover:border-primary/30 transition-colors">
+      <Link href={`/f/${f.slug}`} className="block">
+        <div className="relative aspect-[16/10] w-full bg-stone-200">
+          <Image
+            src={f.heroImageUrl}
+            alt=""
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            placeholder="blur"
+            blurDataURL={BLUR_DATA_URL}
+          />
+        </div>
+        <div className="p-4">
+          <h3 className="font-semibold text-stone-900 line-clamp-2">{f.title}</h3>
+        </div>
+      </Link>
+      <div className="px-4 pb-4">
         {organizer && (
-          <p className="mt-1 text-sm text-stone-600">By {organizer.name}</p>
+          <p className="mt-1 text-sm text-stone-600">
+            By{" "}
+            <Link
+              href={`/u/${organizer.username}`}
+              className="font-medium text-stone-700 hover:text-primary"
+            >
+              {organizer.name}
+            </Link>
+          </p>
         )}
         <div className="mt-3">
           <ProgressBar raised={f.raisedAmount} goal={f.goalAmount} height="h-2" animate={false} />
@@ -39,7 +49,7 @@ function FundraiserCard({ f, organizer }: { f: Fundraiser; organizer: User | und
           {formatCurrency(f.raisedAmount)} of {formatCurrency(f.goalAmount)}
         </p>
       </div>
-    </Link>
+    </div>
   );
 }
 
@@ -133,8 +143,15 @@ function CommunityBySlug({ slug }: { slug: string }) {
     });
   }
 
+  const breadcrumbItems = [
+    { label: "Home", href: "/" },
+    { label: "Communities", href: "/communities" },
+    { label: community.name },
+  ];
+
   return (
     <article className="space-y-8">
+      <Breadcrumbs items={breadcrumbItems} />
       {/* Header: banner, name, cause badge, stats */}
       <section className="overflow-hidden rounded-xl bg-stone-200">
         <div className="relative aspect-[21/9] w-full">

@@ -310,6 +310,81 @@ The following tickets are **required** to pass the MVP gate — three fully inte
 
 ---
 
+## FR-009: Global Navigation Shell ✅ (Phase 2)
+
+### Plain-English Summary
+- Persistent header on every page: FundRight logo (→ `/`), nav links (Discover → `/`, Communities → `/communities`, Start a FundRight → `/create`), profile avatar dropdown with default user (janahan). Profile dropdown: My profile, My Fundraisers (→ profile), Sign Out (cosmetic).
+- Footer on every page: platform description, quick links (About, How It Works, Browse, Communities), copyright.
+- Mobile: hamburger at `md:` breakpoint, slide-out nav drawer with same links; active page indicator in both desktop and mobile nav.
+- Breadcrumb trail on detail pages: Fundraiser (Home / [Community] / Title), Community (Home / Communities / Name), Profile (Home / Name).
+- Communities index at `/communities` lists all communities from store; entity names/avatars are clickable (e.g. organizer in community fundraiser cards → profile). No dead links for store entities.
+
+### Metadata
+- **Status:** Complete
+- **Date:** 2026-03-09
+- **Ticket:** FR-009 (Phase 2 — Full Clone)
+- **Branch:** feature/FR-009-nav-shell
+
+### Scope
+- Header, Footer, Breadcrumbs components; root layout wiring; `/communities` index; organizer link in CommunityPageContent FundraiserCard.
+
+### Files Changed
+- **Created:** components/Header.tsx, components/Footer.tsx, components/Breadcrumbs.tsx, app/communities/page.tsx
+- **Modified:** app/layout.tsx (Header + Footer), components/FundraiserPageContent.tsx (breadcrumbs), components/CommunityPageContent.tsx (breadcrumbs, FundraiserCard organizer link), components/ProfilePageContent.tsx (breadcrumbs)
+- **Updated:** docs/development/DEVLOG.md — this entry
+
+### Acceptance Criteria
+- [x] Persistent header: logo, nav (Discover, Communities, Start a FundRight), profile dropdown
+- [x] Profile dropdown: default user profile, My Fundraisers, Sign Out (cosmetic)
+- [x] Footer: description, quick links, copyright
+- [x] Mobile: hamburger, slide-out drawer with same links
+- [x] Active page indicator
+- [x] Entity names/avatars clickable (organizer in community cards; others already linked)
+- [x] No dead links: `/communities` index added
+- [x] Breadcrumbs on Fundraiser, Community, Profile detail pages
+
+### Next Steps
+- FR-008 (Homepage & Discovery), FR-010 (Fundraiser Creation Flow).
+
+---
+
+## FR-008: Homepage & Discovery ✅ (Phase 2)
+
+### Plain-English Summary
+- Root route `/` replaced placeholder with full discovery homepage. Hero: headline, subtitle, primary CTA "Start a FundRight" → `/create`, and search bar that navigates to `/search?q=` on submit.
+- Platform stats banner: total raised, total donations, active fundraisers, active communities — all computed from Zustand store (live; updates when returning after a donation).
+- Trending Fundraisers: top 4 by donation count; cards with image, title, progress bar, organizer name; each links to `/f/[slug]`.
+- Active Communities: community cards with name, banner, cause badge, aggregate stats; each links to `/communities/[slug]`.
+- Browse by Category: grid of cause categories derived from communities in store; each links to `/browse/[category]` (URL-encoded).
+
+### Metadata
+- **Status:** Complete
+- **Date:** 2026-03-09
+- **Ticket:** FR-008 (Phase 2 — Full Clone)
+- **Branch:** feature/FR-008-homepage
+
+### Scope
+- app/page.tsx rewritten as client component; all data from store; no new shared components (ProgressBar, Image, Link reused).
+
+### Files Changed
+- **Modified:** app/page.tsx (full homepage)
+- **Updated:** docs/development/DEVLOG.md — this entry
+
+### Acceptance Criteria
+- [x] Page at `/` replacing placeholder
+- [x] Hero: headline, subtitle, CTA "Start a FundRight" → /create
+- [x] Platform stats: total raised, donations, active fundraisers, active communities (from store)
+- [x] Trending Fundraisers: top 4 by donation count, cards with image, title, progress, organizer name → /f/[slug]
+- [x] Active Communities: cards with name, banner, cause badge, stats → /communities/[slug]
+- [x] Browse by Category: cause categories from seed/store → /browse/[category]
+- [x] Search bar in hero → /search?q= on submit
+- [x] Stats live (store-driven)
+
+### Next Steps
+- FR-010 (Fundraiser Creation Flow), FR-011 (Category Browse), FR-012 (Search).
+
+---
+
 ## Phase 2: Intelligence Layer (FR-011 → FR-018)
 
 AI features, structured data, and the analytics dashboard. After this phase, every page demonstrates AI integration, every page has valid JSON-LD, and `/analytics` visualizes all four instrumentation tiers.
@@ -431,8 +506,8 @@ Each ticket entry follows this standardized structure:
 | FR-005 | Community Page | Phase 1 | P0 | 4h | DONE |
 | FR-006 | Profile Page | Phase 1 | P0 | 4h | DONE |
 | FR-007 | Donation Flow & Modal | Phase 1 | P0 | 3h | DONE |
-| FR-008 | Cross-Page Navigation & Link Graph | Phase 1 | P0 | 2h | TODO |
-| FR-009 | Responsive Layout | Phase 1 | P0 | 4h | TODO |
+| FR-008 | Homepage & Discovery | Phase 2 | P0 | 4h | DONE |
+| FR-009 | Global Navigation Shell | Phase 2 | P0 | 3h | DONE |
 | FR-010 | Skeleton Loaders & Page Transitions | Phase 1 | P1 | 2h | TODO |
 | FR-011 | Cause Intelligence (AI Content) | Phase 2 | P1 | 3h | TODO |
 | FR-012 | Impact Projections | Phase 2 | P1 | 2h | TODO |

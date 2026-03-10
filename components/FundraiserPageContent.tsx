@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useFundRightStore } from "@/lib/store";
 import { BLUR_DATA_URL, formatCurrency } from "@/lib/utils";
 import type { User, Community } from "@/lib/data";
+import Breadcrumbs from "./Breadcrumbs";
 import DonationModal from "./DonationModal";
 import ProgressBar from "./ProgressBar";
 import UserAvatar from "./UserAvatar";
@@ -63,8 +64,15 @@ function FundraiserBySlug({ slug }: { slug: string }) {
     return () => clearTimeout(t);
   }, [toast.show]);
 
+  const breadcrumbItems = [
+    { label: "Home", href: "/" },
+    ...(community ? [{ label: community.name, href: `/communities/${community.slug}` }] : []),
+    { label: fundraiser.title },
+  ];
+
   return (
     <article className="space-y-8">
+      <Breadcrumbs items={breadcrumbItems} />
       {/* Hero + above-the-fold */}
       <section className="overflow-hidden rounded-xl bg-stone-200">
         <div className="relative aspect-[21/9] w-full">
