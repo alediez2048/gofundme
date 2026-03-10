@@ -150,12 +150,93 @@ FundRight builds a complete (barebones) fundraising platform where every flow re
 | Styling | Tailwind CSS | Utility-first with responsive design. Zero custom CSS files. |
 | State Management | Zustand + persist middleware | Normalized entity store with atomic cross-page mutations. Replaces need for a real backend. |
 | Data Layer | In-memory seed data (typed) | Demo-complete schema with 2 communities, 5 fundraisers, 8 users, 30 donations. Persists to localStorage. |
+| AI Runtime | OpenAI API (optional) | Tool calling for creation assistant, RAG for cause intelligence and discovery. All features have non-AI fallbacks. |
+| AI Orchestration | Custom AI service layer (`lib/ai/`) | Unified wrapper around all AI calls with automatic tracing, tool routing, and structured retrieval. |
+| Observability | Custom trace store (Zustand slice) | Every AI interaction logged with input, output, latency, token usage, tool chain. Viewable in traces panel. |
 | Schema/SEO | Custom JSON-LD generators | DonateAction, Person, Organization, FAQPage, BreadcrumbList. |
 | Images | next/image + curated WebP assets | Blur-up placeholders, responsive srcset, lazy loading. |
 | Testing | Vitest (unit) + Lighthouse (perf) | Targeted tests on Zustand mutations. Lighthouse for performance gates. |
 | Deployment | Vercel (primary) + Local setup | Live URL for instant demo. Local fallback with zero-config setup. |
 
-**Removed from v1 stack:** OpenAI API, Recharts, custom analytics layer, Beacon API dispatch. These can be added later as stretch goals but are not part of the core clone.
+**Removed from v1 stack:** Recharts, custom analytics layer, Beacon API dispatch. These can be added later but are not part of the core platform.
+
+### 4.1 AI Architecture
+
+FundRight integrates AI as a **structured, observable system** — not bolted-on text generation. Every AI feature uses tool calling for structured interactions, retrieval-augmented generation (RAG) grounded in platform data, and full observability with tracing.
+
+**Design Principles:**
+- Every AI feature works without an API key (graceful fallback to templates, static text, or keyword matching)
+- Every AI call is traced — input, output, latency, tokens, tool chain recorded automatically
+- AI retrieves from the Zustand store (structured retrieval), not from external knowledge
+- Tool definitions are typed TypeScript objects with input schemas, execution functions, and descriptions
+
+**System Architecture:**
+
+```
+User Action (create, search, discover, donate)
+    │
+    ▼
+┌──────────────────┐     ┌──────────────────┐
+│   AI Service     │────▶│   Trace Logger   │
+│   (lib/ai/)      │     │   (lib/ai/trace) │
+│                  │     └────────┬─────────┘
+│  ┌────────────┐  │              │
+│  │ Tool Router│  │              │
+│  │            │  │              │
+│  │ • searchSimilarFundraisers   │
+│  │ • suggestGoalAmount          │
+│  │ • enhanceStory               │
+│  │ • assignCategory             │
+│  │ • filterFundraisers          │
+│  └────────────┘  │              │
+│                  │              │
+│  ┌────────────┐  │              │
+│  │ RAG Pipeline  │              │
+│  │            │  │              │
+│  │ • retrieve()  (from store)   │
+│  │ • generate()  (with context) │
+│  └────────────┘  │              │
+└────────┬─────────┘              │
+         │                        ▼
+         ▼               ┌──────────────────┐
+┌──────────────────┐     │   Traces Store   │
+│   OpenAI API     │     │  (Zustand slice) │
+│   (optional)     │     │  persisted to    │
+└──────────────────┘     │  localStorage    │
+                         └────────┬─────────┘
+                                  │
+                                  ▼
+                         ┌──────────────────┐
+                         │   Traces Panel   │
+                         │  (dev overlay /  │
+                         │   /ai-traces)    │
+                         └──────────────────┘
+```
+
+**Tool Calling:** Each AI-powered feature defines typed tools the LLM can invoke. Tools execute against the Zustand store and return structured data. The tool router dispatches based on the LLM's tool_use response.
+
+**RAG Pipeline:** Retrieval-augmented generation uses the platform's own data as context. For seed-data scale, this is structured retrieval (direct store queries). The architecture supports upgrading to embedding-based retrieval for larger datasets.
+
+**Observability:** A `traces` Zustand slice stores every AI interaction:
+
+```typescript
+interface AITrace {
+  id: string;
+  timestamp: string;
+  feature: 'creation-assistant' | 'discovery' | 'cause-intelligence' | 'trust-summary' | 'impact-projection';
+  input: { prompt: string; context?: Record<string, unknown> };
+  output: { text: string; toolCalls?: ToolCall[] };
+  metrics: {
+    latencyMs: number;
+    inputTokens: number;
+    outputTokens: number;
+    totalTokens: number;
+    toolCallCount: number;
+  };
+  status: 'success' | 'fallback' | 'error';
+  fallbackReason?: string;
+}
+```
 
 ---
 
@@ -198,15 +279,27 @@ Metrics are simplified to focus on what matters for a barebones clone demo.
 | Edge cases | Every state has a designed UI (0%, 100%, overfunded, empty) |
 | Console errors | Zero |
 
+### 5.5 AI Intelligence (Phase 4)
+
+| Metric | Target | Why |
+|---|---|---|
+| Fallback coverage | 100% of AI features work without API key | Evaluator may not have an OpenAI key. Zero-dependency demo is non-negotiable |
+| Trace completeness | Every AI call produces a trace entry | Observability is the proof that the AI system is intentional, not bolted-on |
+| RAG grounding | 100% of generated content cites platform data | No hallucination — every claim traces to a fundraiser, organizer, or community in the store |
+| Tool call success rate | ≥ 90% of tool invocations return valid results | Tools must be robust against edge cases (empty communities, new fundraisers) |
+| AI latency (p95) | ≤ 3s for any single AI interaction | Users won't wait longer. Fallback kicks in if exceeded |
+| Traces panel load | All traces render within 500ms | The observability UI must itself be performant |
+
 ---
 
 ## 6. Phase Breakdown
 
 | Phase | Name | Duration | Hours | Goal |
 |---|---|---|---|---|
-| Phase 1 | MVP — Core Platform | Days 1–7 | ~30h | Three detail pages + donation flow + store *(COMPLETE)* |
-| Phase 2 | Full Clone — End-to-End Flows | Days 8–11 | ~22h | Homepage, creation, browse, search, nav shell, responsive |
-| Phase 3 | Polish & Ship | Days 12–14 | ~12h | Schema, accessibility, edge cases, tests, deployment |
+| Phase 1 | MVP — Core Platform | Days 1–7 | ~22h | Three detail pages + donation flow + store *(COMPLETE)* |
+| Phase 2 | Full Clone — End-to-End Flows | Days 8–11 | ~21h | Homepage, creation, browse, search, nav shell, responsive |
+| Phase 3 | Polish & Ship | Days 12–14 | ~16h | Schema, accessibility, edge cases, tests, deployment |
+| Phase 4 | AI Intelligence Layer | Days 15–18 | ~16h | Tool calling, RAG, observability, tracing across all AI features |
 
 ---
 
@@ -505,29 +598,147 @@ Metrics are simplified to focus on what matters for a barebones clone demo.
 
 ---
 
-## Stretch Goals (If Time Permits)
+## Phase 4: AI Intelligence Layer (Post-MVP)
 
-These features from the v1 PRD are valuable but not required for the core clone demo. Build them only after all Phase 2 and Phase 3 tickets are complete.
+**Goal:** Demonstrate that AI can meaningfully improve the fundraising experience across discovery, creation, trust, and conversion — with full observability. Every feature uses tool calling for structured interactions, RAG grounded in platform data, and automatic tracing.
 
-### SG-001: Impact Projections (from v1 FR-012)
+**Timeline:** After Phase 3 | **Budget:** ~18 hours | **Tickets:** 6
 
-Real-time impact statements in the donation modal: "Your $50 means 200 families receive real-time wildfire alerts for one month." Client-side math from a `causeImpactMap`, zero API calls. **Est: 2h**
+**Key constraint:** Every AI feature works without an API key. If `OPENAI_API_KEY` is not set, features fall back to templates, keyword matching, or static seed text. The AI layer enhances — it never blocks.
 
-### SG-002: Cause Intelligence (from v1 FR-011)
+---
 
-AI-generated "About This Cause" section on community pages. Pre-generated at build time, stored in seed data. **Est: 3h**
+### FR-020: AI Service Foundation & Trace Infrastructure
 
-### SG-003: Story Generator (from v1 FR-013)
+| | |
+|---|---|
+| **User Story** | *As a developer, I want a unified AI service layer so that every AI feature shares the same tool-calling, RAG, and tracing infrastructure.* |
+| **Priority** | **P0** (blocks all AI tickets) · Est: 3h |
 
-AI-assisted fundraiser story writing from bullet points. Streaming token-by-token generation with edit capability. **Est: 3h**
+**Acceptance Criteria:**
 
-### SG-004: Analytics Dashboard (from v1 FR-017)
+- ✅ `lib/ai/service.ts`: `aiService` singleton wrapping OpenAI client (or null if no API key). Exposes `chat()`, `chatWithTools()`, and `retrieve()` methods
+- ✅ `lib/ai/tools.ts`: Tool definition registry. Each tool is a typed object: `{ name, description, parameters (JSON Schema), execute: (args) => Promise<result> }`. Tools execute against the Zustand store
+- ✅ `lib/ai/retrieval.ts`: RAG retrieval module. `retrieve(query, options)` performs structured queries against the store (filter by entity type, community, category). Returns ranked context chunks with source attribution
+- ✅ `lib/ai/trace.ts`: Trace logger. Every `aiService` call automatically creates an `AITrace` entry (see Section 4.1 schema). Stored in a new `traces` Zustand slice, persisted to localStorage
+- ✅ `lib/ai/fallback.ts`: Fallback registry. Maps each AI feature to its non-AI fallback function. Used automatically when API key is missing or API call fails
+- ✅ New Zustand slice: `traces: Record<id, AITrace>` with `addTrace()` action
+- ✅ Environment detection: `lib/ai/config.ts` checks for `OPENAI_API_KEY` and exports `aiEnabled: boolean`
+- ✅ All modules have TypeScript types, zero `any`
 
-Dedicated `/analytics` page with performance gauges, conversion funnel, schema validation status, and attribution flow. Requires event tracking (v1 FR-015) and web vitals (v1 FR-016) as prerequisites. **Est: 8h total**
+---
+
+### FR-021: Creation Assistant with Tool Calling
+
+| | |
+|---|---|
+| **User Story** | *As an organizer creating a fundraiser, I want AI-powered suggestions so that my campaign is more compelling and strategically positioned.* |
+| **Priority** | **P1** · Est: 3h |
+
+**Acceptance Criteria:**
+
+- ✅ "AI Assist" toggle on the create page (`/create`). When enabled, AI tools are available alongside the manual form
+- ✅ **Tool: `suggestGoalAmount`** — Input: category, community (optional). Retrieves fundraisers in same category/community from store, returns suggested goal with reasoning ("Similar fundraisers in this community average $3,200")
+- ✅ **Tool: `enhanceStory`** — Input: raw story text. Returns structured suggestions: clarity score, missing elements (impact, fund usage, urgency), rewritten paragraphs. Not a full rewrite — targeted improvements
+- ✅ **Tool: `assignCategory`** — Input: title + story. Returns suggested category with confidence score and reasoning
+- ✅ **Tool: `searchSimilarFundraisers`** — Input: title + story. Retrieves similar fundraisers from store by keyword overlap, returns top 3 with "how to differentiate" suggestions
+- ✅ Each tool call traced automatically (input, output, latency, tokens)
+- ✅ **Fallback (no API key):** Static tips shown inline ("Fundraisers with stories over 300 words raise 2x more"). Category defaults to manual dropdown. No goal suggestion. No similar search
+- ✅ Tool results render inline in the form — not in a chat window
+
+---
+
+### FR-022: Community Discovery Assistant (RAG)
+
+| | |
+|---|---|
+| **User Story** | *As a donor on a community page, I want to describe what I'm looking for in natural language so that I can find the right fundraiser without scrolling through a flat list.* |
+| **Priority** | **P1** · Est: 3h |
+
+**Acceptance Criteria:**
+
+- ✅ Search/filter bar at the top of the community page's fundraiser section. Accepts natural language input ("show me fundraisers close to their goal" / "who needs help with evacuation")
+- ✅ **RAG pipeline:** User query → `retrieve()` pulls fundraiser stories, titles, amounts, and progress within this community → LLM generates a ranked, filtered response with reasoning
+- ✅ Results render as the existing fundraiser card grid — filtered and reordered by the AI's ranking. Not a separate UI
+- ✅ Each query traced: input query, retrieved context (which fundraisers), generated ranking, latency, tokens
+- ✅ **Fallback (no API key):** Keyword-based client-side filter. Matches query words against fundraiser titles and story text. Sort options: "Closest to Goal", "Most Recent", "Most Funded", "Just Launched"
+- ✅ Fallback is the default experience — AI discovery is opt-in via a "Smart Search" toggle or icon
+- ✅ Works within a single community's fundraisers only (scoped retrieval)
+
+---
+
+### FR-023: Cause Intelligence (RAG + Generation)
+
+| | |
+|---|---|
+| **User Story** | *As a donor on a community page, I want to understand why this cause matters right now so that I feel informed and motivated to give.* |
+| **Priority** | **P1** · Est: 2h |
+
+**Acceptance Criteria:**
+
+- ✅ "About This Cause" section on community pages, below the stats bar
+- ✅ **RAG pipeline:** `retrieve()` pulls all fundraiser stories and donation messages within this community → LLM synthesizes a 2–3 paragraph cause summary grounded in the community's actual data
+- ✅ Content includes: what the cause is, why it matters now, what the community has accomplished, what's still needed
+- ✅ Source attribution: each claim links back to the fundraiser it came from ("Based on 5 active fundraisers in this community")
+- ✅ Generated at page load (or cached in store after first generation). Traced with full RAG context
+- ✅ **Fallback (no API key):** Static cause description from seed data (community's `description` field). Displayed as-is with no "AI-generated" label
+- ✅ AI-generated content has a subtle "AI-generated summary" label
+
+---
+
+### FR-024: Trust Summaries & Impact Projections
+
+| | |
+|---|---|
+| **User Story** | *As a donor on a fundraiser page, I want to instantly see why this organizer is credible and what my donation will accomplish.* |
+| **Priority** | **P1** · Est: 3h |
+
+**Acceptance Criteria:**
+
+**Trust Summaries (Fundraiser Page):**
+- ✅ Inline trust summary near the donate CTA: "Janahan has organized 3 fundraisers raising $12,400 total. Verified organizer since 2024. Active in the Watch Duty community."
+- ✅ **Structured retrieval:** Pulls organizer's full history from store (all fundraisers, total raised, communities, verification status). No LLM needed for basic version
+- ✅ **Enhanced (with API key):** LLM generates a natural-language trust narrative from retrieved data. Traced
+- ✅ **Fallback:** Template-based: "{name} has organized {count} fundraisers raising {total}. Member of {communities}."
+
+**Impact Projections (Donation Modal):**
+- ✅ Dynamic impact statement updates as donor changes amount: "Your $50 provides wildfire alerts to 200 families for one month"
+- ✅ Impact data from `causeImpactMap` in seed data — maps cause categories to impact units and rates
+- ✅ **No LLM needed** — pure client-side math with template strings
+- ✅ Displayed below the amount input in the donation modal
+
+---
+
+### FR-025: AI Traces Panel
+
+| | |
+|---|---|
+| **User Story** | *As an evaluator, I want to see every AI interaction the platform made — what was asked, what tools were called, what was retrieved, and how long it took — so that I can assess the AI integration quality.* |
+| **Priority** | **P1** · Est: 2h |
+
+**Acceptance Criteria:**
+
+- ✅ Traces panel accessible via a dev-mode button (floating "AI" badge in bottom-right corner) or at `/ai-traces` route
+- ✅ Lists all AI traces from the `traces` Zustand slice, most recent first
+- ✅ Each trace shows:
+  - Feature name (creation-assistant, discovery, cause-intelligence, trust-summary)
+  - Timestamp and status (success / fallback / error)
+  - Input: the user's query or action that triggered the AI call
+  - Tool calls: ordered list of tools invoked, with inputs and outputs for each
+  - RAG context: what was retrieved from the store (entity IDs, snippets)
+  - Output: the final generated text or structured response
+  - Metrics: latency (ms), input/output/total tokens, tool call count
+  - Fallback reason (if status is "fallback")
+- ✅ Summary stats at top: total traces, avg latency, total tokens used, fallback rate
+- ✅ Filter by feature, status, date range
+- ✅ "Clear traces" button to reset
+- ✅ Works regardless of API key — shows fallback traces when AI is unavailable
 
 ---
 
 ## 10. Ticket Summary
+
+### Phases 1–3: Core Platform
 
 | ID | Title | Phase | Priority | Est. | Status |
 |---|---|---|---|---|---|
@@ -551,9 +762,26 @@ Dedicated `/analytics` page with performance gauges, conversion funnel, schema v
 | FR-018 | Unit Tests for Store Mutations | Phase 3 | P1 | 2h | TODO |
 | FR-019 | Deployment & QA | Phase 3 | P0 | 2h | TODO |
 
-**Total: 19 tickets · ~55 hours · 14 days**
+### Phase 4: AI Intelligence Layer
 
-*Plus 4 stretch goals (~16h) if time permits.*
+| ID | Title | Phase | Priority | Est. | Status |
+|---|---|---|---|---|---|
+| **FR-020** | **AI Service Foundation & Trace Infrastructure** | **Phase 4** | **P0** | **3h** | TODO |
+| **FR-021** | **Creation Assistant with Tool Calling** | **Phase 4** | **P1** | **3h** | TODO |
+| **FR-022** | **Community Discovery Assistant (RAG)** | **Phase 4** | **P1** | **3h** | TODO |
+| **FR-023** | **Cause Intelligence (RAG + Generation)** | **Phase 4** | **P1** | **2h** | TODO |
+| **FR-024** | **Trust Summaries & Impact Projections** | **Phase 4** | **P1** | **3h** | TODO |
+| **FR-025** | **AI Traces Panel** | **Phase 4** | **P1** | **2h** | TODO |
+
+### Totals
+
+| Phase | Tickets | Hours | Status |
+|---|---|---|---|
+| Phase 1 — MVP Core | 7 | 22h | ✅ COMPLETE |
+| Phase 2 — Full Clone | 6 | 21h | TODO |
+| Phase 3 — Polish & Ship | 6 | 16h | TODO |
+| Phase 4 — AI Intelligence | 6 | 16h | TODO |
+| **Total** | **25** | **~75h** | |
 
 ---
 
@@ -567,7 +795,12 @@ Dedicated `/analytics` page with performance gauges, conversion funnel, schema v
 | Search quality with small dataset | Low | Low | Fuzzy matching on client-side store data. Works well for small datasets. Not competing with Algolia. |
 | Responsive retrofit on existing pages | Medium | Medium | Existing pages use Tailwind utility classes. Responsive breakpoints are additive, not destructive. |
 | Vercel deployment fails | Low | High | Continuous deployment from Day 1. Local setup documented as fallback. |
-| Time pressure from broader scope | Medium | High | Phase 3 tickets are ordered by impact. Schema (FR-014) and accessibility (FR-015) can be reduced in scope. Stretch goals are explicitly optional. |
+| Time pressure from broader scope | Medium | High | Phase 3 tickets are ordered by impact. Schema (FR-014) and accessibility (FR-015) can be reduced in scope. Phase 4 (AI) is explicitly post-MVP. |
+| OpenAI API key unavailable during eval | High | Medium | Every AI feature has a non-AI fallback. Traces panel shows fallback traces to prove the system works. Zero runtime dependency on API keys. |
+| AI latency degrades UX | Medium | Medium | Trust summaries and cause intelligence can be cached in store after first generation. Discovery assistant shows loading state with instant keyword fallback. |
+| AI hallucination in generated content | Medium | High | RAG grounds all generation in platform data (store retrieval). Source attribution links every claim to a specific fundraiser or entity. No open-ended generation. |
+| Trace storage fills localStorage | Low | Low | Traces capped at last 100 entries. "Clear traces" button available. Traces are dev-facing, not user-facing. |
+| Tool calling adds complexity to creation flow | Medium | Medium | Tools are optional enhancements on the existing manual form. AI Assist is a toggle — form works identically with it off. |
 
 ---
 
@@ -601,3 +834,35 @@ All Phase 1 tickets are done. No remaining dependencies.
 - FR-017 (Skeletons) → depends on all pages existing
 - FR-018 (Unit Tests) → depends on FR-010 (tests for addFundraiser)
 - FR-019 (Deployment & QA) → final ticket, depends on everything
+
+### 12.4 Phase 4 Dependencies (AI Intelligence Layer)
+
+- FR-020 (AI Foundation) → can start immediately after Phase 1 (only needs Zustand store). **Blocks all other Phase 4 tickets**
+- FR-021 (Creation Assistant) → depends on FR-020 (AI Foundation) + FR-010 (Create Flow exists)
+- FR-022 (Discovery Assistant) → depends on FR-020 (AI Foundation) + FR-005 (Community Page exists) ✅
+- FR-023 (Cause Intelligence) → depends on FR-020 (AI Foundation) + FR-005 (Community Page exists) ✅
+- FR-024 (Trust + Impact) → depends on FR-020 (AI Foundation) + FR-004 (Fundraiser Page exists) ✅ + FR-007 (Donation Modal exists) ✅
+- FR-025 (Traces Panel) → depends on FR-020 (AI Foundation). Can run in parallel with FR-021–FR-024
+
+**Recommended execution order:**
+1. FR-020 (AI Foundation) — builds `lib/ai/` infrastructure, trace store, fallback registry
+2. FR-024 (Trust + Impact) — quickest win, partially template-based, enhances existing pages
+3. FR-023 (Cause Intelligence) — RAG over community data, visible on community page
+4. FR-022 (Discovery Assistant) — most complex RAG feature, enhances community page
+5. FR-021 (Creation Assistant) — tool calling on create flow (requires FR-010 from Phase 2)
+6. FR-025 (Traces Panel) — can run anytime after FR-020, best saved for last to show all traces
+
+**Note:** FR-020 can be started in parallel with Phase 2 work since it only depends on the Zustand store (Phase 1). This allows AI infrastructure to be ready before Phase 2 completes.
+
+```
+Phase 1 (DONE)           Phase 2                Phase 3           Phase 4
+─────────────           ─────────              ─────────         ─────────
+FR-001 Scaffold    ┐
+FR-002 Data Model  ├─► FR-008 Homepage         FR-014 Schema     FR-020 AI Foundation ─┐
+FR-003 Store       ┤   FR-009 Nav Shell        FR-015 A11y       (can start early)     │
+FR-004 Fundraiser  ┤   FR-010 Create Flow ──────────────────────► FR-021 Creation Asst │
+FR-005 Community   ┤   FR-011 Browse           FR-016 Edge Cases  FR-022 Discovery ◄───┤
+FR-006 Profile     ┤   FR-012 Search           FR-017 Skeletons   FR-023 Cause Intel ◄─┤
+FR-007 Donation    ┘   FR-013 Responsive       FR-018 Tests       FR-024 Trust+Impact ◄┤
+                                                FR-019 Deploy+QA   FR-025 Traces Panel ◄┘
+```
