@@ -8,6 +8,7 @@ import { persist } from "zustand/middleware";
 import { useStore } from "zustand/react";
 import { createStore } from "zustand/vanilla";
 import type { Community, Donation, Fundraiser, User } from "@/lib/data";
+import type { CauseCategory } from "@/lib/data";
 import { seed } from "@/lib/data";
 
 export type EntityMap<T> = Record<string, T>;
@@ -36,7 +37,41 @@ function generateDonationId(): string {
   return `don-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
+function generateFundraiserId(): string {
+  return `fund-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+}
+
+function slugify(title: string): string {
+  return title
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "") || "fundraiser";
+}
+
+function ensureUniqueSlug(slug: string, existingSlugs: Set<string>): string {
+  let candidate = slug;
+  let n = 1;
+  while (existingSlugs.has(candidate)) {
+    candidate = `${slug}-${++n}`;
+  }
+  return candidate;
+}
+
+export interface AddFundraiserParams {
+  title: string;
+  goalAmount: number;
+  story: string;
+  organizerId: string;
+  causeCategory: CauseCategory;
+  communityId?: string;
+  heroImageUrl: string;
+}
+
 export interface StoreActions {
+  addFundraiser: (params: AddFundraiserParams) => { id: string; slug: string } | null;
   addDonation: (
     fundraiserId: string,
     amount: number,
@@ -52,6 +87,69 @@ export const createFundRightStore = () => {
     persist(
       (set) => ({
         ...getInitialState(),
+
+        addFundraiser: (params) => {
+          const {
+            title,
+            goalAmount,
+            story,
+            organizerId,
+            causeCategory,
+            communityId = "",
+            heroImageUrl,
+          } = params;
+
+          let result: { id: string; slug: string } | null = null;
+
+          set((s) => {
+            const organizer = s.users[organizerId];
+            if (!organizer) return s;
+
+            const existingSlugs = new Set(
+              Object.values(s.fundraisers).map((f) => f.slug)
+            );
+            const baseSlug = slugify(title);
+            const slug = ensureUniqueSlug(baseSlug, existingSlugs);
+            const id = generateFundraiserId();
+
+            const fundraiser: Fundraiser = {
+              id,
+              slug,
+              title: title.trim(),
+              story: story.trim(),
+              goalAmount,
+              raisedAmount: 0,
+              donationCount: 0,
+              organizerId,
+              communityId,
+              causeCategory,
+              donationIds: [],
+              heroImageUrl,
+              updates: [],
+            };
+
+            result = { id, slug };
+
+            const next: StoreState & StoreActions = {
+              ...s,
+              fundraisers: { ...s.fundraisers, [id]: fundraiser },
+            };
+            if (communityId && s.communities[communityId]) {
+              const community = s.communities[communityId];
+              next.communities = {
+                ...s.communities,
+                [communityId]: {
+                  ...community,
+                  fundraiserIds: [...community.fundraiserIds, id],
+                  fundraiserCount: community.fundraiserCount + 1,
+                },
+              };
+            }
+            return next;
+          });
+
+          return result;
+        },
 
         addDonation: (fundraiserId, amount, donorId, message) => {
           if (amount <= 0) return null;

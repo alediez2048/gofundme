@@ -385,6 +385,41 @@ The following tickets are **required** to pass the MVP gate — three fully inte
 
 ---
 
+## FR-010: Fundraiser Creation Flow ✅ (Phase 2)
+
+### Plain-English Summary
+- Route `/create` with single-page form: title (max 80), goal (min $100), story (min 50 words, 300+ recommended), cause category (required), community (optional), cover image (5 preset picsum URLs), "Donating as" dropdown (organizer = selected user).
+- On submit: `addFundraiser()` in Zustand store — generates id and unique slug from title, creates fundraiser with causeCategory, updates community fundraiserIds/fundraiserCount when community selected; redirect to `/f/[slug]`.
+- New fundraiser appears on homepage (trending if it qualifies), browse by category (FR-011), community page (if linked), organizer profile. Form validation and error messages.
+- `app/f/[slug]/page.tsx` no longer notFounds on server for unknown slug — client FundraiserPageContent handles store-only fundraisers (e.g. just-created). Added `causeCategory` to Fundraiser type and seed for category filtering.
+
+### Metadata
+- **Status:** Complete
+- **Date:** 2026-03-09
+- **Ticket:** FR-010 (Phase 2 — Full Clone)
+- **Branch:** feature/FR-010-create-flow
+
+### Scope
+- lib/store: addFundraiser(), slugify, ensureUniqueSlug; lib/data: Fundraiser.causeCategory, seed fundraisers updated; app/create/page.tsx; app/f/[slug]/page.tsx (allow store-only slugs).
+
+### Files Changed
+- **Created:** app/create/page.tsx
+- **Modified:** lib/store/index.ts (addFundraiser), lib/data/types.ts (causeCategory on Fundraiser), lib/data/seed.ts (causeCategory on all fundraisers), app/f/[slug]/page.tsx (no server notFound)
+- **Updated:** docs/development/DEVLOG.md — this entry
+
+### Acceptance Criteria
+- [x] Start a FundRight in nav and homepage → /create
+- [x] Form: title, goal, story, cause category, community (optional), cover preset, Donating as
+- [x] addFundraiser() in store; redirect to /f/[slug] on success
+- [x] New fundraiser on homepage, community (if linked), organizer profile; category/browse when FR-011 exists
+- [x] Validation: title required max 80, goal min $100, story min 50 words, category required
+- [x] Store mutation atomic: fundraiser + community fundraiserIds/count when applicable
+
+### Next Steps
+- FR-011 (Category Browse), FR-012 (Search), FR-013 (Responsive).
+
+---
+
 ## Phase 2: Intelligence Layer (FR-011 → FR-018)
 
 AI features, structured data, and the analytics dashboard. After this phase, every page demonstrates AI integration, every page has valid JSON-LD, and `/analytics` visualizes all four instrumentation tiers.
@@ -508,7 +543,7 @@ Each ticket entry follows this standardized structure:
 | FR-007 | Donation Flow & Modal | Phase 1 | P0 | 3h | DONE |
 | FR-008 | Homepage & Discovery | Phase 2 | P0 | 4h | DONE |
 | FR-009 | Global Navigation Shell | Phase 2 | P0 | 3h | DONE |
-| FR-010 | Skeleton Loaders & Page Transitions | Phase 1 | P1 | 2h | TODO |
+| FR-010 | Fundraiser Creation Flow | Phase 2 | P0 | 4h | DONE |
 | FR-011 | Cause Intelligence (AI Content) | Phase 2 | P1 | 3h | TODO |
 | FR-012 | Impact Projections | Phase 2 | P1 | 2h | TODO |
 | FR-013 | Fundraiser Story Generator | Phase 2 | P2 | 3h | TODO |

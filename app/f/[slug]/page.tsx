@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { seed } from "@/lib/data";
 import FundraiserPageContent from "@/components/FundraiserPageContent";
 
@@ -7,7 +6,9 @@ type Props = { params: { slug: string } };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const fundraiser = seed.fundraisers.find((f) => f.slug === params.slug);
-  if (!fundraiser) return { title: "Fundraiser | FundRight" };
+  if (!fundraiser) {
+    return { title: "Fundraiser | FundRight" };
+  }
   const organizer = seed.users.find((u) => u.id === fundraiser.organizerId);
   const title = `${fundraiser.title} | FundRight`;
   const description =
@@ -18,7 +19,5 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function FundraiserPage({ params }: Props) {
-  const fundraiser = seed.fundraisers.find((f) => f.slug === params.slug);
-  if (!fundraiser) notFound();
   return <FundraiserPageContent slug={params.slug} />;
 }

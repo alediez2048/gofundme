@@ -153,6 +153,7 @@ const fundraisersBase: Omit<Fundraiser, "raisedAmount" | "donationCount" | "dona
     id: "fund-1",
     slug: "realtime-alerts-for-wildfire-safety",
     title: "Real-Time Alerts for Wildfire Safety",
+    causeCategory: "Disaster Relief & Wildfire Safety",
     story: `Wildfires have become an ever-present threat in our region. Every year, families are caught off guard because they don't have access to timely, accurate information. This fundraiser exists to change that.
 
 **The problem:** Official channels often lag. By the time evacuation orders are widely known, roads are congested and lives are at risk. Our community needs a reliable, real-time alert system that integrates with local fire agencies and volunteer networks.
@@ -177,6 +178,7 @@ Thank you for helping us build a safer, more prepared community.`,
     id: "fund-2",
     slug: "firefighter-equipment-drive",
     title: "Firefighter Equipment Drive for Underserved Communities",
+    causeCategory: "Disaster Relief & Wildfire Safety",
     story: `Volunteer fire departments in rural and underserved areas often operate with outdated or insufficient equipment. When wildfires strike, these crews are the first line of defense—but they're asked to do more with less.
 
 **The problem:** Many small departments rely on hand-me-down gear and donations. Turnout gear, respirators, and communication equipment are expensive. Without them, volunteers face greater risk and slower response times.
@@ -198,6 +200,7 @@ Thank you for helping us build a safer, more prepared community.`,
     id: "fund-3",
     slug: "community-evacuation-hub",
     title: "Community Evacuation Hub — Supplies and Shelter",
+    causeCategory: "Disaster Relief & Wildfire Safety",
     story: `When evacuations happen, families need a safe place to go and basic supplies. This fundraiser establishes a designated community evacuation hub with stored water, blankets, masks, and a clear protocol for opening and staffing it.
 
 **The problem:** In past evacuations, people didn't know where to go. Shelters were overcrowded and supplies ran short. We want a local, well-stocked option that our neighborhood can rely on.
@@ -217,6 +220,7 @@ Thank you for helping us build a safer, more prepared community.`,
     id: "fund-4",
     slug: "help-the-martinez-family-medical-bills",
     title: "Help the Martinez Family with Medical Bills",
+    causeCategory: "Medical & Healthcare",
     story: `The Martinez family has been hit with overwhelming medical bills after their youngest child required emergency surgery and a week in the hospital. They have insurance, but out-of-pocket costs and lost wages have put them in a difficult position.
 
 **The situation:** Their child is recovering well, but the family is facing tens of thousands in bills and has had to cut back on essentials to make payments. We're rallying to ease that burden so they can focus on recovery.
@@ -237,6 +241,7 @@ Thank you for helping us build a safer, more prepared community.`,
     id: "fund-5",
     slug: "cancer-treatment-support-fund",
     title: "Cancer Treatment Support Fund",
+    causeCategory: "Medical & Healthcare",
     story: `We've created a community fund to help families in our network who are facing cancer treatment costs. Insurance doesn't cover everything—travel, lodging near treatment centers, and uncovered procedures add up fast.
 
 **The problem:** Several families in our community are struggling with treatment-related costs. We want to pool resources so that when someone is in need, we can offer quick, no-hassle support.

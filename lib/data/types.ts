@@ -49,6 +49,7 @@ export interface Fundraiser {
   donationCount: number;
   organizerId: string;
   communityId: string;
+  causeCategory: CauseCategory;
   donationIds: string[];
   heroImageUrl: string;
   updates: FundraiserUpdate[];
