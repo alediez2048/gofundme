@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useFundRightStore } from "@/lib/store";
 import { BLUR_DATA_URL, calculateProgress, formatCurrency } from "@/lib/utils";
 import type { Fundraiser, User } from "@/lib/data";
+import type { CauseSummaryResult } from "@/lib/ai/cause-intelligence";
 import Breadcrumbs from "./Breadcrumbs";
 import ProgressBar from "./ProgressBar";
 import UserAvatar from "./UserAvatar";
@@ -85,7 +86,13 @@ function FAQAccordion({ faq }: { faq: { id: string; question: string; answer: st
   );
 }
 
-function CommunityBySlug({ slug }: { slug: string }) {
+interface CommunityBySlugProps {
+  slug: string;
+  causeSummary: CauseSummaryResult;
+  fundraiserCount: number;
+}
+
+function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlugProps) {
   const community = useFundRightStore((s) =>
     Object.values(s.communities).find((c) => c.slug === slug)
   );
@@ -199,12 +206,20 @@ function CommunityBySlug({ slug }: { slug: string }) {
         </div>
       </dl>
 
-      {/* Direct-answer content */}
+      {/* FR-011: Cause Intelligence — About This Cause (AI or static fallback) */}
       <section>
         <h2 className="text-xl font-semibold text-stone-900 mb-3">
           About this cause
         </h2>
-        <p className="text-stone-700 mb-4">{community.description}</p>
+        <div className="text-stone-700 mb-2 whitespace-pre-line">{causeSummary.text}</div>
+        {causeSummary.isAiGenerated && (
+          <p className="text-sm text-stone-500 mb-2">
+            <span className="italic">AI-generated summary</span>
+            {fundraiserCount > 0 && (
+              <> · Based on {fundraiserCount} active fundraiser{fundraiserCount !== 1 ? "s" : ""} in this community</>
+            )}
+          </p>
+        )}
         <div className="rounded-lg bg-stone-50 p-4 space-y-2 text-sm text-stone-700">
           <p><strong>How can I help?</strong> Donate to any campaign below, start a fundraiser, or share this community with others.</p>
           <p><strong>Where does the money go?</strong> Directly to the campaigns you choose. Organizers post updates so you can see impact.</p>
@@ -294,6 +309,22 @@ function CommunityBySlug({ slug }: { slug: string }) {
   );
 }
 
-export default function CommunityPageContent({ slug }: { slug: string }) {
-  return <CommunityBySlug slug={slug} />;
+interface CommunityPageContentProps {
+  slug: string;
+  causeSummary: CauseSummaryResult;
+  fundraiserCount: number;
+}
+
+export default function CommunityPageContent({
+  slug,
+  causeSummary,
+  fundraiserCount,
+}: CommunityPageContentProps) {
+  return (
+    <CommunityBySlug
+      slug={slug}
+      causeSummary={causeSummary}
+      fundraiserCount={fundraiserCount}
+    />
+  );
 }
