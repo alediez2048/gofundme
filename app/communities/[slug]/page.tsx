@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { seed } from "@/lib/data";
 import { getCauseSummary } from "@/lib/ai/cause-intelligence";
 import CommunityPageContent from "@/components/CommunityPageContent";
+import JsonLd from "@/components/JsonLd";
+import { buildCommunitySchema, buildBreadcrumbSchema } from "@/lib/schema";
 
 type Props = { params: { slug: string } };
 
@@ -10,8 +12,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const community = seed.communities.find((c) => c.slug === params.slug);
   if (!community) return { title: "Community | FundRight" };
   const title = `${community.name} | FundRight`;
-  const description =
-    `${community.description} $${community.totalRaised.toLocaleString()} raised · ${community.donationCount} donations · ${community.fundraiserCount} active campaigns.`;
+  const description = `${community.description} $${community.totalRaised.toLocaleString()} raised · ${community.donationCount} donations · ${community.fundraiserCount} active campaigns.`;
   return { title, description };
 }
 
@@ -29,11 +30,23 @@ export default async function CommunityPage({ params }: Props) {
     seed.donations
   );
 
+  const schemas = [
+    ...buildCommunitySchema(community, community.faq),
+    buildBreadcrumbSchema([
+      { label: "Home", href: "/" },
+      { label: "Communities", href: "/communities" },
+      { label: community.name },
+    ]),
+  ];
+
   return (
-    <CommunityPageContent
-      slug={params.slug}
-      causeSummary={causeSummary}
-      fundraiserCount={communityFundraisers.length}
-    />
+    <>
+      <JsonLd data={schemas} />
+      <CommunityPageContent
+        slug={params.slug}
+        causeSummary={causeSummary}
+        fundraiserCount={communityFundraisers.length}
+      />
+    </>
   );
 }
