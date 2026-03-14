@@ -10,7 +10,9 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "vercel:link": "vercel link --scope alediez2048s-projects -p gofundme",
     "vercel:deploy": "vercel",
-    "vercel:prod": "vercel --prod"
+    "vercel:prod": "vercel --prod",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "next": "^14.2.0",
@@ -28,7 +30,8 @@
     "postcss": "^8.4.0",
     "prettier": "^3.0.0",
     "tailwindcss": "^3.4.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^4.1.0"
   },
   "engines": {
     "node": ">=20.0.0"

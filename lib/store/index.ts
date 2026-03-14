@@ -10,6 +10,7 @@ import { createStore } from "zustand/vanilla";
 import type { Community, Donation, Fundraiser, User } from "@/lib/data";
 import type { CauseCategory } from "@/lib/data";
 import { seed } from "@/lib/data";
+import type { AITrace } from "@/lib/ai/trace";
 
 export type EntityMap<T> = Record<string, T>;
 
@@ -18,6 +19,7 @@ export interface StoreState {
   fundraisers: EntityMap<Fundraiser>;
   communities: EntityMap<Community>;
   donations: EntityMap<Donation>;
+  traces: AITrace[];
 }
 
 function toRecord<T extends { id: string }>(arr: T[]): Record<string, T> {
@@ -30,6 +32,7 @@ function getInitialState(): StoreState {
     fundraisers: toRecord(seed.fundraisers),
     communities: toRecord(seed.communities),
     donations: toRecord(seed.donations),
+    traces: [],
   };
 }
 
@@ -70,6 +73,8 @@ export interface AddFundraiserParams {
   heroImageUrl: string;
 }
 
+const MAX_TRACES = 50;
+
 export interface StoreActions {
   addFundraiser: (params: AddFundraiserParams) => { id: string; slug: string } | null;
   addDonation: (
@@ -78,6 +83,8 @@ export interface StoreActions {
     donorId: string,
     message?: string
   ) => string | null;
+  addTrace: (trace: AITrace) => void;
+  clearTraces: () => void;
 }
 
 export type Store = StoreState & StoreActions;
@@ -155,11 +162,13 @@ export const createFundRightStore = () => {
           if (amount <= 0) return null;
           const donationId = generateDonationId();
           const createdAt = new Date().toISOString();
+          let valid = false;
 
           set((state) => {
             const fundraiser = state.fundraisers[fundraiserId];
             const donor = state.users[donorId];
             if (!fundraiser || !donor) return state;
+            valid = true;
 
             const donation: Donation = {
               id: donationId,
@@ -209,7 +218,17 @@ export const createFundRightStore = () => {
             };
           });
 
-          return donationId;
+          return valid ? donationId : null;
+        },
+
+        addTrace: (trace) => {
+          set((state) => ({
+            traces: [...state.traces.slice(-(MAX_TRACES - 1)), trace],
+          }));
+        },
+
+        clearTraces: () => {
+          set({ traces: [] });
         },
       }),
       {
