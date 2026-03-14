@@ -420,53 +420,148 @@ The following tickets are **required** to pass the MVP gate — three fully inte
 
 ---
 
-## Phase 2: Intelligence Layer (FR-011 → FR-018)
+## FR-011: Category Browse Page ✅ (Phase 2)
 
-AI features, structured data, and the analytics dashboard. After this phase, every page demonstrates AI integration, every page has valid JSON-LD, and `/analytics` visualizes all four instrumentation tiers.
+### Plain-English Summary
+- `/browse` shows all fundraisers with a horizontal category chip bar (All, plus each unique `causeCategory`). `/browse/[category]` filters by the URL-encoded category.
+- Sort options: Most Recent, Most Funded, Closest to Goal, Just Launched.
+- Fundraiser grid cards show image, title, progress bar, organizer name (→ `/u/`), community badge (→ `/communities/`). Each card links to `/f/[slug]`.
+- Empty state with "No fundraisers in this category yet" and a CTA to `/create`.
+- Results count header: "X fundraisers in [Category]".
+- "Browse" link added to header nav. Homepage category chips now resolve (no more dead links).
 
-| Ticket | Title | Phase Role | Priority | Est. | Status |
-|--------|-------|------------|----------|------|--------|
-| FR-011 | Cause Intelligence (Community Page AI Content) | **AI** — pre-generated cause context | P1 | 3h | TODO |
-| FR-012 | Impact Projections (Donation Widget Enhancement) | **AI** — real-time impact statements | P1 | 2h | TODO |
-| FR-013 | Fundraiser Story Generator | **AI** — streaming narrative drafting (stretch) | P2 | 3h | TODO |
-| FR-014 | JSON-LD Schema Generators | **SEO** — DonateAction, Person, FAQPage, Organization | P0 | 3h | TODO |
-| FR-015 | Event Tracking System | **Analytics** — custom event layer + Beacon API | P0 | 3h | TODO |
-| FR-016 | Core Web Vitals Monitoring | **Analytics** — TTFB, LCP, CLS, INP per page template | P1 | 2h | TODO |
-| FR-017 | Analytics Dashboard (`/analytics`) | **Analytics** — four-tier instrumentation dashboard | P1 | 4h | TODO |
-| FR-018 | Session Attribution Tracking | **Analytics** — multi-page journey + trust-verification branch | P1 | 2h | TODO |
+### Metadata
+- **Status:** Complete
+- **Date:** 2026-03-10
+- **Ticket:** FR-011 (PRD v2 — Category Browse Page)
+- **Branch:** feature/FR-011-cause-intelligence
 
-### Phase 2 Dependencies
+### Files Changed
+- **Created:** app/browse/page.tsx, app/browse/[category]/page.tsx, components/BrowsePageContent.tsx
+- **Modified:** components/Header.tsx (added "Browse" nav link)
+- **Updated:** docs/development/DEVLOG.md — this entry
 
-- FR-011 (Cause Intelligence) depends on FR-005 (Community Page)
-- FR-012 (Impact Projections) depends on FR-007 (Donation Modal)
-- FR-013 (Story Generator) depends on FR-004 (Fundraiser Page) — can be skipped (P2)
-- FR-014 (Schema) can start immediately (only depends on Phase 1 pages existing)
-- FR-015 (Event Tracking) can start immediately
-- FR-016 (Web Vitals) depends on FR-015
-- FR-017 (Dashboard) depends on FR-015 + FR-016
-- FR-018 (Attribution) depends on FR-015
+### Acceptance Criteria (from PRD v2)
+- [x] Page renders at `/browse/[category]` with fundraisers filtered by cause category
+- [x] Also renders at `/browse` (no category) showing all fundraisers with category filter chips
+- [x] Category filter: horizontal scrollable chip bar showing all available categories, active highlighted
+- [x] Fundraiser grid: cards with image, title, progress bar, organizer name, community badge
+- [x] Sort options: "Most Recent", "Most Funded", "Closest to Goal", "Just Launched"
+- [x] Empty state: "No fundraisers in this category yet. Be the first!" with link to create flow
+- [x] Results count: "X fundraisers in [Category]" header
+- [x] Each card links to `/f/[slug]`
 
 ---
 
-## Phase 3: Polish & Ship (FR-019 → FR-023)
+## FR-012: Search ✅ (Phase 2)
 
-Performance optimization, accessibility compliance, edge case handling, deployment, and quality assurance. After this phase, the product is submission-ready.
+### Plain-English Summary
+- `/search?q=[query]` — client-side fuzzy search across fundraiser titles/stories, community names/descriptions, and user display names.
+- Results grouped by type: Fundraisers, Communities, People — each with up to 5 results.
+- Each result links to its respective page (`/f/`, `/communities/`, `/u/`).
+- Empty state: "No results for '[query]'. Try a different search or browse by category." with link to `/browse`.
+- Search bar in homepage hero already submits to `/search?q=`.
 
-| Ticket | Title | Phase Role | Priority | Est. | Status |
-|--------|-------|------------|----------|------|--------|
-| FR-019 | Accessibility Foundation & ARIA Implementation | **A11y** — keyboard nav, ARIA, focus management | P1 | 4h | TODO |
-| FR-020 | Edge Case Handling & Designed States | **Polish** — overfunding, empty states, boundaries | P1 | 3h | TODO |
-| FR-021 | Vercel Deployment & Environment Configuration | **Deployment** — live URL, env vars, zero-config local | P0 | 2h | TODO |
-| FR-022 | Unit Tests for Store Mutations | **QA** — Vitest suite for addDonation atomicity | P1 | 2h | TODO |
-| FR-023 | Pre-Submission QA Checklist | **Gate** — final quality gate before submission | P0 | 1h | TODO |
+### Metadata
+- **Status:** Complete
+- **Date:** 2026-03-10
+- **Ticket:** FR-012 (PRD v2 — Search)
+- **Branch:** feature/FR-011-cause-intelligence
 
-### Phase 3 Dependencies
+### Files Changed
+- **Created:** app/search/page.tsx, components/SearchPageContent.tsx
+- **Updated:** docs/development/DEVLOG.md — this entry
 
-- FR-019 (Accessibility) can start immediately (refines existing pages)
-- FR-020 (Edge Cases) depends on FR-007 (Donation Flow) + all pages
-- FR-021 (Deployment) can start immediately
-- FR-022 (Unit Tests) depends on FR-003 (Zustand Store)
-- FR-023 (QA Checklist) is the final ticket — depends on everything
+### Acceptance Criteria (from PRD v2)
+- [x] Search page renders at `/search?q=[query]`
+- [x] Search bar in hero (homepage) submits to `/search?q=`
+- [x] Client-side fuzzy search across: fundraiser titles and stories, community names and descriptions, user display names
+- [x] Results grouped by type: "Fundraisers", "Communities", "People" — each with up to 5 results
+- [x] Each result links to its respective page (`/f/`, `/communities/`, `/u/`)
+- [x] Empty state: "No results for '[query]'. Try a different search or browse by category." with link to `/browse`
+- [x] Search is instant (filters store data client-side, no API calls)
+
+---
+
+## FR-023: Cause Intelligence (Community Page AI Content) ✅ (Phase 4 — early delivery)
+
+> **Note:** This was originally tracked as FR-011 in the DEVLOG before the PRD v2 renumbering.
+> In PRD v2, Cause Intelligence is **FR-023** (Phase 4 — AI Intelligence Layer). The work is
+> already complete and ships early.
+
+### Plain-English Summary
+- "About This Cause" on community pages is driven by cause intelligence: when `OPENAI_API_KEY` is set, a RAG-style pipeline synthesizes a cause summary from fundraiser stories and donation messages. Fallback to static `community.description` when key is absent.
+- AI-generated content shows a subtle "AI-generated summary" label and source attribution.
+
+### Metadata
+- **Status:** Complete
+- **Date:** 2026-03-10
+- **Ticket:** FR-023 (PRD v2) — built early
+- **Branch:** feature/FR-011-cause-intelligence
+
+### Files Changed
+- **Created:** lib/ai/cause-intelligence.ts
+- **Modified:** app/communities/[slug]/page.tsx, components/CommunityPageContent.tsx
+- **Updated:** package.json (openai)
+
+### Acceptance Criteria (from PRD v2 FR-023)
+- [x] "About This Cause" section on community pages, below the stats bar
+- [x] RAG-style pipeline: retrieve fundraiser stories + donation messages → LLM cause summary
+- [x] Content covers: what the cause is, why it matters now, what's accomplished, what's needed
+- [x] Source attribution when AI: "Based on N active fundraisers in this community"
+- [x] Fallback (no API key): static `community.description`, no "AI-generated" label
+- [x] AI-generated content has subtle "AI-generated summary" label
+
+### Next Steps
+- FR-013 (Responsive Layout), FR-014 (JSON-LD Schema), FR-015 (Accessibility).
+
+---
+
+## Phase 2 Status (PRD v2: FR-008 → FR-013)
+
+| Ticket | Title | Priority | Est. | Status |
+|--------|-------|----------|------|--------|
+| FR-008 | Homepage & Discovery | P0 | 4h | DONE |
+| FR-009 | Global Navigation Shell | P0 | 3h | DONE |
+| FR-010 | Fundraiser Creation Flow | P0 | 4h | DONE |
+| FR-011 | Category Browse Page | P0 | 3h | DONE |
+| FR-012 | Search | P1 | 3h | DONE |
+| FR-013 | Responsive Layout | P0 | 4h | TODO |
+
+### Phase 2 Dependencies (PRD v2)
+
+- FR-008 (Homepage) → can start immediately ✅
+- FR-009 (Nav Shell) → can start immediately ✅
+- FR-010 (Create Flow) → depends on FR-009 ✅
+- FR-011 (Category Browse) → depends on FR-008 ✅
+- FR-012 (Search) → depends on FR-009 ✅
+- FR-013 (Responsive) → should run after all pages exist
+
+---
+
+## Phase 3: Polish & Ship (PRD v2: FR-014 → FR-019)
+
+| Ticket | Title | Priority | Est. | Status |
+|--------|-------|----------|------|--------|
+| FR-014 | JSON-LD Schema Generators | P1 | 3h | TODO |
+| FR-015 | Accessibility Foundation & ARIA | P1 | 3h | TODO |
+| FR-016 | Edge Case Handling & Designed States | P1 | 3h | TODO |
+| FR-017 | Skeleton Loaders & Page Transitions | P1 | 2h | TODO |
+| FR-018 | Unit Tests for Store Mutations | P1 | 2h | TODO |
+| FR-019 | Deployment & QA | P0 | 2h | TODO |
+
+---
+
+## Phase 4: AI Intelligence Layer (PRD v2: FR-020 → FR-025)
+
+| Ticket | Title | Priority | Est. | Status |
+|--------|-------|----------|------|--------|
+| FR-020 | AI Service Foundation & Trace Infrastructure | P0 | 3h | TODO |
+| FR-021 | Creation Assistant with Tool Calling | P1 | 3h | TODO |
+| FR-022 | Community Discovery Assistant (RAG) | P1 | 3h | TODO |
+| FR-023 | Cause Intelligence (RAG + Generation) | P1 | 2h | DONE (early) |
+| FR-024 | Trust Summaries & Impact Projections | P1 | 3h | TODO |
+| FR-025 | AI Traces Panel | P1 | 2h | TODO |
 
 ---
 
@@ -530,7 +625,7 @@ Each ticket entry follows this standardized structure:
 
 ---
 
-## Ticket Summary
+## Ticket Summary (aligned with PRD v2)
 
 | ID | Title | Phase | Priority | Est. | Status |
 |----|-------|-------|----------|------|--------|
@@ -544,21 +639,23 @@ Each ticket entry follows this standardized structure:
 | FR-008 | Homepage & Discovery | Phase 2 | P0 | 4h | DONE |
 | FR-009 | Global Navigation Shell | Phase 2 | P0 | 3h | DONE |
 | FR-010 | Fundraiser Creation Flow | Phase 2 | P0 | 4h | DONE |
-| FR-011 | Cause Intelligence (AI Content) | Phase 2 | P1 | 3h | TODO |
-| FR-012 | Impact Projections | Phase 2 | P1 | 2h | TODO |
-| FR-013 | Fundraiser Story Generator | Phase 2 | P2 | 3h | TODO |
-| FR-014 | JSON-LD Schema Generators | Phase 2 | P0 | 3h | TODO |
-| FR-015 | Event Tracking System | Phase 2 | P0 | 3h | TODO |
-| FR-016 | Core Web Vitals Monitoring | Phase 2 | P1 | 2h | TODO |
-| FR-017 | Analytics Dashboard | Phase 2 | P1 | 4h | TODO |
-| FR-018 | Session Attribution Tracking | Phase 2 | P1 | 2h | TODO |
-| FR-019 | Accessibility Foundation & ARIA | Phase 3 | P1 | 4h | TODO |
-| FR-020 | Edge Case Handling & Designed States | Phase 3 | P1 | 3h | TODO |
-| FR-021 | Vercel Deployment & Environment Config | Phase 3 | P0 | 2h | TODO |
-| FR-022 | Unit Tests for Store Mutations | Phase 3 | P1 | 2h | TODO |
-| FR-023 | Pre-Submission QA Checklist | Phase 3 | P0 | 1h | TODO |
+| FR-011 | Category Browse Page | Phase 2 | P0 | 3h | DONE |
+| FR-012 | Search | Phase 2 | P1 | 3h | DONE |
+| FR-013 | Responsive Layout | Phase 2 | P0 | 4h | TODO |
+| FR-014 | JSON-LD Schema Generators | Phase 3 | P1 | 3h | TODO |
+| FR-015 | Accessibility Foundation & ARIA | Phase 3 | P1 | 3h | TODO |
+| FR-016 | Edge Case Handling & Designed States | Phase 3 | P1 | 3h | TODO |
+| FR-017 | Skeleton Loaders & Page Transitions | Phase 3 | P1 | 2h | TODO |
+| FR-018 | Unit Tests for Store Mutations | Phase 3 | P1 | 2h | TODO |
+| FR-019 | Deployment & QA | Phase 3 | P0 | 2h | TODO |
+| FR-020 | AI Service Foundation & Trace Infrastructure | Phase 4 | P0 | 3h | TODO |
+| FR-021 | Creation Assistant with Tool Calling | Phase 4 | P1 | 3h | TODO |
+| FR-022 | Community Discovery Assistant (RAG) | Phase 4 | P1 | 3h | TODO |
+| FR-023 | Cause Intelligence (RAG + Generation) | Phase 4 | P1 | 2h | DONE (early) |
+| FR-024 | Trust Summaries & Impact Projections | Phase 4 | P1 | 3h | TODO |
+| FR-025 | AI Traces Panel | Phase 4 | P1 | 2h | TODO |
 
-**Total: 23 tickets · 64 hours · 14 days**
+**Total: 25 tickets · ~75 hours**
 
 ---
 
@@ -568,7 +665,6 @@ Each ticket entry follows this standardized structure:
 |------|-------------|--------|------------|
 | AI API key not available during evaluation | High | High | All AI content pre-generated at build time and committed to seed data. Zero runtime dependency on API keys. |
 | Vercel deployment goes down after submission | Low | High | Local setup documented and tested. Evaluator can run `npm install && npm run dev` as fallback. |
-| Performance budget exceeded by analytics code | Medium | Medium | Analytics footprint capped at 5KB. All event dispatch uses non-blocking Beacon API. Dashboard charts dynamically imported. |
-| Zustand store mutation introduces cross-page bug | Medium | High | 8 unit tests cover the addDonation function. Manual QA checklist verifies cross-page state after donation. |
+| Scope creep from stretch features | High | Medium | Phase 4 (AI) is explicitly post-MVP. Only P0 and P1 tickets from Phases 1–3 are required for submission. |
+| Zustand store mutation introduces cross-page bug | Medium | High | Unit tests cover addDonation and addFundraiser. Manual QA checklist verifies cross-page state after donation. |
 | Schema JSON-LD fails Google validation | Low | Medium | Build-time validation script checks schema output. QA checklist includes Rich Results Test verification. |
-| Scope creep from stretch features | High | Medium | FR-013 (Story Generator) is explicitly P2. MVP ships without it. Only P0 and P1 tickets are required for submission. |

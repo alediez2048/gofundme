@@ -10,6 +10,7 @@ const DEFAULT_PROFILE_USERNAME = "janahan";
 
 const NAV_LINKS = [
   { href: "/", label: "Discover" },
+  { href: "/browse", label: "Browse" },
   { href: "/communities", label: "Communities" },
   { href: "/create", label: "Start a FundRight" },
 ] as const;
