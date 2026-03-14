@@ -98,8 +98,8 @@ export default function DonationModal({
         onClick={onClose}
         onKeyDown={(e) => e.key === "Escape" && onClose()}
       />
-      <div className="relative z-10 w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-        <h2 id="donation-modal-title" className="text-xl font-semibold text-stone-900">
+      <div className="relative z-10 w-full max-w-md rounded-xl bg-white p-4 shadow-xl sm:p-6">
+        <h2 id="donation-modal-title" className="text-lg font-semibold text-stone-900 sm:text-xl">
           Donate to {fundraiserTitle}
         </h2>
 
@@ -131,7 +131,7 @@ export default function DonationModal({
               onChange={(e) =>
                 setAmount(e.target.value === "" ? "" : Number(e.target.value) || "")
               }
-              className="ml-2 mt-1 w-32 rounded border border-stone-300 px-3 py-2 text-stone-900"
+              className="mt-1 block w-full rounded border border-stone-300 px-3 py-2 text-stone-900 sm:ml-2 sm:inline sm:w-32"
             />
           </label>
         </div>

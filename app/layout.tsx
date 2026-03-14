@@ -24,7 +24,7 @@ export default function RootLayout({
           Skip to main content
         </a>
         <Header />
-        <main id="main-content" className="mx-auto max-w-6xl px-4 py-8" role="main">
+        <main id="main-content" className="mx-auto max-w-6xl px-4 py-6 sm:py-8" role="main">
           {children}
         </main>
         <Footer />

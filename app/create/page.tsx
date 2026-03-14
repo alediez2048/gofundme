@@ -79,7 +79,7 @@ export default function CreateFundraiserPage() {
   return (
     <div className="mx-auto max-w-xl space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-stone-900 tracking-tight">
+        <h1 className="text-2xl font-bold text-stone-900 tracking-tight sm:text-3xl">
           Start a FundRight
         </h1>
         <p className="mt-2 text-stone-600">
@@ -223,7 +223,7 @@ export default function CreateFundraiserPage() {
           <p className="mt-1 text-xs text-stone-500">This person will be listed as the organizer.</p>
         </div>
 
-        <div className="flex gap-4 pt-4">
+        <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:gap-4">
           <button
             type="submit"
             disabled={submitting}
