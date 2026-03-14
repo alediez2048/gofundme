@@ -161,7 +161,7 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
       <Breadcrumbs items={breadcrumbItems} />
       {/* Header: banner, name, cause badge, stats */}
       <section className="overflow-hidden rounded-xl bg-stone-200">
-        <div className="relative aspect-[21/9] w-full">
+        <div className="relative aspect-[16/9] w-full sm:aspect-[21/9]">
           <Image
             src={community.bannerImageUrl}
             alt=""
@@ -173,7 +173,7 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
           />
         </div>
       </section>
-      <h1 className="text-3xl font-bold text-stone-900 tracking-tight">
+      <h1 className="text-2xl font-bold text-stone-900 tracking-tight sm:text-3xl">
         {community.name}
       </h1>
       <span className="inline-block rounded-full bg-stone-200 px-3 py-1 text-sm font-medium text-stone-700">
@@ -182,25 +182,25 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
       <dl className="grid grid-cols-2 gap-4 sm:grid-cols-4 text-center">
         <div>
           <dt className="text-sm text-stone-500">Total raised</dt>
-          <dd className="text-xl font-semibold text-stone-900">
+          <dd className="text-lg font-semibold text-stone-900 sm:text-xl">
             {formatCurrency(community.totalRaised)}
           </dd>
         </div>
         <div>
           <dt className="text-sm text-stone-500">Donations</dt>
-          <dd className="text-xl font-semibold text-stone-900">
+          <dd className="text-lg font-semibold text-stone-900 sm:text-xl">
             {community.donationCount}
           </dd>
         </div>
         <div>
           <dt className="text-sm text-stone-500">Fundraisers</dt>
-          <dd className="text-xl font-semibold text-stone-900">
+          <dd className="text-lg font-semibold text-stone-900 sm:text-xl">
             {community.fundraiserCount}
           </dd>
         </div>
         <div>
           <dt className="text-sm text-stone-500">Members</dt>
-          <dd className="text-xl font-semibold text-stone-900">
+          <dd className="text-lg font-semibold text-stone-900 sm:text-xl">
             {community.memberCount}
           </dd>
         </div>
@@ -208,7 +208,7 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
 
       {/* FR-011: Cause Intelligence — About This Cause (AI or static fallback) */}
       <section>
-        <h2 className="text-xl font-semibold text-stone-900 mb-3">
+        <h2 className="text-lg font-semibold text-stone-900 mb-3 sm:text-xl">
           About this cause
         </h2>
         <div className="text-stone-700 mb-2 whitespace-pre-line">{causeSummary.text}</div>
@@ -229,7 +229,7 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
       {/* Guided discovery */}
       {featured.length > 0 && (
         <section>
-          <h2 className="text-xl font-semibold text-stone-900 mb-4">
+          <h2 className="text-lg font-semibold text-stone-900 mb-4 sm:text-xl">
             Find a campaign to support
           </h2>
           <div className="grid gap-4 sm:grid-cols-3">
@@ -253,7 +253,7 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
 
       {/* Fundraiser directory */}
       <section>
-        <h2 className="text-xl font-semibold text-stone-900 mb-4">
+        <h2 className="text-lg font-semibold text-stone-900 mb-4 sm:text-xl">
           Active fundraisers
         </h2>
         {sortedFundraisers.length === 0 ? (
@@ -272,7 +272,7 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
       {/* Members */}
       {displayMembers.length > 0 && (
         <section>
-          <h2 className="text-xl font-semibold text-stone-900 mb-4">
+          <h2 className="text-lg font-semibold text-stone-900 mb-4 sm:text-xl">
             Community members
           </h2>
           <ul className="flex flex-wrap gap-4 items-center">
@@ -299,7 +299,7 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
       {/* FAQ */}
       {faqList.length > 0 && (
         <section>
-          <h2 className="text-xl font-semibold text-stone-900 mb-4">
+          <h2 className="text-lg font-semibold text-stone-900 mb-4 sm:text-xl">
             Frequently asked questions
           </h2>
           <FAQAccordion faq={faqList} />

@@ -88,10 +88,10 @@ function ProfileByUsername({ username }: { username: string }) {
     <article className="space-y-8">
       <Breadcrumbs items={breadcrumbItems} />
       {/* Identity */}
-      <section className="flex flex-wrap items-start gap-6">
-        <UserAvatar src={user.avatar} size={96} />
+      <section className="flex flex-wrap items-start gap-4 sm:gap-6">
+        <UserAvatar src={user.avatar} size={80} />
         <div className="min-w-0 flex-1">
-          <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-stone-900 tracking-tight flex items-center gap-2 sm:text-3xl">
             {user.name}
             {user.verified && (
               <span
@@ -144,19 +144,19 @@ function ProfileByUsername({ username }: { username: string }) {
       <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3 text-center">
         <div>
           <dt className="text-sm text-stone-500">Total raised (as organizer)</dt>
-          <dd className="text-xl font-semibold text-stone-900">
+          <dd className="text-lg font-semibold text-stone-900 sm:text-xl">
             {formatCurrency(totalRaisedAsOrganizer)}
           </dd>
         </div>
         <div>
           <dt className="text-sm text-stone-500">Total donated</dt>
-          <dd className="text-xl font-semibold text-stone-900">
+          <dd className="text-lg font-semibold text-stone-900 sm:text-xl">
             {formatCurrency(user.totalDonated)}
           </dd>
         </div>
         <div>
           <dt className="text-sm text-stone-500">Causes supported</dt>
-          <dd className="text-xl font-semibold text-stone-900">
+          <dd className="text-lg font-semibold text-stone-900 sm:text-xl">
             {causesSupportedCount}
           </dd>
         </div>
@@ -165,7 +165,7 @@ function ProfileByUsername({ username }: { username: string }) {
       {/* Active fundraisers */}
       {organizerFundraisers.length > 0 && (
         <section>
-          <h2 className="text-xl font-semibold text-stone-900 mb-4">
+          <h2 className="text-lg font-semibold text-stone-900 mb-4 sm:text-xl">
             Active fundraisers
           </h2>
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -190,7 +190,7 @@ function ProfileByUsername({ username }: { username: string }) {
       {/* Community memberships */}
       {userCommunities.length > 0 && (
         <section>
-          <h2 className="text-xl font-semibold text-stone-900 mb-4">
+          <h2 className="text-lg font-semibold text-stone-900 mb-4 sm:text-xl">
             Communities
           </h2>
           <div className="flex flex-wrap gap-2">

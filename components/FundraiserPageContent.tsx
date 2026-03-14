@@ -75,13 +75,13 @@ function FundraiserBySlug({ slug }: { slug: string }) {
       <Breadcrumbs items={breadcrumbItems} />
       {/* Hero + above-the-fold */}
       <section className="overflow-hidden rounded-xl bg-stone-200">
-        <div className="relative aspect-[21/9] w-full">
+        <div className="relative aspect-[16/9] w-full sm:aspect-[21/9]">
           <Image
             src={fundraiser.heroImageUrl}
             alt=""
             fill
             className="object-cover"
-            sizes="(max-width: 1024px) 100vw, 1024px"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1024px"
             placeholder="blur"
             blurDataURL={BLUR_DATA_URL}
           />
@@ -90,7 +90,7 @@ function FundraiserBySlug({ slug }: { slug: string }) {
 
       <div className="lg:grid lg:grid-cols-3 lg:gap-8">
         <div className="lg:col-span-2 space-y-6">
-          <h1 className="text-3xl font-bold text-stone-900 tracking-tight">
+          <h1 className="text-2xl font-bold text-stone-900 tracking-tight sm:text-3xl">
             {fundraiser.title}
           </h1>
           {organizer && (
@@ -193,8 +193,8 @@ function FundraiserBySlug({ slug }: { slug: string }) {
       </div>
 
       {/* Below-the-fold: story */}
-      <section className="border-t border-stone-200 pt-8">
-        <h2 className="text-xl font-semibold text-stone-900 mb-4">Story</h2>
+      <section className="border-t border-stone-200 pt-6 sm:pt-8">
+        <h2 className="text-lg font-semibold text-stone-900 mb-3 sm:text-xl sm:mb-4">Story</h2>
         <div className="prose prose-stone max-w-none text-stone-700">
           {formatStory(fundraiser.story)}
         </div>
@@ -202,8 +202,8 @@ function FundraiserBySlug({ slug }: { slug: string }) {
 
       {/* Recent donors (top 5) */}
       {topDonors.length > 0 && (
-        <section className="border-t border-stone-200 pt-8">
-          <h2 className="text-xl font-semibold text-stone-900 mb-4">
+        <section className="border-t border-stone-200 pt-6 sm:pt-8">
+          <h2 className="text-lg font-semibold text-stone-900 mb-3 sm:text-xl sm:mb-4">
             Recent donors
           </h2>
           <ul className="flex flex-wrap gap-4">
@@ -224,8 +224,8 @@ function FundraiserBySlug({ slug }: { slug: string }) {
 
       {/* Organizer updates */}
       {fundraiser.updates.length > 0 && (
-        <section className="border-t border-stone-200 pt-8">
-          <h2 className="text-xl font-semibold text-stone-900 mb-4">Updates</h2>
+        <section className="border-t border-stone-200 pt-6 sm:pt-8">
+          <h2 className="text-lg font-semibold text-stone-900 mb-3 sm:text-xl sm:mb-4">Updates</h2>
           <ul className="space-y-4">
             {fundraiser.updates.map((up) => (
               <li key={up.id} className="rounded-lg bg-stone-50 p-4">
@@ -244,7 +244,7 @@ function FundraiserBySlug({ slug }: { slug: string }) {
 
       {/* Parent community badge */}
       {community && (
-        <section className="border-t border-stone-200 pt-8">
+        <section className="border-t border-stone-200 pt-6 sm:pt-8">
           <p className="text-sm text-stone-600 mb-2">Part of the community</p>
           <Link
             href={`/communities/${community.slug}`}
@@ -257,8 +257,8 @@ function FundraiserBySlug({ slug }: { slug: string }) {
 
       {/* Related fundraisers (3) */}
       {related.length > 0 && (
-        <section className="border-t border-stone-200 pt-8">
-          <h2 className="text-xl font-semibold text-stone-900 mb-4">
+        <section className="border-t border-stone-200 pt-6 sm:pt-8">
+          <h2 className="text-lg font-semibold text-stone-900 mb-3 sm:text-xl sm:mb-4">
             Related fundraisers in this community
           </h2>
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

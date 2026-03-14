@@ -15,7 +15,7 @@ const QUICK_LINKS = [
 export default function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer className="border-t border-stone-200 bg-stone-100 py-8" role="contentinfo">
+    <footer className="border-t border-stone-200 bg-stone-100 py-6 sm:py-8" role="contentinfo">
       <div className="mx-auto max-w-6xl px-4">
         <p className="text-sm text-stone-600 max-w-xl">
           FundRight is a fundraising platform where donors discover causes, support campaigns,

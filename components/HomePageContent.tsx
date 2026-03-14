@@ -46,7 +46,7 @@ export default function HomePageContent() {
   };
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-8 sm:space-y-12">
       {/* Hero */}
       <section className="text-center">
         <h1 className="text-4xl font-bold tracking-tight text-stone-900 sm:text-5xl">
@@ -84,32 +84,32 @@ export default function HomePageContent() {
       </section>
 
       {/* Platform stats */}
-      <section className="rounded-xl border border-stone-200 bg-white p-6 shadow-sm">
-        <dl className="grid grid-cols-2 gap-6 md:grid-cols-4 md:gap-8">
+      <section className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm sm:p-6">
+        <dl className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-8">
           <div>
             <dt className="text-sm font-medium text-stone-500">Total raised</dt>
-            <dd className="mt-1 text-2xl font-bold text-stone-900">
+            <dd className="mt-1 text-xl font-bold text-stone-900 sm:text-2xl">
               {formatCurrency(totalRaised)}
             </dd>
           </div>
           <div>
             <dt className="text-sm font-medium text-stone-500">Total donations</dt>
-            <dd className="mt-1 text-2xl font-bold text-stone-900">{totalDonations}</dd>
+            <dd className="mt-1 text-xl font-bold text-stone-900 sm:text-2xl">{totalDonations}</dd>
           </div>
           <div>
             <dt className="text-sm font-medium text-stone-500">Active fundraisers</dt>
-            <dd className="mt-1 text-2xl font-bold text-stone-900">{activeFundraisers}</dd>
+            <dd className="mt-1 text-xl font-bold text-stone-900 sm:text-2xl">{activeFundraisers}</dd>
           </div>
           <div>
             <dt className="text-sm font-medium text-stone-500">Active communities</dt>
-            <dd className="mt-1 text-2xl font-bold text-stone-900">{activeCommunities}</dd>
+            <dd className="mt-1 text-xl font-bold text-stone-900 sm:text-2xl">{activeCommunities}</dd>
           </div>
         </dl>
       </section>
 
       {/* Trending Fundraisers */}
       <section>
-        <h2 className="text-2xl font-bold text-stone-900">Trending Fundraisers</h2>
+        <h2 className="text-xl font-bold text-stone-900 sm:text-2xl">Trending Fundraisers</h2>
         <p className="mt-1 text-stone-600">
           Top campaigns by donor support
         </p>
@@ -154,7 +154,7 @@ export default function HomePageContent() {
 
       {/* Active Communities */}
       <section>
-        <h2 className="text-2xl font-bold text-stone-900">Active Communities</h2>
+        <h2 className="text-xl font-bold text-stone-900 sm:text-2xl">Active Communities</h2>
         <p className="mt-1 text-stone-600">
           Causes and communities you can support
         </p>
@@ -202,7 +202,7 @@ export default function HomePageContent() {
 
       {/* Browse by Category */}
       <section>
-        <h2 className="text-2xl font-bold text-stone-900">Browse by Category</h2>
+        <h2 className="text-xl font-bold text-stone-900 sm:text-2xl">Browse by Category</h2>
         <p className="mt-1 text-stone-600">
           Explore fundraisers by cause
         </p>
