@@ -7,6 +7,7 @@ import { useRef } from "react";
 import { useFundRightStore } from "@/lib/store";
 import { BLUR_DATA_URL, formatCurrency } from "@/lib/utils";
 import type { CauseCategory } from "@/lib/data";
+import PageTransition from "@/components/PageTransition";
 import ProgressBar from "@/components/ProgressBar";
 
 /** Unique cause categories present in seed/store (for Browse by Category). */
@@ -46,6 +47,7 @@ export default function HomePageContent() {
   };
 
   return (
+    <PageTransition>
     <div className="space-y-8 sm:space-y-12">
       {/* Hero */}
       <section className="text-center">
@@ -220,5 +222,6 @@ export default function HomePageContent() {
         </ul>
       </section>
     </div>
+    </PageTransition>
   );
 }

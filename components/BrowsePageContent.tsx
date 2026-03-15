@@ -7,6 +7,7 @@ import { useFundRightStore } from "@/lib/store";
 import { BLUR_DATA_URL, formatCurrency } from "@/lib/utils";
 import type { CauseCategory, Fundraiser, User } from "@/lib/data";
 import Breadcrumbs from "./Breadcrumbs";
+import PageTransition from "./PageTransition";
 import ProgressBar from "./ProgressBar";
 
 type SortKey = "recent" | "most-funded" | "closest-to-goal" | "just-launched";
@@ -140,6 +141,7 @@ export default function BrowsePageContent({ activeCategory }: BrowsePageContentP
     : `${sorted.length} fundraiser${sorted.length !== 1 ? "s" : ""}`;
 
   return (
+    <PageTransition>
     <div className="space-y-8">
       <Breadcrumbs items={breadcrumbItems} />
 
@@ -230,5 +232,6 @@ export default function BrowsePageContent({ activeCategory }: BrowsePageContentP
         </ul>
       )}
     </div>
+    </PageTransition>
   );
 }

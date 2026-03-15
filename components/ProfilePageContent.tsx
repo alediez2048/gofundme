@@ -6,6 +6,7 @@ import { useFundRightStore } from "@/lib/store";
 import { formatCurrency } from "@/lib/utils";
 import type { User, Fundraiser, Community, Donation } from "@/lib/data";
 import Breadcrumbs from "./Breadcrumbs";
+import PageTransition from "./PageTransition";
 import UserAvatar from "./UserAvatar";
 
 function buildImpactSummary(
@@ -255,5 +256,5 @@ function ProfileByUsername({ username }: { username: string }) {
 }
 
 export default function ProfilePageContent({ username }: { username: string }) {
-  return <ProfileByUsername username={username} />;
+  return <PageTransition><ProfileByUsername username={username} /></PageTransition>;
 }

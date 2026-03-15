@@ -796,12 +796,12 @@ Metrics are simplified to focus on what matters for a barebones clone demo.
 | FR-011 | Category Browse Page | Phase 2 | P0 | 3h | ✅ DONE |
 | FR-012 | Search | Phase 2 | P1 | 3h | ✅ DONE |
 | FR-013 | Responsive Layout | Phase 2 | P0 | 4h | ✅ DONE |
-| FR-014 | JSON-LD Schema Generators | Phase 3 | P1 | 3h | ✅ DONE — AEO enhancements pending |
-| FR-015 | Accessibility Foundation & ARIA | Phase 3 | P1 | 3h | TODO |
-| FR-016 | Edge Case Handling & Designed States | Phase 3 | P1 | 3h | TODO |
-| FR-017 | Skeleton Loaders & Page Transitions | Phase 3 | P1 | 2h | TODO |
+| FR-014 | JSON-LD Schema Generators | Phase 3 | P1 | 3h | ✅ DONE — AEO enhanced |
+| FR-015 | Accessibility Foundation & ARIA | Phase 3 | P1 | 3h | ✅ DONE |
+| FR-016 | Edge Case Handling & Designed States | Phase 3 | P1 | 3h | ✅ DONE |
+| FR-017 | Skeleton Loaders & Page Transitions | Phase 3 | P1 | 2h | ✅ DONE |
 | FR-018 | Unit Tests for Store Mutations | Phase 3 | P1 | 2h | ✅ DONE |
-| FR-019 | Deployment & QA | Phase 3 | P0 | 2h | TODO |
+| FR-019 | Deployment & QA | Phase 3 | P0 | 2h | IN PROGRESS |
 
 ### Phase 4: AI Intelligence Layer
 
@@ -810,7 +810,7 @@ Metrics are simplified to focus on what matters for a barebones clone demo.
 | FR-020 | AI Service Foundation & Trace Infrastructure | Phase 4 | P0 | 3h | ✅ DONE |
 | **FR-021** | **Creation Assistant with Tool Calling** | **Phase 4** | **P1** | **3h** | TODO |
 | **FR-022** | **Community Discovery Assistant (RAG)** | **Phase 4** | **P1** | **3h** | TODO |
-| FR-023 | Cause Intelligence (RAG + Generation) | Phase 4 | P1 | 2h | ✅ DONE — AEO output format pending |
+| FR-023 | Cause Intelligence (RAG + Generation) | Phase 4 | P1 | 2h | ✅ DONE — AEO enhanced |
 | **FR-024** | **Trust Summaries & Impact Projections** | **Phase 4** | **P1** | **3h** | TODO |
 | **FR-025** | **AI Traces Panel** | **Phase 4** | **P1** | **2h** | TODO |
 
@@ -820,9 +820,9 @@ Metrics are simplified to focus on what matters for a barebones clone demo.
 |---|---|---|---|
 | Phase 1 — MVP Core | 7 | 22h | ✅ COMPLETE |
 | Phase 2 — Full Clone | 6 | 21h | ✅ COMPLETE |
-| Phase 3 — Polish & Ship | 6 | 16h | 2/6 DONE (FR-014, FR-018) |
+| Phase 3 — Polish & Ship | 6 | 16h | 5/6 DONE (FR-019 in progress) |
 | Phase 4 — AI Intelligence | 6 | 16h | 2/6 DONE (FR-020, FR-023) |
-| **Total** | **25** | **~75h** | **17/25 done (68%)** |
+| **Total** | **25** | **~75h** | **21/25 done (84%)** |
 
 ---
 

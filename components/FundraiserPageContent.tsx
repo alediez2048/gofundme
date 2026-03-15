@@ -8,6 +8,7 @@ import { useFundRightStore } from "@/lib/store";
 import { BLUR_DATA_URL, calculateProgress, formatCurrency } from "@/lib/utils";
 import type { User, Community } from "@/lib/data";
 import Breadcrumbs from "./Breadcrumbs";
+import PageTransition from "./PageTransition";
 import DonationModal from "./DonationModal";
 import ProgressBar from "./ProgressBar";
 import UserAvatar from "./UserAvatar";
@@ -386,5 +387,5 @@ function FundraiserBySlug({ slug }: { slug: string }) {
 }
 
 export default function FundraiserPageContent({ slug }: { slug: string }) {
-  return <FundraiserBySlug slug={slug} />;
+  return <PageTransition><FundraiserBySlug slug={slug} /></PageTransition>;
 }

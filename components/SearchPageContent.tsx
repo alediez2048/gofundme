@@ -8,6 +8,7 @@ import { useFundRightStore } from "@/lib/store";
 import { BLUR_DATA_URL, formatCurrency } from "@/lib/utils";
 import type { Community, Fundraiser, User } from "@/lib/data";
 import Breadcrumbs from "./Breadcrumbs";
+import PageTransition from "./PageTransition";
 import ProgressBar from "./ProgressBar";
 import UserAvatar from "./UserAvatar";
 
@@ -234,6 +235,7 @@ function SearchResults() {
 
 export default function SearchPageContent() {
   return (
+    <PageTransition>
     <Suspense
       fallback={
         <div className="py-16 text-center text-stone-500">Loading search...</div>
@@ -241,5 +243,6 @@ export default function SearchPageContent() {
     >
       <SearchResults />
     </Suspense>
+    </PageTransition>
   );
 }

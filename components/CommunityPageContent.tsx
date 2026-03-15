@@ -9,6 +9,7 @@ import { BLUR_DATA_URL, calculateProgress, formatCurrency } from "@/lib/utils";
 import type { Fundraiser, User } from "@/lib/data";
 import type { CauseSummaryResult } from "@/lib/ai/cause-intelligence";
 import Breadcrumbs from "./Breadcrumbs";
+import PageTransition from "./PageTransition";
 import ProgressBar from "./ProgressBar";
 import UserAvatar from "./UserAvatar";
 
@@ -330,10 +331,12 @@ export default function CommunityPageContent({
   fundraiserCount,
 }: CommunityPageContentProps) {
   return (
-    <CommunityBySlug
-      slug={slug}
-      causeSummary={causeSummary}
-      fundraiserCount={fundraiserCount}
-    />
+    <PageTransition>
+      <CommunityBySlug
+        slug={slug}
+        causeSummary={causeSummary}
+        fundraiserCount={fundraiserCount}
+      />
+    </PageTransition>
   );
 }
