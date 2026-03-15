@@ -120,12 +120,12 @@ export default function HomePageContent() {
               <li key={f.id}>
                 <Link
                   href={`/f/${f.slug}`}
-                  className="block overflow-hidden rounded-xl border border-stone-200 bg-white transition-colors hover:border-primary/30"
+                  className="block overflow-hidden rounded-xl border border-stone-200 bg-white transition-colors hover:border-primary/30 focus-visible:outline-offset-4"
                 >
                   <div className="relative aspect-[16/10] w-full bg-stone-200">
                     <Image
                       src={f.heroImageUrl}
-                      alt=""
+                      alt={f.title}
                       fill
                       className="object-cover"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
@@ -163,12 +163,12 @@ export default function HomePageContent() {
             <li key={c.id}>
               <Link
                 href={`/communities/${c.slug}`}
-                className="block overflow-hidden rounded-xl border border-stone-200 bg-white transition-colors hover:border-primary/30"
+                className="block overflow-hidden rounded-xl border border-stone-200 bg-white transition-colors hover:border-primary/30 focus-visible:outline-offset-4"
               >
                 <div className="relative aspect-[21/9] w-full bg-stone-200">
                   <Image
                     src={c.bannerImageUrl}
-                    alt=""
+                    alt={c.name}
                     fill
                     className="object-cover"
                     sizes="(max-width: 640px) 100vw, 50vw"
@@ -211,7 +211,7 @@ export default function HomePageContent() {
             <li key={category}>
               <Link
                 href={`/browse/${encodeURIComponent(category)}`}
-                className="rounded-full border border-stone-200 bg-white px-4 py-2 text-sm font-medium text-stone-700 shadow-sm transition-colors hover:border-primary/50 hover:text-primary"
+                className="rounded-full border border-stone-200 bg-white px-4 py-2 text-sm font-medium text-stone-700 shadow-sm transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-offset-4"
               >
                 {category}
               </Link>

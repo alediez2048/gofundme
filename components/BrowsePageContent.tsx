@@ -157,7 +157,7 @@ export default function BrowsePageContent({ activeCategory }: BrowsePageContentP
         <div className="flex gap-2 min-w-max pb-2">
           <Link
             href="/browse"
-            className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+            className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-offset-4 ${
               !decodedCategory
                 ? "bg-primary text-primary-foreground"
                 : "border border-stone-200 bg-white text-stone-700 hover:border-primary/50 hover:text-primary"
@@ -169,7 +169,7 @@ export default function BrowsePageContent({ activeCategory }: BrowsePageContentP
             <Link
               key={cat}
               href={`/browse/${encodeURIComponent(cat)}`}
-              className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+              className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-offset-4 ${
                 decodedCategory === cat
                   ? "bg-primary text-primary-foreground"
                   : "border border-stone-200 bg-white text-stone-700 hover:border-primary/50 hover:text-primary"
@@ -183,7 +183,7 @@ export default function BrowsePageContent({ activeCategory }: BrowsePageContentP
 
       {/* Sort + results count */}
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <p className="text-sm font-medium text-stone-700">{heading}</p>
+        <h2 className="text-sm font-medium text-stone-700">{heading}</h2>
         <select
           value={sortKey}
           onChange={(e) => setSortKey(e.target.value as SortKey)}

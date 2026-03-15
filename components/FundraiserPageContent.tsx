@@ -2,10 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useFundRightStore } from "@/lib/store";
-import { BLUR_DATA_URL, formatCurrency } from "@/lib/utils";
+import { BLUR_DATA_URL, calculateProgress, formatCurrency } from "@/lib/utils";
 import type { User, Community } from "@/lib/data";
 import Breadcrumbs from "./Breadcrumbs";
 import DonationModal from "./DonationModal";
@@ -27,6 +27,8 @@ function formatStory(text: string): React.ReactNode {
 }
 
 function FundraiserBySlug({ slug }: { slug: string }) {
+  const searchParams = useSearchParams();
+  const isNewlyCreated = searchParams.get("new") === "1";
   const fundraiser = useFundRightStore((s) =>
     Object.values(s.fundraisers).find((f) => f.slug === slug)
   );
@@ -73,6 +75,44 @@ function FundraiserBySlug({ slug }: { slug: string }) {
   return (
     <article className="space-y-8">
       <Breadcrumbs items={breadcrumbItems} />
+
+      {/* FR-016: Newly created fundraiser welcome + share prompt */}
+      {isNewlyCreated && fundraiser.donationCount === 0 && (
+        <div className="rounded-xl border border-primary/30 bg-emerald-50 p-5">
+          <p className="text-lg font-bold text-primary">Your fundraiser is live!</p>
+          <p className="mt-1 text-sm text-stone-600">
+            Share it with friends and family to get the word out and receive your first donation.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                navigator.clipboard.writeText(window.location.href.split("?")[0]);
+              }}
+              className="rounded-lg border border-stone-200 bg-white px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50"
+            >
+              Copy link
+            </button>
+            <a
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`I just launched "${fundraiser.title}" on FundRight! Help me reach my goal:`)}&url=${encodeURIComponent(window.location.href.split("?")[0])}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-lg border border-stone-200 bg-white px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50"
+            >
+              Share on X
+            </a>
+            <a
+              href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href.split("?")[0])}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-lg border border-stone-200 bg-white px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50"
+            >
+              Share on Facebook
+            </a>
+          </div>
+        </div>
+      )}
+
       {/* Hero + above-the-fold */}
       <section className="overflow-hidden rounded-xl bg-stone-200">
         <div className="relative aspect-[16/9] w-full sm:aspect-[21/9]">
@@ -133,16 +173,74 @@ function FundraiserBySlug({ slug }: { slug: string }) {
             )}
           </div>
 
-          {/* Progress bar */}
-          <ProgressBar raised={fundraiser.raisedAmount} goal={fundraiser.goalAmount} />
-          <p className="text-lg font-semibold text-stone-900">
-            {formatCurrency(fundraiser.raisedAmount)} raised of{" "}
-            {formatCurrency(fundraiser.goalAmount)} goal
-          </p>
-          <p className="text-sm text-stone-500">
-            {fundraiser.donationCount} donation
-            {fundraiser.donationCount !== 1 ? "s" : ""}
-          </p>
+          {/* Progress bar + state-based messaging */}
+          {(() => {
+            const pct = calculateProgress(fundraiser.raisedAmount, fundraiser.goalAmount);
+            const rawPct = fundraiser.goalAmount > 0
+              ? Math.round((fundraiser.raisedAmount / fundraiser.goalAmount) * 100)
+              : 0;
+            const remaining = fundraiser.goalAmount - fundraiser.raisedAmount;
+            const isOverfunded = fundraiser.raisedAmount > fundraiser.goalAmount;
+            const isGoalReached = fundraiser.raisedAmount >= fundraiser.goalAmount;
+
+            return (
+              <>
+                {/* FR-016: 0% — Just launched */}
+                {fundraiser.donationCount === 0 && (
+                  <div className="rounded-lg border border-dashed border-primary/40 bg-emerald-50/50 px-4 py-3">
+                    <p className="font-semibold text-primary">Just launched — be the first donor!</p>
+                    <p className="mt-1 text-sm text-stone-600">
+                      Every fundraiser starts with one person. Your donation sets the momentum.
+                    </p>
+                  </div>
+                )}
+
+                {/* FR-016: >100% — Overfunded */}
+                {isOverfunded && (
+                  <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3">
+                    <p className="font-semibold text-amber-800">
+                      {rawPct}% — Goal exceeded!
+                    </p>
+                    <p className="mt-1 text-sm text-amber-700">
+                      {formatCurrency(fundraiser.raisedAmount - fundraiser.goalAmount)} over the original goal. Every extra dollar extends the impact.
+                    </p>
+                  </div>
+                )}
+
+                {/* FR-016: 100% — Goal reached */}
+                {isGoalReached && !isOverfunded && (
+                  <div className="rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3">
+                    <p className="font-semibold text-emerald-800">Goal reached!</p>
+                    <p className="mt-1 text-sm text-emerald-700">
+                      This fundraiser hit its {formatCurrency(fundraiser.goalAmount)} goal. You can still donate to extend the impact.
+                    </p>
+                  </div>
+                )}
+
+                {/* FR-016: 76–99% — Urgency */}
+                {pct >= 76 && pct < 100 && (
+                  <div className="rounded-lg bg-blue-50 border border-blue-200 px-4 py-3">
+                    <p className="font-semibold text-blue-800">
+                      Almost there! {formatCurrency(remaining)} to go
+                    </p>
+                    <p className="mt-1 text-sm text-blue-700">
+                      This fundraiser is {pct}% funded. Help push it over the finish line.
+                    </p>
+                  </div>
+                )}
+
+                <ProgressBar raised={fundraiser.raisedAmount} goal={fundraiser.goalAmount} />
+                <p className="text-lg font-semibold text-stone-900">
+                  {formatCurrency(fundraiser.raisedAmount)} raised of{" "}
+                  {formatCurrency(fundraiser.goalAmount)} goal
+                </p>
+                <p className="text-sm text-stone-500">
+                  {fundraiser.donationCount} donation
+                  {fundraiser.donationCount !== 1 ? "s" : ""}
+                </p>
+              </>
+            );
+          })()}
 
           {/* Donate CTA */}
           <div>
@@ -150,10 +248,14 @@ function FundraiserBySlug({ slug }: { slug: string }) {
               ref={donateButtonRef}
               type="button"
               onClick={() => setModalOpen(true)}
-              className="rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              className={`rounded-lg px-6 py-3 font-semibold text-primary-foreground hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
+                fundraiser.donationCount === 0
+                  ? "bg-primary animate-pulse"
+                  : "bg-primary"
+              }`}
               aria-label="Donate to this fundraiser"
             >
-              Donate
+              {fundraiser.donationCount === 0 ? "Be the first to donate" : "Donate"}
             </button>
           </div>
         </div>

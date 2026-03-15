@@ -66,7 +66,7 @@ function FAQAccordion({ faq }: { faq: { id: string; question: string; answer: st
           <button
             type="button"
             onClick={() => setOpenId(openId === item.id ? null : item.id)}
-            className="w-full flex items-center justify-between px-4 py-3 text-left font-medium text-stone-900 hover:bg-stone-50"
+            className="w-full flex items-center justify-between px-4 py-3 text-left font-medium text-stone-900 hover:bg-stone-50 focus-visible:outline-offset-[-2px]"
             aria-expanded={openId === item.id}
             aria-label={`${openId === item.id ? "Collapse" : "Expand"}: ${item.question}`}
           >
@@ -257,7 +257,16 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
           Active fundraisers
         </h2>
         {sortedFundraisers.length === 0 ? (
-          <p className="text-stone-600 text-sm">No fundraisers yet. Be the first to start one.</p>
+          <div className="rounded-xl border border-dashed border-stone-300 bg-stone-50 py-12 text-center">
+            <p className="text-lg font-semibold text-stone-700">No fundraisers yet.</p>
+            <p className="mt-2 text-stone-500">Be the first to start one!</p>
+            <Link
+              href="/create"
+              className="mt-4 inline-block rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground hover:opacity-90"
+            >
+              Start a FundRight
+            </Link>
+          </div>
         ) : (
           <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {sortedFundraisers.map((f) => (

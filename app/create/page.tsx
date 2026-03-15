@@ -73,7 +73,7 @@ export default function CreateFundraiserPage() {
     });
 
     setSubmitting(false);
-    if (result) router.push(`/f/${result.slug}`);
+    if (result) router.push(`/f/${result.slug}?new=1`);
   };
 
   return (

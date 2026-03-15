@@ -21,7 +21,7 @@ export default function Breadcrumbs({ items }: BreadcrumbsProps) {
               </span>
             )}
             {item.href ? (
-              <Link href={item.href} className="hover:text-primary">
+              <Link href={item.href} className="hover:text-primary rounded-sm">
                 {item.label}
               </Link>
             ) : (
