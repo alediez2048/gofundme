@@ -1,6 +1,12 @@
 /**
  * FR-014: JSON-LD schema generators for structured data.
  * Each builder returns a plain object ready for JSON.stringify in <script type="application/ld+json">.
+ *
+ * AEO enhancements:
+ * - `@id` URIs on all entities for cross-referencing (only 4% of sites do this)
+ * - `sameAs` for entity linking to external profiles/orgs
+ * - `dateModified` for freshness signals (Perplexity weighs ~40%)
+ * - `nonprofitStatus` on Organization schemas
  */
 
 import type { Community, FAQItem, Fundraiser, User } from "@/lib/data";
@@ -12,6 +18,11 @@ function absoluteUrl(path: string): string {
   return `${BASE_URL}${path}`;
 }
 
+/** Build a stable @id URI for cross-referencing between JSON-LD entities. */
+function entityId(path: string, fragment: string): string {
+  return `${absoluteUrl(path)}#${fragment}`;
+}
+
 // ---------------------------------------------------------------------------
 // Fundraiser: DonateAction + MonetaryAmount
 // ---------------------------------------------------------------------------
@@ -19,25 +30,41 @@ function absoluteUrl(path: string): string {
 export function buildFundraiserSchema(
   fundraiser: Fundraiser,
   organizer: User,
-  community?: Community
+  community?: Community,
+  lastModified?: string
 ) {
+  const personId = entityId(`/u/${organizer.username}`, "person");
+
   return {
     "@context": "https://schema.org",
     "@type": "DonateAction",
+    "@id": entityId(`/f/${fundraiser.slug}`, "donate"),
     name: fundraiser.title,
     description: fundraiser.story.slice(0, 200),
     url: absoluteUrl(`/f/${fundraiser.slug}`),
+    ...(lastModified ? { dateModified: lastModified } : {}),
     agent: {
       "@type": "Person",
+      "@id": personId,
       name: organizer.name,
       url: absoluteUrl(`/u/${organizer.username}`),
+      ...(organizer.sameAs && organizer.sameAs.length > 0
+        ? { sameAs: organizer.sameAs }
+        : {}),
     },
     ...(community
       ? {
           recipient: {
             "@type": "Organization",
+            "@id": entityId(`/communities/${community.slug}`, "org"),
             name: community.name,
             url: absoluteUrl(`/communities/${community.slug}`),
+            ...(community.sameAs && community.sameAs.length > 0
+              ? { sameAs: community.sameAs }
+              : {}),
+            ...(community.nonprofitStatus
+              ? { nonprofitStatus: community.nonprofitStatus }
+              : {}),
           },
         }
       : {}),
@@ -60,15 +87,26 @@ export function buildFundraiserSchema(
 
 export function buildCommunitySchema(
   community: Community,
-  faqItems?: FAQItem[]
+  faqItems?: FAQItem[],
+  lastModified?: string
 ) {
+  const orgId = entityId(`/communities/${community.slug}`, "org");
+
   const schemas: object[] = [
     {
       "@context": "https://schema.org",
       "@type": "Organization",
+      "@id": orgId,
       name: community.name,
       description: community.description,
       url: absoluteUrl(`/communities/${community.slug}`),
+      ...(lastModified ? { dateModified: lastModified } : {}),
+      ...(community.sameAs && community.sameAs.length > 0
+        ? { sameAs: community.sameAs }
+        : {}),
+      ...(community.nonprofitStatus
+        ? { nonprofitStatus: community.nonprofitStatus }
+        : {}),
     },
   ];
 
@@ -76,6 +114,7 @@ export function buildCommunitySchema(
     schemas.push({
       "@context": "https://schema.org",
       "@type": "FAQPage",
+      "@id": entityId(`/communities/${community.slug}`, "faq"),
       mainEntity: faqItems.map((item) => ({
         "@type": "Question",
         name: item.question,
@@ -94,18 +133,24 @@ export function buildCommunitySchema(
 // Profile: Person + ProfilePage
 // ---------------------------------------------------------------------------
 
-export function buildProfileSchema(user: User) {
+export function buildProfileSchema(user: User, lastModified?: string) {
+  const personId = entityId(`/u/${user.username}`, "person");
+
   return {
     "@context": "https://schema.org",
     "@type": "ProfilePage",
+    "@id": entityId(`/u/${user.username}`, "profile"),
     url: absoluteUrl(`/u/${user.username}`),
+    ...(lastModified ? { dateModified: lastModified } : {}),
     mainEntity: {
       "@type": "Person",
+      "@id": personId,
       name: user.name,
       description: user.bio,
       url: absoluteUrl(`/u/${user.username}`),
-      ...(user.avatar
-        ? { image: user.avatar }
+      ...(user.avatar ? { image: user.avatar } : {}),
+      ...(user.sameAs && user.sameAs.length > 0
+        ? { sameAs: user.sameAs }
         : {}),
     },
   };
@@ -119,6 +164,7 @@ export function buildHomepageSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": `${BASE_URL}#website`,
     name: "FundRight",
     url: BASE_URL,
     description:

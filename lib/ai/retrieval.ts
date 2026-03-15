@@ -49,6 +49,14 @@ export function buildCommunityContext(
     parts.push(`[Fundraiser: ${f.title}]\n${storyExcerpt}`);
     sourceCount++;
 
+    // Include organizer quotes from updates (AEO: named quotes +37% visibility)
+    const quotes = (f.updates ?? [])
+      .filter((u) => u.quote)
+      .map((u) => u.quote as string);
+    if (quotes.length > 0) {
+      parts.push("Organizer quotes: " + quotes.join(" | "));
+    }
+
     const fundDonations = (donationsByFund.get(f.id) ?? [])
       .filter((d) => d.message)
       .slice(0, 10)

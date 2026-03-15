@@ -31,6 +31,7 @@ const usersBase: Omit<User, "donationIds" | "totalDonated">[] = [
       { platform: "LinkedIn", url: "https://linkedin.com/in/janahan" },
     ],
     communityIds: ["comm-1"],
+    sameAs: ["https://twitter.com/janahan", "https://linkedin.com/in/janahan"],
   },
   {
     id: "user-2",
@@ -42,6 +43,7 @@ const usersBase: Omit<User, "donationIds" | "totalDonated">[] = [
     joinDate: "2023-08-01",
     socialLinks: [{ platform: "Instagram", url: "https://instagram.com/mayachen" }],
     communityIds: ["comm-1"],
+    sameAs: ["https://instagram.com/mayachen"],
   },
   {
     id: "user-3",
@@ -53,6 +55,7 @@ const usersBase: Omit<User, "donationIds" | "totalDonated">[] = [
     joinDate: "2023-09-10",
     socialLinks: [],
     communityIds: ["comm-1", "comm-2"],
+    sameAs: [],
   },
   {
     id: "user-4",
@@ -64,6 +67,7 @@ const usersBase: Omit<User, "donationIds" | "totalDonated">[] = [
     joinDate: "2024-01-05",
     socialLinks: [{ platform: "Facebook", url: "https://facebook.com/sarahlee" }],
     communityIds: ["comm-2"],
+    sameAs: ["https://facebook.com/sarahlee"],
   },
   {
     id: "user-5",
@@ -75,6 +79,7 @@ const usersBase: Omit<User, "donationIds" | "totalDonated">[] = [
     joinDate: "2024-02-12",
     socialLinks: [],
     communityIds: ["comm-2"],
+    sameAs: [],
   },
   {
     id: "user-6",
@@ -86,6 +91,7 @@ const usersBase: Omit<User, "donationIds" | "totalDonated">[] = [
     joinDate: "2024-03-01",
     socialLinks: [],
     communityIds: ["comm-1", "comm-2"],
+    sameAs: [],
   },
   {
     id: "user-7",
@@ -97,6 +103,7 @@ const usersBase: Omit<User, "donationIds" | "totalDonated">[] = [
     joinDate: "2024-03-15",
     socialLinks: [{ platform: "GitHub", url: "https://github.com/alexkim" }],
     communityIds: ["comm-1"],
+    sameAs: ["https://github.com/alexkim"],
   },
   {
     id: "user-8",
@@ -108,6 +115,7 @@ const usersBase: Omit<User, "donationIds" | "totalDonated">[] = [
     joinDate: "2024-04-01",
     socialLinks: [],
     communityIds: ["comm-2"],
+    sameAs: [],
   },
 ];
 
@@ -122,11 +130,13 @@ const communitiesBase: Omit<Community, "totalRaised" | "donationCount" | "fundra
     bannerImageUrl: placeholderImage("watch-duty", 1200, 400),
     memberIds: ["user-1", "user-2", "user-3", "user-6", "user-7"],
     fundraiserIds: ["fund-1", "fund-2", "fund-3"],
+    sameAs: ["https://twitter.com/WatchDutyOrg", "https://www.watchduty.org"],
+    nonprofitStatus: "501(c)(3)",
     faq: [
-      { id: "faq-1-1", question: "What is Watch Duty?", answer: "Watch Duty is a community focused on wildfire safety, real-time alerts, and supporting families and first responders during fire season. We fundraise for alert systems, equipment, and evacuation resources." },
-      { id: "faq-1-2", question: "How can I help?", answer: "You can donate to any active fundraiser in this community, start your own campaign, or share fundraisers to spread awareness. Every contribution helps deploy alerts and resources where they're needed." },
-      { id: "faq-1-3", question: "Where does the money go?", answer: "Funds go directly to the campaigns you choose: alert system deployment, firefighter equipment, evacuation hubs, and community training. Organizers publish updates so you can see impact." },
-      { id: "faq-1-4", question: "Is my donation tax-deductible?", answer: "Tax treatment depends on the recipient organization. Check each fundraiser for details; many campaigns are run by 501(c)(3) nonprofits." },
+      { id: "faq-1-1", question: "How do I donate to wildfire relief near me?", answer: "Browse active wildfire relief fundraisers in the Watch Duty community. Each campaign lists its location, goal, and organizer. You can donate directly — 100% of your contribution goes to the campaign with no platform fee." },
+      { id: "faq-1-2", question: "What is the best way to help wildfire victims in 2024?", answer: "The most effective way to help is donating to verified community fundraisers that fund real-time alert systems, firefighter equipment, and evacuation supplies. Watch Duty campaigns are organized by local volunteers and first responders who publish transparent updates on how funds are used." },
+      { id: "faq-1-3", question: "Are wildfire relief donations tax-deductible?", answer: "Many Watch Duty campaigns are run by 501(c)(3) nonprofits, making donations tax-deductible. Check each fundraiser's details for the recipient organization's tax status. We recommend consulting a tax professional for your specific situation." },
+      { id: "faq-1-4", question: "How does Watch Duty use donations for wildfire safety?", answer: "Donations fund four key areas: real-time alert system deployment (SMS and app notifications), firefighter PPE and communication equipment for volunteer departments, community evacuation hubs with supplies and trained volunteers, and neighborhood coordinator training programs." },
     ],
   },
   {
@@ -138,11 +148,13 @@ const communitiesBase: Omit<Community, "totalRaised" | "donationCount" | "fundra
     bannerImageUrl: placeholderImage("medical-relief", 1200, 400),
     memberIds: ["user-3", "user-4", "user-5", "user-6", "user-8"],
     fundraiserIds: ["fund-4", "fund-5"],
+    sameAs: ["https://twitter.com/MedReliefNet"],
+    nonprofitStatus: "501(c)(3)",
     faq: [
-      { id: "faq-2-1", question: "What is the Medical Relief Network?", answer: "We're a community that rallies around families facing medical bills, treatment costs, and healthcare access. We pool donations and support vetted campaigns so funds reach those in need." },
-      { id: "faq-2-2", question: "How can I get help with medical bills?", answer: "Browse active fundraisers or start one for yourself or someone you know. Organizers share their story and goals; donors give directly to the campaign." },
-      { id: "faq-2-3", question: "How are campaigns verified?", answer: "We rely on organizer profiles, updates, and community oversight. Look for verified organizers and read campaign updates before giving." },
-      { id: "faq-2-4", question: "Are there fees?", answer: "FundRight charges no platform fee on donations. Payment processors may apply a small percentage; check the donation flow for details." },
+      { id: "faq-2-1", question: "How can I crowdfund for medical bills?", answer: "Start a fundraiser on FundRight through the Medical Relief Network. Share your story, set a goal, and publish updates as your situation evolves. Donors give directly to your campaign with no platform fee. Verified organizers receive a trust badge that increases donor confidence." },
+      { id: "faq-2-2", question: "What is the best fundraising site for medical expenses?", answer: "FundRight's Medical Relief Network connects families facing medical costs with a community of verified donors. Unlike generic platforms, every campaign is community-backed with organizer verification, transparent updates, and zero platform fees. A healthcare social worker reviews grant requests for the community fund." },
+      { id: "faq-2-3", question: "How do I verify a medical fundraiser is legitimate?", answer: "Look for verified organizer badges, read campaign updates, and check the organizer's profile and donation history. Medical Relief Network campaigns include community oversight — members can flag concerns, and organizers with a track record of updates earn higher trust scores." },
+      { id: "faq-2-4", question: "Does FundRight charge fees on medical donations?", answer: "FundRight charges no platform fee on any donation. Payment processors apply a small percentage (typically 2.9% + $0.30 per transaction). 100% of the remaining amount goes directly to the campaign organizer." },
     ],
   },
 ];
@@ -170,8 +182,8 @@ Thank you for helping us build a safer, more prepared community.`,
     communityId: "comm-1",
     heroImageUrl: placeholderImage("fund-1-wildfire", 800, 450),
     updates: [
-      { id: "up-1-1", date: "2024-05-01", text: "Partnership confirmed with County Fire. Alert system pilot starts next month." },
-      { id: "up-1-2", date: "2024-05-15", text: "First 50 go-bags distributed. Training session scheduled for June." },
+      { id: "up-1-1", date: "2024-05-01", text: "Partnership confirmed with County Fire. Alert system pilot starts next month.", quote: "This partnership means 12,000 families in fire zones will get alerts within 90 seconds of a new report — that's faster than any official channel. — Janahan Selvakumaran, Campaign Organizer" },
+      { id: "up-1-2", date: "2024-05-15", text: "First 50 go-bags distributed. Training session scheduled for June.", quote: "We handed out 50 go-bags at the community center in under two hours. Families told us they'd never had an evacuation plan before. — Janahan Selvakumaran, Campaign Organizer" },
     ],
   },
   {
@@ -193,7 +205,7 @@ Thank you for helping us build a safer, more prepared community.`,
     communityId: "comm-1",
     heroImageUrl: placeholderImage("fund-2-firefighter", 800, 450),
     updates: [
-      { id: "up-2-1", date: "2024-04-20", text: "First department identified. Ordering first batch of gear." },
+      { id: "up-2-1", date: "2024-04-20", text: "First department identified. Ordering first batch of gear.", quote: "These volunteers have been running into fires with 15-year-old turnout gear. This drive changes that. — David Okonkwo, Former Firefighter & Campaign Organizer" },
     ],
   },
   {
@@ -213,7 +225,7 @@ Thank you for helping us build a safer, more prepared community.`,
     communityId: "comm-1",
     heroImageUrl: placeholderImage("fund-3-evacuation", 800, 450),
     updates: [
-      { id: "up-3-1", date: "2024-05-10", text: "Location secured. Next step: supply list and volunteer sign-up." },
+      { id: "up-3-1", date: "2024-05-10", text: "Location secured. Next step: supply list and volunteer sign-up.", quote: "In the last evacuation, people drove in circles looking for shelter. This hub means they'll know exactly where to go. — Maya Chen, Emergency Response Volunteer" },
     ],
   },
   {
@@ -233,8 +245,8 @@ Thank you for helping us build a safer, more prepared community.`,
     communityId: "comm-2",
     heroImageUrl: placeholderImage("fund-4-martinez", 800, 450),
     updates: [
-      { id: "up-4-1", date: "2024-04-25", text: "Thank you to everyone who has given. We're about 40% of the way to our goal." },
-      { id: "up-4-2", date: "2024-05-05", text: "Child is home and doing well. Family is incredibly grateful." },
+      { id: "up-4-1", date: "2024-04-25", text: "Thank you to everyone who has given. We're about 40% of the way to our goal.", quote: "Every donation takes one more bill off the stack. We never expected this many people to step up. — Sarah Lee, Medical Bills Advocate" },
+      { id: "up-4-2", date: "2024-05-05", text: "Child is home and doing well. Family is incredibly grateful.", quote: "Our son is back home playing with his sister. The community's support means we can focus on his recovery instead of the bills. — The Martinez Family" },
     ],
   },
   {
@@ -254,7 +266,7 @@ Thank you for helping us build a safer, more prepared community.`,
     communityId: "comm-2",
     heroImageUrl: placeholderImage("fund-5-cancer", 800, 450),
     updates: [
-      { id: "up-5-1", date: "2024-05-01", text: "Fund is live. First applications under review." },
+      { id: "up-5-1", date: "2024-05-01", text: "Fund is live. First applications under review.", quote: "We've already received 3 applications in the first week. The need is real and urgent — families shouldn't have to choose between treatment and rent. — James Rivera, Community Health Worker" },
     ],
   },
 ];

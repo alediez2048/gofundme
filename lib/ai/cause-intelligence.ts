@@ -19,7 +19,15 @@ export interface CauseSummaryResult {
 }
 
 const FEATURE = "cause-intelligence";
-const SYSTEM_PROMPT = `You are writing a short "About This Cause" section for a fundraising community page. Use only the provided context (community description, fundraiser stories, and donor messages). Write 2–3 short paragraphs that cover: what the cause is, why it matters now, what this community has accomplished, and what's still needed. Use clear, empathetic language. Do not invent facts; ground every claim in the context. Output only the summary text, no headings or labels.`;
+const SYSTEM_PROMPT = `You are writing a short "About This Cause" section for a fundraising community page. Use only the provided context (community description, fundraiser stories, donor messages, and organizer quotes).
+
+FORMAT REQUIREMENTS (AEO-optimized for AI citation extraction):
+1. Lead with an answer-first block (40–60 words) that directly answers "What does this community do and why does it matter?" — this block should stand alone as a complete answer.
+2. Follow with 1–2 short paragraphs covering what this community has accomplished and what's still needed.
+3. Include inline source citations when referencing specific numbers or facts (e.g., "according to campaign organizer Janahan Selvakumaran" or "as reported in the Real-Time Alerts campaign").
+4. Include at least one named organizer quote from the provided context, attributed with the person's name and role.
+5. Use clear, empathetic language. Do not invent facts; ground every claim in the context.
+6. Output only the summary text, no headings or labels.`;
 
 // Register fallback: return the static community description
 registerFallback(FEATURE, (input: unknown) => {

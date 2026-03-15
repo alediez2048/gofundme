@@ -24,7 +24,7 @@ export default async function ProfilePage({ params }: Props) {
   if (!user) notFound();
 
   const schemas = [
-    buildProfileSchema(user),
+    buildProfileSchema(user, new Date().toISOString()),
     buildBreadcrumbSchema([
       { label: "Home", href: "/" },
       { label: user.name },

@@ -35,7 +35,7 @@ export default async function FundraiserPage({ params }: Props) {
 
   const schemas: object[] = [];
   if (fundraiser && organizer) {
-    schemas.push(buildFundraiserSchema(fundraiser, organizer, community));
+    schemas.push(buildFundraiserSchema(fundraiser, organizer, community, new Date().toISOString()));
   }
   schemas.push(
     buildBreadcrumbSchema([

@@ -31,7 +31,7 @@ export default async function CommunityPage({ params }: Props) {
   );
 
   const schemas = [
-    ...buildCommunitySchema(community, community.faq),
+    ...buildCommunitySchema(community, community.faq, new Date().toISOString()),
     buildBreadcrumbSchema([
       { label: "Home", href: "/" },
       { label: "Communities", href: "/communities" },

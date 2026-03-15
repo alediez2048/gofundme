@@ -615,6 +615,13 @@ Metrics are simplified to focus on what matters for a barebones clone demo.
   - Creation flow: create fundraiser → appears on homepage, browse, community, profile
   - Search: returns relevant results for fundraiser titles, community names, user names
   - Schema JSON-LD validates for all page types
+  - **AEO validation checklist:**
+    - All JSON-LD entities have `@id` URIs and cross-reference each other (Person ↔ DonateAction ↔ Organization)
+    - `sameAs` populated on Person and Organization schemas where social links exist
+    - `dateModified` present on every page schema
+    - `nonprofitStatus` present on Organization schemas
+    - FAQ questions match real AI query patterns (e.g., "How do I donate to wildfire relief?")
+    - Cause intelligence output uses answer-first format (40-60 word lead block)
   - Lighthouse ≥ 90 performance, ≥ 95 accessibility, ≥ 90 SEO on all pages
   - Mobile responsive: all pages render correctly at 375px
   - No horizontal scroll 375px–1440px
