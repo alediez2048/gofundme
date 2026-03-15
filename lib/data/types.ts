@@ -31,12 +31,16 @@ export interface User {
   communityIds: string[];
   donationIds: string[];
   totalDonated: number;
+  /** External profile URLs for Person schema `sameAs` (AEO) */
+  sameAs?: string[];
 }
 
 export interface FundraiserUpdate {
   id: string;
   date: string;
   text: string;
+  /** Named organizer quote for AEO citation visibility (+37%) */
+  quote?: string;
 }
 
 export interface Fundraiser {
@@ -75,6 +79,10 @@ export interface Community {
   fundraiserCount: number;
   memberCount: number;
   faq?: FAQItem[];
+  /** External org URLs for Organization schema `sameAs` (AEO) */
+  sameAs?: string[];
+  /** For Organization schema `nonprofitStatus` (AEO) */
+  nonprofitStatus?: string;
 }
 
 export interface Donation {

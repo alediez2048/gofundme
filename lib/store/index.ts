@@ -20,6 +20,8 @@ export interface StoreState {
   communities: EntityMap<Community>;
   donations: EntityMap<Donation>;
   traces: AITrace[];
+  /** ISO timestamp of last store mutation — used for `dateModified` in schema (AEO) */
+  lastModified: string;
 }
 
 function toRecord<T extends { id: string }>(arr: T[]): Record<string, T> {
@@ -33,6 +35,7 @@ function getInitialState(): StoreState {
     communities: toRecord(seed.communities),
     donations: toRecord(seed.donations),
     traces: [],
+    lastModified: new Date().toISOString(),
   };
 }
 
@@ -140,6 +143,7 @@ export const createFundRightStore = () => {
             const next: StoreState & StoreActions = {
               ...s,
               fundraisers: { ...s.fundraisers, [id]: fundraiser },
+              lastModified: new Date().toISOString(),
             };
             if (communityId && s.communities[communityId]) {
               const community = s.communities[communityId];
@@ -183,6 +187,7 @@ export const createFundRightStore = () => {
             const community = communityId ? state.communities[communityId] : undefined;
 
             return {
+              lastModified: new Date().toISOString(),
               donations: {
                 ...state.donations,
                 [donationId]: donation,
@@ -238,6 +243,7 @@ export const createFundRightStore = () => {
           fundraisers: state.fundraisers,
           communities: state.communities,
           donations: state.donations,
+          lastModified: state.lastModified,
         }),
       }
     )

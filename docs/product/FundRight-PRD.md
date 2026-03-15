@@ -6,9 +6,9 @@
 |---|---|
 | **Author** | Alex |
 | **Role** | Senior Product Manager |
-| **Status** | v2.0 — Revised for full-clone approach |
-| **Version** | 2.0 |
-| **Date** | March 9, 2026 |
+| **Status** | v3.0 — AEO/GEO citation strategy integrated |
+| **Version** | 3.0 |
+| **Date** | March 15, 2026 |
 | **Sprint Duration** | 2 Weeks (64 hours) |
 
 ---
@@ -56,7 +56,9 @@ Instead of 3 deep pages + AI + analytics dashboard, FundRight now ships as a **c
 - **JSON-LD schema** on every page type
 - **Edge case handling** for production-ready feel
 
-The AI features (Cause Intelligence, Impact Projections, Story Generator) and the analytics dashboard are **descoped** to stretch goals. They can be layered on after the core clone is complete, but they are no longer blocking.
+The AI layer (Phase 4) adds tool calling, RAG-grounded generation, and full observability with tracing — every AI feature works without an API key.
+
+**AEO/GEO differentiation:** FundRight is the first fundraising platform systematically optimized for AI citation. Every page produces structured data with `@id` cross-referencing and `sameAs` entity linking, answer-first content blocks (40-60 words, the optimal AI extraction length), and inline source citations designed to be extracted by Google AI Overviews, Perplexity, and ChatGPT Search. GoFundMe has zero structured data on community pages, noindexed profiles, and no DonateAction schema — this is FundRight's biggest competitive opening.
 
 ---
 
@@ -70,10 +72,11 @@ The AI features (Cause Intelligence, Impact Projections, Story Generator) and th
 | **Fundraiser creation** | Not defined | Simple form → publishes to store |
 | **Category browsing** | Not defined | Browse by cause category |
 | **Navigation** | Cross-page links only (FR-008) | Global nav shell + header/footer on every page |
-| **AI features** | Phase 2 (P1) | Stretch goals (P2) — build if time permits |
+| **AI features** | Phase 2 (P1) | Phase 4 — AI Intelligence Layer with AEO/GEO optimization |
+| **AEO/GEO** | Not considered | Core differentiator — structured data, answer-first content, inline citations for AI engine citation |
 | **Analytics dashboard** | Phase 2 (P1) | Descoped — not needed for clone demo |
 | **Event tracking** | Phase 2 (P0) | Descoped — focus on product flows |
-| **Schema/SEO** | Phase 2 | Moved into Phase 3 polish |
+| **Schema/SEO** | Phase 2 | Phase 3 polish + AEO enhancements (`@id`, `sameAs`, `dateModified`) |
 | **What's preserved** | FR-001 through FR-007 (done) | All completed work carries forward unchanged |
 
 ### Tickets removed or descoped
@@ -153,7 +156,7 @@ FundRight builds a complete (barebones) fundraising platform where every flow re
 | AI Runtime | OpenAI API (optional) | Tool calling for creation assistant, RAG for cause intelligence and discovery. All features have non-AI fallbacks. |
 | AI Orchestration | Custom AI service layer (`lib/ai/`) | Unified wrapper around all AI calls with automatic tracing, tool routing, and structured retrieval. |
 | Observability | Custom trace store (Zustand slice) | Every AI interaction logged with input, output, latency, token usage, tool chain. Viewable in traces panel. |
-| Schema/SEO | Custom JSON-LD generators | DonateAction, Person, Organization, FAQPage, BreadcrumbList. |
+| Schema/SEO | Custom JSON-LD generators + AEO content layer | DonateAction, Person, Organization, FAQPage, BreadcrumbList — with `@id` cross-referencing, `sameAs` entity linking, and `dateModified` freshness signals for AI citation optimization. |
 | Images | next/image + curated WebP assets | Blur-up placeholders, responsive srcset, lazy loading. |
 | Testing | Vitest (unit) + Lighthouse (perf) | Targeted tests on Zustand mutations. Lighthouse for performance gates. |
 | Deployment | Vercel (primary) + Local setup | Live URL for instant demo. Local fallback with zero-config setup. |
@@ -289,6 +292,18 @@ Metrics are simplified to focus on what matters for a barebones clone demo.
 | Tool call success rate | ≥ 90% of tool invocations return valid results | Tools must be robust against edge cases (empty communities, new fundraisers) |
 | AI latency (p95) | ≤ 3s for any single AI interaction | Users won't wait longer. Fallback kicks in if exceeded |
 | Traces panel load | All traces render within 500ms | The observability UI must itself be performant |
+
+### 5.6 AEO/GEO Citation Readiness
+
+| Metric | Target | Why |
+|---|---|---|
+| `@id` cross-referencing | Every entity schema links to related entities via `@id` | Only 4% of sites do this — connects the entity graph for AI engines |
+| `sameAs` coverage | Every Organization and Person schema has ≥3 `sameAs` links | Confirms entity identity across sources for AI knowledge graphs |
+| `dateModified` freshness | Every page schema includes `dateModified` reflecting last store mutation | Perplexity weighs freshness at ~40% of ranking; ChatGPT cites 76% from pages updated in last 30 days |
+| Answer-first content blocks | Every FAQ answer and AI-generated summary is 40-60 words, self-contained | Optimal extraction length for AI answer engines (Princeton GEO study) |
+| Inline source citations | Every AI-generated claim cites a specific fundraiser or data point | Content with explicit data attribution is cited at 4.2x the rate of content without |
+| FAQ prompt matching | Community FAQ questions match real user/AI queries | FAQ questions matching real prompts get 3.1x extraction rate |
+| Named quotes | Trust summaries and cause intelligence include attributed organizer quotes | Named expert quotes increase AI citation visibility by 37% |
 
 ---
 
@@ -491,6 +506,15 @@ Metrics are simplified to focus on what matters for a barebones clone demo.
 - ✅ Profile pages have `<meta name="robots" content="index, follow">`
 - ✅ Open Graph tags correctly set per page type
 
+**AEO/GEO Enhancements (update to existing schema implementation):**
+
+- ✅ `@id` cross-referencing: Fundraiser schema's `organizer` links to Profile page's Person `@id`; Profile's `memberOf` links to Community's Organization `@id`; Community's `hasPart` links to Fundraiser `@id`s
+- ✅ `sameAs` on Person schema: links to organizer's social profiles (from seed data `socialLinks` field)
+- ✅ `sameAs` on Organization schema: links to community's external profiles (Charity Navigator, social media)
+- ✅ `dateModified` on every page schema: dynamically set from the most recent store mutation timestamp (donation, fundraiser creation, or update)
+- ✅ `nonprofitStatus` on Organization schema for communities with nonprofit affiliation
+- ✅ DonateAction `recipient` structured as a full Organization or Person reference with `@id`, not just a name string
+
 ---
 
 ### FR-015: Accessibility Foundation & ARIA
@@ -639,7 +663,7 @@ Metrics are simplified to focus on what matters for a barebones clone demo.
 
 - ✅ "AI Assist" toggle on the create page (`/create`). When enabled, AI tools are available alongside the manual form
 - ✅ **Tool: `suggestGoalAmount`** — Input: category, community (optional). Retrieves fundraisers in same category/community from store, returns suggested goal with reasoning ("Similar fundraisers in this community average $3,200")
-- ✅ **Tool: `enhanceStory`** — Input: raw story text. Returns structured suggestions: clarity score, missing elements (impact, fund usage, urgency), rewritten paragraphs. Not a full rewrite — targeted improvements
+- ✅ **Tool: `enhanceStory`** — Input: raw story text. Returns structured suggestions: clarity score, missing elements (impact, fund usage, urgency), rewritten paragraphs. Not a full rewrite — targeted improvements. Includes AEO prompts: "Add a specific number — how many families will be helped?" and "Include a direct quote from someone affected"
 - ✅ **Tool: `assignCategory`** — Input: title + story. Returns suggested category with confidence score and reasoning
 - ✅ **Tool: `searchSimilarFundraisers`** — Input: title + story. Retrieves similar fundraisers from store by keyword overlap, returns top 3 with "how to differentiate" suggestions
 - ✅ Each tool call traced automatically (input, output, latency, tokens)
@@ -664,6 +688,7 @@ Metrics are simplified to focus on what matters for a barebones clone demo.
 - ✅ **Fallback (no API key):** Keyword-based client-side filter. Matches query words against fundraiser titles and story text. Sort options: "Closest to Goal", "Most Recent", "Most Funded", "Just Launched"
 - ✅ Fallback is the default experience — AI discovery is opt-in via a "Smart Search" toggle or icon
 - ✅ Works within a single community's fundraisers only (scoped retrieval)
+- ✅ **AEO:** AI-ranked results include a one-sentence explanation per fundraiser that follows the answer-first pattern: "This fundraiser is 87% funded and focuses on evacuation routes — closest match to your query"
 
 ---
 
@@ -684,6 +709,13 @@ Metrics are simplified to focus on what matters for a barebones clone demo.
 - ✅ **Fallback (no API key):** Static cause description from seed data (community's `description` field). Displayed as-is with no "AI-generated" label
 - ✅ AI-generated content has a subtle "AI-generated summary" label
 
+**AEO/GEO Output Requirements:**
+
+- ✅ Generated summary structured as answer-first blocks: each paragraph opens with a 40-60 word self-contained statement, followed by supporting evidence
+- ✅ Every factual claim includes an inline source citation linking to a specific fundraiser: "This community has raised $38,800 across 5 active campaigns ([Real-Time Alerts for Wildfire Safety](/f/wildfire-safety) leads with $2,102)"
+- ✅ Summary includes at least one named quote from an organizer (pulled from fundraiser updates in seed data)
+- ✅ Source attribution block at the end: "Based on [N] active fundraisers and [N] donations in this community"
+
 ---
 
 ### FR-024: Trust Summaries & Impact Projections
@@ -695,11 +727,13 @@ Metrics are simplified to focus on what matters for a barebones clone demo.
 
 **Acceptance Criteria:**
 
-**Trust Summaries (Fundraiser Page):**
-- ✅ Inline trust summary near the donate CTA: "Janahan has organized 3 fundraisers raising $12,400 total. Verified organizer since 2024. Active in the Watch Duty community."
+**Trust Summaries (Fundraiser Page) — AEO-Optimized:**
+- ✅ Inline trust summary near the donate CTA, structured as a **self-contained 40-60 word extractable block** that AI engines can quote verbatim
+- ✅ Example format: "Janahan has organized 3 fundraisers raising $12,400 total across 2 communities. Verified organizer since 2024. 21 donors have contributed to his campaigns, with an average donation of $58. Active member of the Watch Duty community."
+- ✅ Every claim cites platform data with inline attribution: "raising $12,400 total ([view fundraisers](/u/janahan#fundraisers))"
 - ✅ **Structured retrieval:** Pulls organizer's full history from store (all fundraisers, total raised, communities, verification status). No LLM needed for basic version
-- ✅ **Enhanced (with API key):** LLM generates a natural-language trust narrative from retrieved data. Traced
-- ✅ **Fallback:** Template-based: "{name} has organized {count} fundraisers raising {total}. Member of {communities}."
+- ✅ **Enhanced (with API key):** LLM generates a natural-language trust narrative from retrieved data. Traced. Output still follows 40-60 word extractable block format with inline citations
+- ✅ **Fallback:** Template-based with same AEO structure and inline citations: "{name} has organized {count} fundraisers raising {total} ([view all](/u/{username}#fundraisers)). Member of {communities}."
 
 **Impact Projections (Donation Modal):**
 - ✅ Dynamic impact statement updates as donor changes amount: "Your $50 provides wildfire alerts to 200 families for one month"
@@ -749,27 +783,27 @@ Metrics are simplified to focus on what matters for a barebones clone demo.
 | FR-005 | Community Page (/communities/[slug]) | Phase 1 | P0 | 4h | ✅ DONE |
 | FR-006 | Profile Page (/u/[username]) | Phase 1 | P0 | 4h | ✅ DONE |
 | FR-007 | Donation Flow & Modal | Phase 1 | P0 | 3h | ✅ DONE |
-| **FR-008** | **Homepage & Discovery** | **Phase 2** | **P0** | **4h** | TODO |
-| **FR-009** | **Global Navigation Shell** | **Phase 2** | **P0** | **3h** | TODO |
-| **FR-010** | **Fundraiser Creation Flow** | **Phase 2** | **P0** | **4h** | TODO |
-| **FR-011** | **Category Browse Page** | **Phase 2** | **P0** | **3h** | TODO |
-| **FR-012** | **Search** | **Phase 2** | **P1** | **3h** | TODO |
-| **FR-013** | **Responsive Layout** | **Phase 2** | **P0** | **4h** | TODO |
-| FR-014 | JSON-LD Schema Generators | Phase 3 | P1 | 3h | TODO |
+| FR-008 | Homepage & Discovery | Phase 2 | P0 | 4h | ✅ DONE |
+| FR-009 | Global Navigation Shell | Phase 2 | P0 | 3h | ✅ DONE |
+| FR-010 | Fundraiser Creation Flow | Phase 2 | P0 | 4h | ✅ DONE |
+| FR-011 | Category Browse Page | Phase 2 | P0 | 3h | ✅ DONE |
+| FR-012 | Search | Phase 2 | P1 | 3h | ✅ DONE |
+| FR-013 | Responsive Layout | Phase 2 | P0 | 4h | ✅ DONE |
+| FR-014 | JSON-LD Schema Generators | Phase 3 | P1 | 3h | ✅ DONE — AEO enhancements pending |
 | FR-015 | Accessibility Foundation & ARIA | Phase 3 | P1 | 3h | TODO |
 | FR-016 | Edge Case Handling & Designed States | Phase 3 | P1 | 3h | TODO |
 | FR-017 | Skeleton Loaders & Page Transitions | Phase 3 | P1 | 2h | TODO |
-| FR-018 | Unit Tests for Store Mutations | Phase 3 | P1 | 2h | TODO |
+| FR-018 | Unit Tests for Store Mutations | Phase 3 | P1 | 2h | ✅ DONE |
 | FR-019 | Deployment & QA | Phase 3 | P0 | 2h | TODO |
 
 ### Phase 4: AI Intelligence Layer
 
 | ID | Title | Phase | Priority | Est. | Status |
 |---|---|---|---|---|---|
-| **FR-020** | **AI Service Foundation & Trace Infrastructure** | **Phase 4** | **P0** | **3h** | TODO |
+| FR-020 | AI Service Foundation & Trace Infrastructure | Phase 4 | P0 | 3h | ✅ DONE |
 | **FR-021** | **Creation Assistant with Tool Calling** | **Phase 4** | **P1** | **3h** | TODO |
 | **FR-022** | **Community Discovery Assistant (RAG)** | **Phase 4** | **P1** | **3h** | TODO |
-| **FR-023** | **Cause Intelligence (RAG + Generation)** | **Phase 4** | **P1** | **2h** | TODO |
+| FR-023 | Cause Intelligence (RAG + Generation) | Phase 4 | P1 | 2h | ✅ DONE — AEO output format pending |
 | **FR-024** | **Trust Summaries & Impact Projections** | **Phase 4** | **P1** | **3h** | TODO |
 | **FR-025** | **AI Traces Panel** | **Phase 4** | **P1** | **2h** | TODO |
 
@@ -778,10 +812,10 @@ Metrics are simplified to focus on what matters for a barebones clone demo.
 | Phase | Tickets | Hours | Status |
 |---|---|---|---|
 | Phase 1 — MVP Core | 7 | 22h | ✅ COMPLETE |
-| Phase 2 — Full Clone | 6 | 21h | TODO |
-| Phase 3 — Polish & Ship | 6 | 16h | TODO |
-| Phase 4 — AI Intelligence | 6 | 16h | TODO |
-| **Total** | **25** | **~75h** | |
+| Phase 2 — Full Clone | 6 | 21h | ✅ COMPLETE |
+| Phase 3 — Polish & Ship | 6 | 16h | 2/6 DONE (FR-014, FR-018) |
+| Phase 4 — AI Intelligence | 6 | 16h | 2/6 DONE (FR-020, FR-023) |
+| **Total** | **25** | **~75h** | **17/25 done (68%)** |
 
 ---
 
@@ -801,6 +835,8 @@ Metrics are simplified to focus on what matters for a barebones clone demo.
 | AI hallucination in generated content | Medium | High | RAG grounds all generation in platform data (store retrieval). Source attribution links every claim to a specific fundraiser or entity. No open-ended generation. |
 | Trace storage fills localStorage | Low | Low | Traces capped at last 100 entries. "Clear traces" button available. Traces are dev-facing, not user-facing. |
 | Tool calling adds complexity to creation flow | Medium | Medium | Tools are optional enhancements on the existing manual form. AI Assist is a toggle — form works identically with it off. |
+| AEO content patterns feel unnatural | Medium | Medium | Answer-first blocks and inline citations are structured but must read naturally. Trust summaries use templates validated against real organizer data. AI-enhanced versions are reviewed for tone. |
+| AI citation landscape shifts rapidly | Medium | Low | AEO strategy is built on structural patterns (schema, content structure) not platform-specific hacks. `@id` cross-referencing, `sameAs`, and answer-first content work across all AI engines. |
 
 ---
 
@@ -853,6 +889,8 @@ All Phase 1 tickets are done. No remaining dependencies.
 6. FR-025 (Traces Panel) — can run anytime after FR-020, best saved for last to show all traces
 
 **Note:** FR-020 can be started in parallel with Phase 2 work since it only depends on the Zustand store (Phase 1). This allows AI infrastructure to be ready before Phase 2 completes.
+
+**AEO Enhancement Path:** FR-014 (schema, done) and FR-023 (cause intelligence, done) both need AEO-specific output updates. These can be done as follow-up commits without blocking other work. FR-024 (trust + impact) should be built with AEO patterns from the start — it is the single highest-impact ticket for AI citation readiness.
 
 ```
 Phase 1 (DONE)           Phase 2                Phase 3           Phase 4
