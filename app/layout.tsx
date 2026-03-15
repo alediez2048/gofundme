@@ -3,6 +3,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AITracesBadge from "@/components/AITracesBadge";
+import SchemaViewerToggle from "@/components/SchemaViewerToggle";
 
 export const metadata: Metadata = {
   title: "FundRight — AI-Powered Fundraising",
@@ -29,6 +30,7 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <SchemaViewerToggle />
         <AITracesBadge />
       </body>
     </html>
