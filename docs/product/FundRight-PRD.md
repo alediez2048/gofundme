@@ -808,11 +808,11 @@ Metrics are simplified to focus on what matters for a barebones clone demo.
 | ID | Title | Phase | Priority | Est. | Status |
 |---|---|---|---|---|---|
 | FR-020 | AI Service Foundation & Trace Infrastructure | Phase 4 | P0 | 3h | ✅ DONE |
-| **FR-021** | **Creation Assistant with Tool Calling** | **Phase 4** | **P1** | **3h** | TODO |
-| **FR-022** | **Community Discovery Assistant (RAG)** | **Phase 4** | **P1** | **3h** | TODO |
+| FR-021 | Creation Assistant with Tool Calling | Phase 4 | P1 | 3h | ✅ DONE |
+| FR-022 | Community Discovery Assistant (RAG) | Phase 4 | P1 | 3h | ✅ DONE |
 | FR-023 | Cause Intelligence (RAG + Generation) | Phase 4 | P1 | 2h | ✅ DONE — AEO enhanced |
-| **FR-024** | **Trust Summaries & Impact Projections** | **Phase 4** | **P1** | **3h** | TODO |
-| **FR-025** | **AI Traces Panel** | **Phase 4** | **P1** | **2h** | TODO |
+| FR-024 | Trust Summaries & Impact Projections | Phase 4 | P1 | 3h | ✅ DONE |
+| FR-025 | AI Traces Panel | Phase 4 | P1 | 2h | ✅ DONE |
 
 ### Totals
 
@@ -821,8 +821,8 @@ Metrics are simplified to focus on what matters for a barebones clone demo.
 | Phase 1 — MVP Core | 7 | 22h | ✅ COMPLETE |
 | Phase 2 — Full Clone | 6 | 21h | ✅ COMPLETE |
 | Phase 3 — Polish & Ship | 6 | 16h | 5/6 DONE (FR-019 in progress) |
-| Phase 4 — AI Intelligence | 6 | 16h | 2/6 DONE (FR-020, FR-023) |
-| **Total** | **25** | **~75h** | **21/25 done (84%)** |
+| Phase 4 — AI Intelligence | 6 | 16h | ✅ COMPLETE |
+| **Total** | **25** | **~75h** | **24/25 done (96%)** |
 
 ---
 

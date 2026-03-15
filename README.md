@@ -38,6 +38,7 @@ Without the key, all AI features fall back to static seed content.
 | `/u/[username]` | Profile — trust layer with giving history and impact stats |
 | `/create` | Create a new fundraiser |
 | `/search?q=` | Full-text search across fundraisers, communities, people |
+| `/ai-traces` | AI observability — traces, metrics, fallback rate |
 
 ---
 

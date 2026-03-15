@@ -92,12 +92,30 @@ export function startTrace(feature: string, prompt: string): TraceBuilder {
   };
 }
 
+/** In-memory trace store for server-side collection. */
+const MAX_SERVER_TRACES = 50;
+const serverTraces: AITrace[] = [];
+
 /** Structured log for Vercel / server-side observability. */
 function logTrace(trace: AITrace): void {
+  serverTraces.push(trace);
+  if (serverTraces.length > MAX_SERVER_TRACES) {
+    serverTraces.shift();
+  }
   console.log(
     JSON.stringify({
       type: "ai_trace",
       ...trace,
     })
   );
+}
+
+/** Get all server-side traces (most recent last). */
+export function getServerTraces(): AITrace[] {
+  return [...serverTraces];
+}
+
+/** Clear server-side traces. */
+export function clearServerTraces(): void {
+  serverTraces.length = 0;
 }

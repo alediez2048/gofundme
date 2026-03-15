@@ -3,10 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useFundRightStore } from "@/lib/store";
 import { BLUR_DATA_URL, calculateProgress, formatCurrency } from "@/lib/utils";
 import type { User, Community } from "@/lib/data";
+import { buildTrustSummary } from "@/lib/ai/trust-impact";
 import Breadcrumbs from "./Breadcrumbs";
 import PageTransition from "./PageTransition";
 import DonationModal from "./DonationModal";
@@ -25,6 +26,38 @@ function formatStory(text: string): React.ReactNode {
       )}
     </p>
   ));
+}
+
+function TrustSummaryBlock({ organizer }: { organizer: User }) {
+  const fundraisers = useFundRightStore((s) => s.fundraisers);
+  const communities = useFundRightStore((s) => s.communities);
+
+  const trust = useMemo(
+    () =>
+      buildTrustSummary(
+        organizer,
+        Object.values(fundraisers),
+        Object.values(communities)
+      ),
+    [organizer, fundraisers, communities]
+  );
+
+  if (trust.stats.campaignCount === 0) return null;
+
+  return (
+    <div className="rounded-lg bg-stone-50 border border-stone-200 p-4">
+      <h3 className="text-sm font-semibold text-stone-700 mb-2">
+        Why trust this organizer
+      </h3>
+      <p className="text-sm text-stone-700">{trust.text}</p>
+      <Link
+        href={`/u/${organizer.username}`}
+        className="mt-2 inline-block text-xs font-medium text-primary hover:underline"
+      >
+        View full profile
+      </Link>
+    </div>
+  );
 }
 
 function FundraiserBySlug({ slug }: { slug: string }) {
@@ -243,6 +276,9 @@ function FundraiserBySlug({ slug }: { slug: string }) {
             );
           })()}
 
+          {/* FR-024: Trust Summary */}
+          {organizer && <TrustSummaryBlock organizer={organizer} />}
+
           {/* Donate CTA */}
           <div>
             <button
@@ -266,6 +302,7 @@ function FundraiserBySlug({ slug }: { slug: string }) {
           onClose={() => setModalOpen(false)}
           fundraiserId={fundraiser.id}
           fundraiserTitle={fundraiser.title}
+          causeCategory={fundraiser.causeCategory}
           users={users}
           triggerRef={donateButtonRef}
           onSuccess={(donorUsername) =>

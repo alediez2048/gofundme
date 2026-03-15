@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { getStore } from "@/lib/store";
-import type { User } from "@/lib/data";
+import type { CauseCategory, User } from "@/lib/data";
+import { getImpactProjection } from "@/lib/ai/trust-impact";
 
 const PRESETS = [25, 50, 100, 250] as const;
 
@@ -11,6 +12,7 @@ export interface DonationModalProps {
   onClose: () => void;
   fundraiserId: string;
   fundraiserTitle: string;
+  causeCategory?: CauseCategory;
   users: Record<string, User>;
   triggerRef?: React.RefObject<HTMLButtonElement | null>;
   onSuccess: (donorUsername: string) => void;
@@ -21,6 +23,7 @@ export default function DonationModal({
   onClose,
   fundraiserId,
   fundraiserTitle,
+  causeCategory,
   users,
   triggerRef,
   onSuccess,
@@ -134,6 +137,16 @@ export default function DonationModal({
               className="mt-1 block w-full rounded border border-stone-300 px-3 py-2 text-stone-900 sm:ml-2 sm:inline sm:w-32"
             />
           </label>
+
+          {/* FR-024: Impact Projection */}
+          {causeCategory && typeof amount === "number" && amount > 0 && (() => {
+            const impact = getImpactProjection(amount, causeCategory);
+            return impact ? (
+              <p className="mt-2 rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+                {impact}
+              </p>
+            ) : null;
+          })()}
         </div>
 
         <div className="mt-4">

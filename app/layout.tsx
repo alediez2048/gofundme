@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import AITracesBadge from "@/components/AITracesBadge";
 
 export const metadata: Metadata = {
   title: "FundRight — AI-Powered Fundraising",
@@ -28,6 +29,7 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <AITracesBadge />
       </body>
     </html>
   );

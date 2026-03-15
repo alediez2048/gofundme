@@ -3,17 +3,19 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useFundRightStore } from "@/lib/store";
 import { BLUR_DATA_URL, calculateProgress, formatCurrency } from "@/lib/utils";
 import type { Fundraiser, User } from "@/lib/data";
 import type { CauseSummaryResult } from "@/lib/ai/cause-intelligence";
+import { keywordFilter } from "@/lib/ai/community-discovery";
+import type { RankedFundraiser } from "@/lib/ai/community-discovery";
 import Breadcrumbs from "./Breadcrumbs";
 import PageTransition from "./PageTransition";
 import ProgressBar from "./ProgressBar";
 import UserAvatar from "./UserAvatar";
 
-function FundraiserCard({ f, organizer }: { f: Fundraiser; organizer: User | undefined }) {
+function FundraiserCard({ f, organizer, explanation }: { f: Fundraiser; organizer: User | undefined; explanation?: string }) {
   return (
     <div className="rounded-xl border border-stone-200 bg-white overflow-hidden hover:border-primary/30 transition-colors">
       <Link href={`/f/${f.slug}`} className="block">
@@ -50,7 +52,194 @@ function FundraiserCard({ f, organizer }: { f: Fundraiser; organizer: User | und
         <p className="mt-2 text-sm font-medium text-stone-700">
           {formatCurrency(f.raisedAmount)} of {formatCurrency(f.goalAmount)}
         </p>
+        {explanation && (
+          <p className="mt-2 text-xs text-primary/80 italic">{explanation}</p>
+        )}
       </div>
+    </div>
+  );
+}
+
+type SortOption = "popular" | "closest" | "most-funded" | "just-launched";
+
+function FundraiserSearch({
+  fundraisers,
+  users: usersMap,
+}: {
+  fundraisers: Fundraiser[];
+  users: Record<string, User>;
+}) {
+  const [query, setQuery] = useState("");
+  const [smartSearch, setSmartSearch] = useState(false);
+  const [sort, setSort] = useState<SortOption>("popular");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiRanked, setAiRanked] = useState<RankedFundraiser[] | null>(null);
+
+  const handleSmartSearch = useCallback(async () => {
+    if (!query.trim() || !smartSearch) return;
+    setAiLoading(true);
+    setAiRanked(null);
+    try {
+      const res = await fetch("/api/ai/community-discover", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: query.trim(), fundraisers }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.ranked && data.ranked.length > 0) {
+          setAiRanked(data.ranked);
+        }
+      }
+    } catch {
+      // Silently fail, fall back to keyword
+    } finally {
+      setAiLoading(false);
+    }
+  }, [query, smartSearch, fundraisers]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (smartSearch) handleSmartSearch();
+    }
+  };
+
+  // If AI returned ranked results, use those
+  const aiFilteredFundraisers = useMemo(() => {
+    if (!aiRanked || aiRanked.length === 0) return null;
+    const idOrder = aiRanked.map((r) => r.fundraiserId);
+    const explanationMap = new Map(aiRanked.map((r) => [r.fundraiserId, r.explanation]));
+    const result = idOrder
+      .map((id) => fundraisers.find((f) => f.id === id))
+      .filter(Boolean) as Fundraiser[];
+    return { fundraisers: result, explanationMap };
+  }, [aiRanked, fundraisers]);
+
+  // Keyword filtered + sorted fundraisers (fallback)
+  const filteredFundraisers = useMemo(() => {
+    let list = query.trim() ? keywordFilter(query, fundraisers) : [...fundraisers];
+
+    switch (sort) {
+      case "closest":
+        list.sort((a, b) => {
+          const pctA = a.goalAmount > 0 ? a.raisedAmount / a.goalAmount : 0;
+          const pctB = b.goalAmount > 0 ? b.raisedAmount / b.goalAmount : 0;
+          return pctB - pctA;
+        });
+        break;
+      case "most-funded":
+        list.sort((a, b) => b.raisedAmount - a.raisedAmount);
+        break;
+      case "just-launched":
+        list.sort((a, b) => a.donationCount - b.donationCount);
+        break;
+      default: // popular
+        list.sort((a, b) => b.donationCount - a.donationCount);
+    }
+
+    return list;
+  }, [query, fundraisers, sort]);
+
+  const displayList = aiFilteredFundraisers?.fundraisers ?? filteredFundraisers;
+  const explanationMap = aiFilteredFundraisers?.explanationMap;
+
+  return (
+    <div>
+      {/* Search bar */}
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="relative flex-1">
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setAiRanked(null);
+            }}
+            onKeyDown={handleKeyDown}
+            placeholder={
+              smartSearch
+                ? "Describe what you're looking for..."
+                : "Filter by keyword..."
+            }
+            className="block w-full rounded-lg border border-stone-300 px-4 py-2 pr-10 text-sm text-stone-900 focus:border-primary focus:ring-1 focus:ring-primary"
+          />
+          {aiLoading && (
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-stone-400 animate-pulse">
+              Searching...
+            </span>
+          )}
+        </div>
+
+        {/* Sort dropdown (keyword mode only) */}
+        {!smartSearch && (
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value as SortOption)}
+            className="rounded-lg border border-stone-300 px-3 py-2 text-sm text-stone-700 focus:border-primary focus:ring-1 focus:ring-primary"
+          >
+            <option value="popular">Most Popular</option>
+            <option value="closest">Closest to Goal</option>
+            <option value="most-funded">Most Funded</option>
+            <option value="just-launched">Just Launched</option>
+          </select>
+        )}
+
+        {/* Smart Search toggle */}
+        <button
+          type="button"
+          onClick={() => {
+            setSmartSearch(!smartSearch);
+            setAiRanked(null);
+          }}
+          className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
+            smartSearch
+              ? "bg-primary text-primary-foreground"
+              : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+          }`}
+          title="AI-powered natural language search"
+        >
+          <span aria-hidden="true">&#x2728;</span>
+          Smart Search
+        </button>
+
+        {smartSearch && query.trim() && (
+          <button
+            type="button"
+            onClick={handleSmartSearch}
+            disabled={aiLoading}
+            className="rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50"
+          >
+            Search
+          </button>
+        )}
+      </div>
+
+      {/* AI attribution */}
+      {aiFilteredFundraisers && (
+        <p className="mb-3 text-xs text-stone-500 italic">
+          AI-ranked results for &ldquo;{query}&rdquo;
+        </p>
+      )}
+
+      {/* Results */}
+      {displayList.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-stone-300 bg-stone-50 py-8 text-center">
+          <p className="text-stone-600">No fundraisers match your search.</p>
+        </div>
+      ) : (
+        <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {displayList.map((f) => (
+            <li key={f.id}>
+              <FundraiserCard
+                f={f}
+                organizer={usersMap[f.organizerId]}
+                explanation={explanationMap?.get(f.id)}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
@@ -252,7 +441,7 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
         </section>
       )}
 
-      {/* Fundraiser directory */}
+      {/* Fundraiser directory with search/filter (FR-022) */}
       <section>
         <h2 className="text-lg font-semibold text-stone-900 mb-4 sm:text-xl">
           Active fundraisers
@@ -269,13 +458,7 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
             </Link>
           </div>
         ) : (
-          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {sortedFundraisers.map((f) => (
-              <li key={f.id}>
-                <FundraiserCard f={f} organizer={users[f.organizerId]} />
-              </li>
-            ))}
-          </ul>
+          <FundraiserSearch fundraisers={sortedFundraisers} users={users} />
         )}
       </section>
 
