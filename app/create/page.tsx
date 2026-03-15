@@ -147,7 +147,7 @@ function CategoryResult({
 function SimilarResult({ data }: { data: SimilarFundraisersResult }) {
   if (data.similar.length === 0) {
     return (
-      <div className="mt-2 rounded-lg border border-stone-200 bg-stone-50 p-3 text-sm text-stone-600">
+      <div className="mt-2 rounded-lg border border-gray-200 bg-gray-50 p-3 text-sm text-secondary">
         No similar fundraisers found — your campaign is unique!
       </div>
     );
@@ -285,19 +285,19 @@ export default function CreateFundraiserPage() {
   return (
     <div className="mx-auto max-w-xl space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-stone-900 tracking-tight sm:text-3xl">
+        <h1 className="text-2xl font-bold text-heading tracking-tight sm:text-3xl">
           Start a FundRight
         </h1>
-        <p className="mt-2 text-stone-600">
+        <p className="mt-2 text-secondary">
           Create your campaign. It will appear on the homepage, in browse, and on your profile.
         </p>
       </div>
 
       {/* AI Assist toggle */}
-      <div className="flex items-center justify-between rounded-lg border border-stone-200 bg-stone-50 px-4 py-3">
+      <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
         <div>
-          <p className="text-sm font-medium text-stone-900">AI Assist</p>
-          <p className="text-xs text-stone-500">
+          <p className="text-sm font-medium text-heading">AI Assist</p>
+          <p className="text-xs text-secondary">
             Get AI-powered suggestions for your campaign
           </p>
         </div>
@@ -307,7 +307,7 @@ export default function CreateFundraiserPage() {
           aria-checked={aiAssist}
           onClick={() => setAiAssist(!aiAssist)}
           className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
-            aiAssist ? "bg-primary" : "bg-stone-300"
+            aiAssist ? "bg-primary" : "bg-gray-300"
           }`}
         >
           <span
@@ -320,9 +320,9 @@ export default function CreateFundraiserPage() {
 
       {/* Static tips when AI is off */}
       {!aiAssist && (
-        <div className="rounded-lg border border-stone-200 bg-stone-50 p-4">
-          <p className="text-sm font-medium text-stone-700 mb-2">Tips for a stronger campaign:</p>
-          <ul className="list-disc pl-4 space-y-1 text-sm text-stone-600">
+        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+          <p className="text-sm font-medium text-heading mb-2">Tips for a stronger campaign:</p>
+          <ul className="list-disc pl-4 space-y-1 text-sm text-secondary">
             {STATIC_TIPS.map((tip) => (
               <li key={tip}>{tip}</li>
             ))}
@@ -333,7 +333,7 @@ export default function CreateFundraiserPage() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Title */}
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-stone-700">
+          <label htmlFor="title" className="block text-sm font-medium text-heading">
             Campaign title
           </label>
           <input
@@ -342,10 +342,10 @@ export default function CreateFundraiserPage() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             maxLength={80}
-            className="mt-1 block w-full rounded-lg border border-stone-300 px-4 py-2 text-stone-900 focus:border-primary focus:ring-1 focus:ring-primary"
+            className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-heading focus:border-primary focus:ring-1 focus:ring-primary"
             placeholder="e.g. Real-Time Alerts for Wildfire Safety"
           />
-          <p className="mt-1 text-xs text-stone-500">{title.length}/80</p>
+          <p className="mt-1 text-xs text-secondary">{title.length}/80</p>
           {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title}</p>}
 
           {/* AI: auto-categorize + find similar */}
@@ -375,7 +375,7 @@ export default function CreateFundraiserPage() {
 
         {/* Goal */}
         <div>
-          <label htmlFor="goalAmount" className="block text-sm font-medium text-stone-700">
+          <label htmlFor="goalAmount" className="block text-sm font-medium text-heading">
             Goal amount ($)
           </label>
           <input
@@ -385,7 +385,7 @@ export default function CreateFundraiserPage() {
             step={1}
             value={goalAmount}
             onChange={(e) => setGoalAmount(e.target.value)}
-            className="mt-1 block w-full rounded-lg border border-stone-300 px-4 py-2 text-stone-900 focus:border-primary focus:ring-1 focus:ring-primary"
+            className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-heading focus:border-primary focus:ring-1 focus:ring-primary"
             placeholder="100"
           />
           {errors.goalAmount && <p className="mt-1 text-sm text-red-600">{errors.goalAmount}</p>}
@@ -411,7 +411,7 @@ export default function CreateFundraiserPage() {
 
         {/* Story */}
         <div>
-          <label htmlFor="story" className="block text-sm font-medium text-stone-700">
+          <label htmlFor="story" className="block text-sm font-medium text-heading">
             Story
           </label>
           <textarea
@@ -419,10 +419,10 @@ export default function CreateFundraiserPage() {
             value={story}
             onChange={(e) => setStory(e.target.value)}
             rows={8}
-            className="mt-1 block w-full rounded-lg border border-stone-300 px-4 py-2 text-stone-900 focus:border-primary focus:ring-1 focus:ring-primary"
+            className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-heading focus:border-primary focus:ring-1 focus:ring-primary"
             placeholder="Explain your cause, who it helps, and why now. 300+ words is recommended for stronger impact."
           />
-          <p className="mt-1 text-xs text-stone-500">
+          <p className="mt-1 text-xs text-secondary">
             {wordCount(story)} words (min 50, 300+ recommended)
           </p>
           {errors.story && <p className="mt-1 text-sm text-red-600">{errors.story}</p>}
@@ -443,14 +443,14 @@ export default function CreateFundraiserPage() {
 
         {/* Category */}
         <div>
-          <label htmlFor="causeCategory" className="block text-sm font-medium text-stone-700">
+          <label htmlFor="causeCategory" className="block text-sm font-medium text-heading">
             Cause category
           </label>
           <select
             id="causeCategory"
             value={causeCategory}
             onChange={(e) => setCauseCategory(e.target.value as CauseCategory | "")}
-            className="mt-1 block w-full rounded-lg border border-stone-300 px-4 py-2 text-stone-900 focus:border-primary focus:ring-1 focus:ring-primary"
+            className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-heading focus:border-primary focus:ring-1 focus:ring-primary"
           >
             <option value="">Select a category</option>
             {CAUSE_CATEGORIES.map((c) => (
@@ -464,14 +464,14 @@ export default function CreateFundraiserPage() {
 
         {/* Community */}
         <div>
-          <label htmlFor="communityId" className="block text-sm font-medium text-stone-700">
+          <label htmlFor="communityId" className="block text-sm font-medium text-heading">
             Community (optional)
           </label>
           <select
             id="communityId"
             value={communityId}
             onChange={(e) => setCommunityId(e.target.value)}
-            className="mt-1 block w-full rounded-lg border border-stone-300 px-4 py-2 text-stone-900 focus:border-primary focus:ring-1 focus:ring-primary"
+            className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-heading focus:border-primary focus:ring-1 focus:ring-primary"
           >
             <option value="">No community</option>
             {communities.map((c) => (
@@ -484,8 +484,8 @@ export default function CreateFundraiserPage() {
 
         {/* Cover image */}
         <div>
-          <span className="block text-sm font-medium text-stone-700">Cover image</span>
-          <p className="mt-1 text-xs text-stone-500">Choose a preset image for your campaign.</p>
+          <span className="block text-sm font-medium text-heading">Cover image</span>
+          <p className="mt-1 text-xs text-secondary">Choose a preset image for your campaign.</p>
           <div className="mt-2 flex flex-wrap gap-3">
             {PRESET_HERO_IMAGES.map((preset) => (
               <button
@@ -493,7 +493,7 @@ export default function CreateFundraiserPage() {
                 type="button"
                 onClick={() => setHeroImageUrl(preset.url)}
                 className={`relative h-20 w-28 overflow-hidden rounded-lg border-2 transition-colors ${
-                  heroImageUrl === preset.url ? "border-primary" : "border-stone-200 hover:border-stone-300"
+                  heroImageUrl === preset.url ? "border-primary" : "border-gray-200 hover:border-gray-300"
                 }`}
               >
                 <Image
@@ -510,14 +510,14 @@ export default function CreateFundraiserPage() {
 
         {/* Organizer */}
         <div>
-          <label htmlFor="organizerId" className="block text-sm font-medium text-stone-700">
+          <label htmlFor="organizerId" className="block text-sm font-medium text-heading">
             Donating as (organizer)
           </label>
           <select
             id="organizerId"
             value={effectiveOrganizerId}
             onChange={(e) => setOrganizerId(e.target.value)}
-            className="mt-1 block w-full rounded-lg border border-stone-300 px-4 py-2 text-stone-900 focus:border-primary focus:ring-1 focus:ring-primary"
+            className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-heading focus:border-primary focus:ring-1 focus:ring-primary"
           >
             {users.map((u) => (
               <option key={u.id} value={u.id}>
@@ -525,7 +525,7 @@ export default function CreateFundraiserPage() {
               </option>
             ))}
           </select>
-          <p className="mt-1 text-xs text-stone-500">This person will be listed as the organizer.</p>
+          <p className="mt-1 text-xs text-secondary">This person will be listed as the organizer.</p>
         </div>
 
         {/* Submit */}
@@ -540,7 +540,7 @@ export default function CreateFundraiserPage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="rounded-lg border border-stone-300 px-6 py-3 font-medium text-stone-700 hover:bg-stone-50"
+            className="rounded-lg border border-gray-300 px-6 py-3 font-medium text-heading hover:bg-gray-50"
           >
             Cancel
           </button>

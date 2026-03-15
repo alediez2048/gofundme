@@ -12,7 +12,7 @@ export default function UserAvatar({
 }) {
   return (
     <span
-      className={`relative shrink-0 overflow-hidden rounded-full bg-stone-200 ${className}`}
+      className={`relative shrink-0 overflow-hidden rounded-full bg-gray-200 ${className}`}
       style={{ width: size, height: size }}
     >
       <Image

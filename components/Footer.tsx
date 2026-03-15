@@ -1,40 +1,65 @@
 import Link from "next/link";
 
-/**
- * TODO: Replace About / How It Works with real routes or homepage sections when
- * FR-008+ adds dedicated content. For now these link to homepage anchors (no
- * section IDs yet) — intentional placeholder to avoid dead /browse-style 404s.
- */
-const QUICK_LINKS = [
-  { href: "/#about", label: "About" },
-  { href: "/#how-it-works", label: "How It Works" },
-  { href: "/browse", label: "Browse" },
-  { href: "/communities", label: "Communities" },
+const FOOTER_COLUMNS = [
+  {
+    heading: "Donate",
+    links: [
+      { href: "/browse", label: "Browse Fundraisers" },
+      { href: "/communities", label: "Communities" },
+    ],
+  },
+  {
+    heading: "Fundraise",
+    links: [
+      { href: "/create", label: "Start a Fundraiser" },
+    ],
+  },
+  {
+    heading: "About",
+    links: [
+      { href: "/#about", label: "About FundRight" },
+      { href: "/#how-it-works", label: "How It Works" },
+    ],
+  },
+  {
+    heading: "Resources",
+    links: [
+      { href: "/ai-traces", label: "AI Traces" },
+    ],
+  },
 ] as const;
 
 export default function Footer() {
-  const year = new Date().getFullYear();
   return (
-    <footer className="border-t border-stone-200 bg-stone-100 py-6 sm:py-8" role="contentinfo">
+    <footer className="bg-[#1a1a1a] py-10 sm:py-14" role="contentinfo">
       <div className="mx-auto max-w-6xl px-4">
-        <p className="text-sm text-stone-600 max-w-xl">
-          FundRight is a fundraising platform where donors discover causes, support campaigns,
-          and see impact. Organizers build trust through profiles and communities.
-        </p>
-        <nav className="mt-4 flex flex-wrap gap-x-6 gap-y-2" aria-label="Footer">
-          {QUICK_LINKS.map(({ href, label }) => (
-            <Link
-              key={href}
-              href={href}
-              className="text-sm font-medium text-stone-700 hover:text-primary"
-            >
-              {label}
-            </Link>
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+          {FOOTER_COLUMNS.map((col) => (
+            <div key={col.heading}>
+              <h3 className="mb-3 text-sm font-semibold text-white">
+                {col.heading}
+              </h3>
+              <ul className="space-y-2">
+                {col.links.map(({ href, label }) => (
+                  <li key={href}>
+                    <Link
+                      href={href}
+                      className="text-sm text-gray-400 transition-colors hover:text-white"
+                    >
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
-        </nav>
-        <p className="mt-6 text-xs text-stone-500">
-          © {year} FundRight. All rights reserved.
-        </p>
+        </div>
+
+        <div className="mt-10 border-t border-gray-700 pt-6">
+          <p className="text-xs text-gray-500">
+            &copy; 2026 FundRight
+          </p>
+        </div>
       </div>
     </footer>
   );

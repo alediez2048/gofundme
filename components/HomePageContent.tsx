@@ -48,36 +48,38 @@ export default function HomePageContent() {
 
   return (
     <PageTransition>
-    <div className="space-y-8 sm:space-y-12">
+    <div>
       {/* Hero */}
-      <section className="text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-stone-900 sm:text-5xl">
-          Find causes that matter. Give with confidence.
+      <section className="py-16 sm:py-24 text-center">
+        <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-heading">
+          Successful fundraisers
+          <br />
+          start here
         </h1>
-        <p className="mx-auto mt-4 max-w-xl text-lg text-stone-600">
+        <p className="mx-auto mt-6 max-w-2xl text-lg text-secondary">
           Discover fundraisers, join communities, and support organizers you can trust.
         </p>
-        <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+        <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Link
             href="/create"
-            className="rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            className="rounded-full bg-primary px-8 py-4 text-lg font-semibold text-primary-foreground hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-opacity"
           >
             Start a FundRight
           </Link>
         </div>
-        <form onSubmit={handleSearch} className="mx-auto mt-8 max-w-md">
-          <div className="flex rounded-lg border border-stone-300 bg-white shadow-sm focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
+        <form onSubmit={handleSearch} className="mx-auto mt-8 max-w-lg">
+          <div className="flex rounded-full border border-gray-300 bg-white shadow-sm focus-within:ring-2 focus-within:ring-primary focus-within:border-primary overflow-hidden">
             <input
               ref={searchInputRef}
               type="search"
               name="q"
               placeholder="Search fundraisers, communities, people..."
-              className="min-w-0 flex-1 rounded-l-lg border-0 px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-0"
+              className="min-w-0 flex-1 border-0 px-6 py-3 text-heading placeholder-gray-400 focus:outline-none focus:ring-0"
               aria-label="Search"
             />
             <button
               type="submit"
-              className="rounded-r-lg bg-stone-100 px-4 py-3 font-medium text-stone-700 hover:bg-stone-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
+              className="bg-gray-100 px-5 py-3 font-medium text-heading hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
             >
               Search
             </button>
@@ -85,46 +87,45 @@ export default function HomePageContent() {
         </form>
       </section>
 
-      {/* Platform stats */}
-      <section className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm sm:p-6">
-        <dl className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-8">
-          <div>
-            <dt className="text-sm font-medium text-stone-500">Total raised</dt>
-            <dd className="mt-1 text-xl font-bold text-stone-900 sm:text-2xl">
+      {/* Stats ticker row */}
+      <section className="py-8 border-y border-gray-200">
+        <dl className="mx-auto flex flex-wrap justify-center gap-8 sm:gap-16">
+          <div className="text-center">
+            <dd className="text-2xl sm:text-3xl font-bold text-heading">
               {formatCurrency(totalRaised)}
             </dd>
+            <dt className="mt-1 text-sm font-medium text-secondary">Total raised</dt>
           </div>
-          <div>
-            <dt className="text-sm font-medium text-stone-500">Total donations</dt>
-            <dd className="mt-1 text-xl font-bold text-stone-900 sm:text-2xl">{totalDonations}</dd>
+          <div className="text-center">
+            <dd className="text-2xl sm:text-3xl font-bold text-heading">{totalDonations}</dd>
+            <dt className="mt-1 text-sm font-medium text-secondary">Total donations</dt>
           </div>
-          <div>
-            <dt className="text-sm font-medium text-stone-500">Active fundraisers</dt>
-            <dd className="mt-1 text-xl font-bold text-stone-900 sm:text-2xl">{activeFundraisers}</dd>
+          <div className="text-center">
+            <dd className="text-2xl sm:text-3xl font-bold text-heading">{activeFundraisers}</dd>
+            <dt className="mt-1 text-sm font-medium text-secondary">Active fundraisers</dt>
           </div>
-          <div>
-            <dt className="text-sm font-medium text-stone-500">Active communities</dt>
-            <dd className="mt-1 text-xl font-bold text-stone-900 sm:text-2xl">{activeCommunities}</dd>
+          <div className="text-center">
+            <dd className="text-2xl sm:text-3xl font-bold text-heading">{activeCommunities}</dd>
+            <dt className="mt-1 text-sm font-medium text-secondary">Active communities</dt>
           </div>
         </dl>
       </section>
 
-      {/* Trending Fundraisers */}
-      <section>
-        <h2 className="text-xl font-bold text-stone-900 sm:text-2xl">Trending Fundraisers</h2>
-        <p className="mt-1 text-stone-600">
-          Top campaigns by donor support
-        </p>
-        <ul className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Discover Fundraisers */}
+      <section className="py-12 sm:py-16">
+        <h2 className="text-2xl sm:text-3xl font-bold text-heading">
+          Discover fundraisers inspired by what you care about
+        </h2>
+        <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {trendingFundraisers.map((f) => {
             const organizer = users[f.organizerId];
             return (
               <li key={f.id}>
                 <Link
                   href={`/f/${f.slug}`}
-                  className="block overflow-hidden rounded-xl border border-stone-200 bg-white transition-colors hover:border-primary/30 focus-visible:outline-offset-4"
+                  className="block overflow-hidden rounded-xl border border-gray-200 bg-white transition-colors hover:border-primary/30 focus-visible:outline-offset-4"
                 >
-                  <div className="relative aspect-[16/10] w-full bg-stone-200">
+                  <div className="relative aspect-[16/10] w-full bg-gray-200">
                     <Image
                       src={f.heroImageUrl}
                       alt={f.title}
@@ -136,14 +137,14 @@ export default function HomePageContent() {
                     />
                   </div>
                   <div className="p-4">
-                    <h3 className="font-semibold text-stone-900 line-clamp-2">{f.title}</h3>
+                    <h3 className="font-semibold text-heading line-clamp-2">{f.title}</h3>
                     {organizer && (
-                      <p className="mt-1 text-sm text-stone-600">By {organizer.name}</p>
+                      <p className="mt-1 text-sm text-secondary">By {organizer.name}</p>
                     )}
                     <div className="mt-3">
                       <ProgressBar raised={f.raisedAmount} goal={f.goalAmount} height="h-2" animate={false} />
                     </div>
-                    <p className="mt-2 text-sm font-medium text-stone-700">
+                    <p className="mt-2 text-sm font-medium text-heading">
                       {formatCurrency(f.raisedAmount)} of {formatCurrency(f.goalAmount)}
                     </p>
                   </div>
@@ -155,19 +156,19 @@ export default function HomePageContent() {
       </section>
 
       {/* Active Communities */}
-      <section>
-        <h2 className="text-xl font-bold text-stone-900 sm:text-2xl">Active Communities</h2>
-        <p className="mt-1 text-stone-600">
+      <section className="py-12 sm:py-16">
+        <h2 className="text-2xl sm:text-3xl font-bold text-heading">Active Communities</h2>
+        <p className="mt-2 text-secondary">
           Causes and communities you can support
         </p>
-        <ul className="mt-6 grid gap-6 sm:grid-cols-2">
+        <ul className="mt-8 grid gap-6 sm:grid-cols-2">
           {communities.map((c) => (
             <li key={c.id}>
               <Link
                 href={`/communities/${c.slug}`}
-                className="block overflow-hidden rounded-xl border border-stone-200 bg-white transition-colors hover:border-primary/30 focus-visible:outline-offset-4"
+                className="block overflow-hidden rounded-xl border border-gray-200 bg-white transition-colors hover:border-primary/30 focus-visible:outline-offset-4"
               >
-                <div className="relative aspect-[21/9] w-full bg-stone-200">
+                <div className="relative aspect-[21/9] w-full bg-gray-200">
                   <Image
                     src={c.bannerImageUrl}
                     alt={c.name}
@@ -179,20 +180,20 @@ export default function HomePageContent() {
                   />
                 </div>
                 <div className="p-4">
-                  <h3 className="font-semibold text-stone-900">{c.name}</h3>
-                  <span className="mt-1 inline-block rounded-full bg-stone-100 px-2.5 py-0.5 text-xs font-medium text-stone-700">
+                  <h3 className="font-semibold text-heading">{c.name}</h3>
+                  <span className="mt-1 inline-block rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-heading">
                     {c.causeCategory}
                   </span>
                   <dl className="mt-3 flex gap-4 text-sm">
                     <div>
-                      <dt className="text-stone-500">Raised</dt>
-                      <dd className="font-semibold text-stone-900">
+                      <dt className="text-secondary">Raised</dt>
+                      <dd className="font-semibold text-heading">
                         {formatCurrency(c.totalRaised)}
                       </dd>
                     </div>
                     <div>
-                      <dt className="text-stone-500">Fundraisers</dt>
-                      <dd className="font-semibold text-stone-900">{c.fundraiserCount}</dd>
+                      <dt className="text-secondary">Fundraisers</dt>
+                      <dd className="font-semibold text-heading">{c.fundraiserCount}</dd>
                     </div>
                   </dl>
                 </div>
@@ -203,23 +204,52 @@ export default function HomePageContent() {
       </section>
 
       {/* Browse by Category */}
-      <section>
-        <h2 className="text-xl font-bold text-stone-900 sm:text-2xl">Browse by Category</h2>
-        <p className="mt-1 text-stone-600">
+      <section className="py-12 sm:py-16">
+        <h2 className="text-2xl sm:text-3xl font-bold text-heading">Browse by Category</h2>
+        <p className="mt-2 text-secondary">
           Explore fundraisers by cause
         </p>
-        <ul className="mt-6 flex flex-wrap gap-3">
+        <ul className="mt-8 flex flex-wrap gap-3">
           {categories.map((category) => (
             <li key={category}>
               <Link
                 href={`/browse/${encodeURIComponent(category)}`}
-                className="rounded-full border border-stone-200 bg-white px-4 py-2 text-sm font-medium text-stone-700 shadow-sm transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-offset-4"
+                className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-heading shadow-sm transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-offset-4"
               >
                 {category}
               </Link>
             </li>
           ))}
         </ul>
+      </section>
+
+      {/* Dark trust section */}
+      <section className="bg-[#1a1a1a] text-white -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-16 sm:py-20 mt-12">
+        <div className="mx-auto max-w-5xl text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold">
+            Your easy, powerful, and trusted home for help
+          </h2>
+          <div className="mt-12 grid gap-10 sm:grid-cols-3">
+            <div>
+              <h3 className="text-xl font-bold text-primary">Easy</h3>
+              <p className="mt-3 text-gray-300 leading-relaxed">
+                Start your fundraiser in minutes. Our simple setup means you can begin receiving support right away.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-primary">Powerful</h3>
+              <p className="mt-3 text-gray-300 leading-relaxed">
+                Share with communities, reach more donors, and watch your impact grow with built-in tools and insights.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-primary">Trusted</h3>
+              <p className="mt-3 text-gray-300 leading-relaxed">
+                Every donation is protected. Our trust and safety team works around the clock to keep your funds secure.
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
     </PageTransition>

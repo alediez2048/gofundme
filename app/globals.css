@@ -3,8 +3,11 @@
 @tailwind utilities;
 
 :root {
-  --color-primary: #059669; /* emerald-600 */
+  --color-primary: #02a95c;
   --color-primary-foreground: #ffffff;
+  --color-accent: #ffc629;
+  --color-heading: #1a1a1a;
+  --color-secondary: #6b6b6b;
 }
 
 /* FR-015: Global focus indicator for all interactive elements */

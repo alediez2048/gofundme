@@ -10,9 +10,18 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#059669", // emerald-600
+          DEFAULT: "#02a95c",
           foreground: "#ffffff",
         },
+        accent: {
+          DEFAULT: "#ffc629",
+          foreground: "#1a1a1a",
+        },
+        heading: "#1a1a1a",
+        secondary: "#6b6b6b",
+      },
+      fontFamily: {
+        sans: ['"DM Sans"', "system-ui", "sans-serif"],
       },
       keyframes: {
         fadeIn: {

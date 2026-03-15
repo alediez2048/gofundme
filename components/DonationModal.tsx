@@ -97,17 +97,17 @@ export default function DonationModal({
       ref={dialogRef}
     >
       <div
-        className="absolute inset-0 bg-stone-900/60"
+        className="absolute inset-0 bg-black/60"
         onClick={onClose}
         onKeyDown={(e) => e.key === "Escape" && onClose()}
       />
       <div className="relative z-10 w-full max-w-md rounded-xl bg-white p-4 shadow-xl sm:p-6">
-        <h2 id="donation-modal-title" className="text-lg font-semibold text-stone-900 sm:text-xl">
+        <h2 id="donation-modal-title" className="text-lg font-semibold text-heading sm:text-xl">
           Donate to {fundraiserTitle}
         </h2>
 
         <div className="mt-4">
-          <p className="text-sm font-medium text-stone-700">Amount</p>
+          <p className="text-sm font-medium text-heading">Amount</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {PRESETS.map((n) => (
               <button
@@ -117,14 +117,14 @@ export default function DonationModal({
                 className={`rounded-lg border px-4 py-2 text-sm font-medium ${
                   amount === n
                     ? "border-primary bg-primary text-primary-foreground"
-                    : "border-stone-300 bg-white text-stone-700 hover:bg-stone-50"
+                    : "border-gray-300 bg-white text-heading hover:bg-gray-50"
                 }`}
               >
                 ${n}
               </button>
             ))}
           </div>
-          <label className="mt-3 block text-sm text-stone-600">
+          <label className="mt-3 block text-sm text-secondary">
             Custom amount ($)
             <input
               type="number"
@@ -134,7 +134,7 @@ export default function DonationModal({
               onChange={(e) =>
                 setAmount(e.target.value === "" ? "" : Number(e.target.value) || "")
               }
-              className="mt-1 block w-full rounded border border-stone-300 px-3 py-2 text-stone-900 sm:ml-2 sm:inline sm:w-32"
+              className="mt-1 block w-full rounded border border-gray-300 px-3 py-2 text-heading sm:ml-2 sm:inline sm:w-32"
             />
           </label>
 
@@ -150,7 +150,7 @@ export default function DonationModal({
         </div>
 
         <div className="mt-4">
-          <label className="block text-sm font-medium text-stone-700">
+          <label className="block text-sm font-medium text-heading">
             Message (optional)
           </label>
           <textarea
@@ -158,19 +158,19 @@ export default function DonationModal({
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Add a message of support..."
             rows={2}
-            className="mt-1 w-full rounded border border-stone-300 px-3 py-2 text-stone-900 placeholder:text-stone-400"
+            className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-heading placeholder:text-gray-400"
           />
         </div>
 
         {userList.length > 1 && (
           <div className="mt-4">
-            <label className="block text-sm font-medium text-stone-700">
+            <label className="block text-sm font-medium text-heading">
               Donating as
             </label>
             <select
               value={effectiveDonorId}
               onChange={(e) => setDonorId(e.target.value)}
-              className="mt-1 w-full rounded border border-stone-300 px-3 py-2 text-stone-900"
+              className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-heading"
             >
               {userList.map((u) => (
                 <option key={u.id} value={u.id}>
@@ -185,7 +185,7 @@ export default function DonationModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-stone-300 px-4 py-2 text-stone-700 hover:bg-stone-50"
+            className="rounded-lg border border-gray-300 px-4 py-2 text-heading hover:bg-gray-50"
           >
             Cancel
           </button>

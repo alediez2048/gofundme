@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
+import { DM_Sans } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AITracesBadge from "@/components/AITracesBadge";
 import SchemaViewerToggle from "@/components/SchemaViewerToggle";
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 
 export const metadata: Metadata = {
   title: "FundRight — AI-Powered Fundraising",
@@ -18,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-stone-50 text-stone-900 antialiased">
+      <body className={`min-h-screen bg-white text-heading antialiased ${dmSans.className}`}>
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground focus:outline-none"
@@ -26,7 +32,7 @@ export default function RootLayout({
           Skip to main content
         </a>
         <Header />
-        <main id="main-content" className="mx-auto max-w-6xl px-4 py-6 sm:py-8" role="main">
+        <main id="main-content" className="mx-auto max-w-7xl px-4 py-6 sm:py-8" role="main">
           {children}
         </main>
         <Footer />

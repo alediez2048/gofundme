@@ -45,9 +45,9 @@ function typeColor(type: string): string {
     case "WebSite":
       return "bg-indigo-100 text-indigo-800";
     case "BreadcrumbList":
-      return "bg-stone-200 text-stone-700";
+      return "bg-gray-200 text-heading";
     default:
-      return "bg-stone-100 text-stone-700";
+      return "bg-gray-100 text-heading";
   }
 }
 
@@ -55,27 +55,27 @@ function highlightKey(key: string): string {
   const aeoKeys = ["@id", "@type", "sameAs", "dateModified", "nonprofitStatus"];
   if (aeoKeys.includes(key)) return "text-primary font-bold";
   if (key.startsWith("@")) return "text-blue-600 font-medium";
-  return "text-stone-500";
+  return "text-secondary";
 }
 
 function JsonRenderer({ data, depth = 0 }: { data: unknown; depth?: number }) {
-  if (data === null || data === undefined) return <span className="text-stone-400">null</span>;
+  if (data === null || data === undefined) return <span className="text-gray-400">null</span>;
   if (typeof data === "string") return <span className="text-emerald-700">&quot;{data}&quot;</span>;
   if (typeof data === "number" || typeof data === "boolean")
     return <span className="text-amber-700">{String(data)}</span>;
 
   if (Array.isArray(data)) {
-    if (data.length === 0) return <span className="text-stone-400">[]</span>;
+    if (data.length === 0) return <span className="text-gray-400">[]</span>;
     return (
       <div style={{ marginLeft: depth > 0 ? 16 : 0 }}>
-        <span className="text-stone-400">[</span>
+        <span className="text-gray-400">[</span>
         {data.map((item, i) => (
           <div key={i} style={{ marginLeft: 16 }}>
             <JsonRenderer data={item} depth={depth + 1} />
-            {i < data.length - 1 && <span className="text-stone-400">,</span>}
+            {i < data.length - 1 && <span className="text-gray-400">,</span>}
           </div>
         ))}
-        <span className="text-stone-400">]</span>
+        <span className="text-gray-400">]</span>
       </div>
     );
   }
@@ -84,16 +84,16 @@ function JsonRenderer({ data, depth = 0 }: { data: unknown; depth?: number }) {
     const entries = Object.entries(data as Record<string, unknown>);
     return (
       <div style={{ marginLeft: depth > 0 ? 16 : 0 }}>
-        <span className="text-stone-400">{"{"}</span>
+        <span className="text-gray-400">{"{"}</span>
         {entries.map(([key, value], i) => (
           <div key={key} style={{ marginLeft: 16 }}>
             <span className={highlightKey(key)}>&quot;{key}&quot;</span>
-            <span className="text-stone-400">: </span>
+            <span className="text-gray-400">: </span>
             <JsonRenderer data={value} depth={depth + 1} />
-            {i < entries.length - 1 && <span className="text-stone-400">,</span>}
+            {i < entries.length - 1 && <span className="text-gray-400">,</span>}
           </div>
         ))}
-        <span className="text-stone-400">{"}"}</span>
+        <span className="text-gray-400">{"}"}</span>
       </div>
     );
   }
@@ -114,9 +114,9 @@ export default function SchemaViewer() {
 
   if (schemas.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-stone-300 bg-stone-50 py-8 text-center">
-        <p className="text-stone-600">No JSON-LD schemas found on this page.</p>
-        <p className="mt-1 text-sm text-stone-500">Navigate to a fundraiser, community, or profile page.</p>
+      <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 py-8 text-center">
+        <p className="text-secondary">No JSON-LD schemas found on this page.</p>
+        <p className="mt-1 text-sm text-secondary">Navigate to a fundraiser, community, or profile page.</p>
       </div>
     );
   }
@@ -148,7 +148,7 @@ export default function SchemaViewer() {
         <h3 className="text-sm font-semibold text-primary mb-2">
           AEO/GEO Features on This Page
         </h3>
-        <p className="text-xs text-stone-600 mb-2">
+        <p className="text-xs text-secondary mb-2">
           {schemas.length} schema{schemas.length !== 1 ? "s" : ""} detected &middot; {pathname}
         </p>
         {uniqueAeo.length > 0 ? (
@@ -163,32 +163,32 @@ export default function SchemaViewer() {
             ))}
           </div>
         ) : (
-          <p className="text-xs text-stone-500">Base schema only (no advanced AEO features on this page type).</p>
+          <p className="text-xs text-secondary">Base schema only (no advanced AEO features on this page type).</p>
         )}
       </div>
 
       {/* Schema cards */}
       {schemas.map((schema, i) => (
-        <div key={i} className="rounded-lg border border-stone-200 bg-white overflow-hidden">
+        <div key={i} className="rounded-lg border border-gray-200 bg-white overflow-hidden">
           <button
             type="button"
             onClick={() => setExpanded((p) => ({ ...p, [i]: !p[i] }))}
-            className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-stone-50"
+            className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50"
           >
             <div className="flex items-center gap-2">
               <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${typeColor(schema.type)}`}>
                 {schema.type}
               </span>
               {schema.id && (
-                <span className="text-xs text-stone-500 truncate max-w-[300px]">
+                <span className="text-xs text-secondary truncate max-w-[300px]">
                   {schema.id}
                 </span>
               )}
             </div>
-            <span className="text-xs text-stone-400">{expanded[i] ? "Collapse" : "Expand"}</span>
+            <span className="text-xs text-gray-400">{expanded[i] ? "Collapse" : "Expand"}</span>
           </button>
           {expanded[i] && (
-            <div className="border-t border-stone-100 px-4 py-3 overflow-x-auto">
+            <div className="border-t border-gray-100 px-4 py-3 overflow-x-auto">
               <pre className="text-xs font-mono leading-relaxed">
                 <JsonRenderer data={schema.raw} />
               </pre>

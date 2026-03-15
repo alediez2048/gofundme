@@ -92,7 +92,7 @@ function ProfileByUsername({ username }: { username: string }) {
       <section className="flex flex-wrap items-start gap-4 sm:gap-6">
         <UserAvatar src={user.avatar} size={80} />
         <div className="min-w-0 flex-1">
-          <h1 className="text-2xl font-bold text-stone-900 tracking-tight flex items-center gap-2 sm:text-3xl">
+          <h1 className="text-2xl font-bold text-heading tracking-tight flex items-center gap-2 sm:text-3xl">
             {user.name}
             {user.verified && (
               <span
@@ -104,19 +104,19 @@ function ProfileByUsername({ username }: { username: string }) {
               </span>
             )}
           </h1>
-          <p className="mt-2 text-stone-600">{user.bio}</p>
-          <p className="mt-2 text-sm text-stone-500">
+          <p className="mt-2 text-secondary">{user.bio}</p>
+          <p className="mt-2 text-sm text-secondary">
             Joined {new Date(user.joinDate).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
           </p>
         </div>
       </section>
 
       {/* Trust summary */}
-      <section className="rounded-lg bg-stone-50 p-4">
-        <h2 className="text-sm font-semibold text-stone-700 mb-2">
+      <section className="rounded-lg bg-gray-50 p-4">
+        <h2 className="text-sm font-semibold text-heading mb-2">
           Why trust this organizer
         </h2>
-        <ul className="text-sm text-stone-600 space-y-1">
+        <ul className="text-sm text-secondary space-y-1">
           {organizerFundraisers.length > 0 && (
             <li>
               Organized {organizerFundraisers.length} campaign
@@ -135,29 +135,29 @@ function ProfileByUsername({ username }: { username: string }) {
 
       {/* Impact summary (derived narrative) */}
       <section>
-        <h2 className="text-sm font-semibold text-stone-700 mb-2">
+        <h2 className="text-sm font-semibold text-heading mb-2">
           Impact at a glance
         </h2>
-        <p className="text-stone-700">{impactSummary}</p>
+        <p className="text-heading">{impactSummary}</p>
       </section>
 
       {/* Impact stats */}
       <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3 text-center">
         <div>
-          <dt className="text-sm text-stone-500">Total raised (as organizer)</dt>
-          <dd className="text-lg font-semibold text-stone-900 sm:text-xl">
+          <dt className="text-sm text-secondary">Total raised (as organizer)</dt>
+          <dd className="text-lg font-semibold text-heading sm:text-xl">
             {formatCurrency(totalRaisedAsOrganizer)}
           </dd>
         </div>
         <div>
-          <dt className="text-sm text-stone-500">Total donated</dt>
-          <dd className="text-lg font-semibold text-stone-900 sm:text-xl">
+          <dt className="text-sm text-secondary">Total donated</dt>
+          <dd className="text-lg font-semibold text-heading sm:text-xl">
             {formatCurrency(user.totalDonated)}
           </dd>
         </div>
         <div>
-          <dt className="text-sm text-stone-500">Causes supported</dt>
-          <dd className="text-lg font-semibold text-stone-900 sm:text-xl">
+          <dt className="text-sm text-secondary">Causes supported</dt>
+          <dd className="text-lg font-semibold text-heading sm:text-xl">
             {causesSupportedCount}
           </dd>
         </div>
@@ -166,7 +166,7 @@ function ProfileByUsername({ username }: { username: string }) {
       {/* Active fundraisers */}
       {organizerFundraisers.length > 0 && (
         <section>
-          <h2 className="text-lg font-semibold text-stone-900 mb-4 sm:text-xl">
+          <h2 className="text-lg font-semibold text-heading mb-4 sm:text-xl">
             Active fundraisers
           </h2>
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -174,10 +174,10 @@ function ProfileByUsername({ username }: { username: string }) {
               <li key={f.id}>
                 <Link
                   href={`/f/${f.slug}`}
-                  className="block rounded-xl border border-stone-200 bg-white p-4 hover:border-primary/30"
+                  className="block rounded-xl border border-gray-200 bg-white p-4 hover:border-primary/30"
                 >
-                  <p className="font-semibold text-stone-900">{f.title}</p>
-                  <p className="mt-1 text-sm text-stone-600">
+                  <p className="font-semibold text-heading">{f.title}</p>
+                  <p className="mt-1 text-sm text-secondary">
                     {formatCurrency(f.raisedAmount)} of{" "}
                     {formatCurrency(f.goalAmount)}
                   </p>
@@ -191,7 +191,7 @@ function ProfileByUsername({ username }: { username: string }) {
       {/* Community memberships */}
       {userCommunities.length > 0 && (
         <section>
-          <h2 className="text-lg font-semibold text-stone-900 mb-4 sm:text-xl">
+          <h2 className="text-lg font-semibold text-heading mb-4 sm:text-xl">
             Communities
           </h2>
           <div className="flex flex-wrap gap-2">
@@ -199,7 +199,7 @@ function ProfileByUsername({ username }: { username: string }) {
               <Link
                 key={c.id}
                 href={`/communities/${c.slug}`}
-                className="rounded-full bg-stone-100 px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-200"
+                className="rounded-full bg-gray-100 px-4 py-2 text-sm font-medium text-heading hover:bg-gray-200"
               >
                 {c.name}
               </Link>
@@ -210,11 +210,11 @@ function ProfileByUsername({ username }: { username: string }) {
 
       {/* Giving history */}
       <section>
-        <h2 className="text-xl font-semibold text-stone-900 mb-4">
+        <h2 className="text-xl font-semibold text-heading mb-4">
           Giving history
         </h2>
         {givingHistorySorted.length === 0 ? (
-          <p className="text-stone-600 text-sm">
+          <p className="text-secondary text-sm">
             No donations yet. Support a campaign to see it here.
           </p>
         ) : (
@@ -224,24 +224,24 @@ function ProfileByUsername({ username }: { username: string }) {
               return (
                 <li
                   key={d.id}
-                  className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-stone-100 bg-stone-50/50 px-4 py-3"
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-gray-100 bg-gray-50/50 px-4 py-3"
                 >
-                  <span className="font-semibold text-stone-900">
+                  <span className="font-semibold text-heading">
                     {formatCurrency(d.amount)}
                   </span>
                   {f ? (
                     <Link
                       href={`/f/${f.slug}`}
-                      className="text-stone-700 hover:text-primary"
+                      className="text-heading hover:text-primary"
                     >
                       {f.title}
                     </Link>
                   ) : (
-                    <span className="text-stone-500">Campaign</span>
+                    <span className="text-secondary">Campaign</span>
                   )}
                   <time
                     dateTime={d.createdAt}
-                    className="text-sm text-stone-500"
+                    className="text-sm text-secondary"
                   >
                     {new Date(d.createdAt).toLocaleDateString()}
                   </time>

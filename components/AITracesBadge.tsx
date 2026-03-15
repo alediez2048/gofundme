@@ -9,7 +9,7 @@ export default function AITracesBadge() {
   return (
     <Link
       href="/ai-traces"
-      className="fixed bottom-4 right-4 z-40 flex items-center gap-1.5 rounded-full bg-stone-900 px-3 py-2 text-xs font-medium text-white shadow-lg hover:bg-stone-800 transition-colors"
+      className="fixed bottom-4 right-4 z-40 flex items-center gap-1.5 rounded-full bg-gray-900 px-3 py-2 text-xs font-medium text-white shadow-lg hover:bg-gray-800 transition-colors"
       title="View AI Traces"
     >
       <span aria-hidden="true">&#x2728;</span>

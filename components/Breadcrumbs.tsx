@@ -12,11 +12,11 @@ interface BreadcrumbsProps {
 export default function Breadcrumbs({ items }: BreadcrumbsProps) {
   return (
     <nav aria-label="Breadcrumb" className="mb-6">
-      <ol className="flex flex-wrap items-center gap-1.5 text-sm text-stone-600">
+      <ol className="flex flex-wrap items-center gap-1.5 text-sm text-secondary">
         {items.map((item, i) => (
           <li key={i} className="flex items-center gap-1.5">
             {i > 0 && (
-              <span className="text-stone-400" aria-hidden>
+              <span className="text-gray-400" aria-hidden>
                 /
               </span>
             )}
@@ -25,7 +25,7 @@ export default function Breadcrumbs({ items }: BreadcrumbsProps) {
                 {item.label}
               </Link>
             ) : (
-              <span className="font-medium text-stone-900" aria-current="page">
+              <span className="font-medium text-heading" aria-current="page">
                 {item.label}
               </span>
             )}
