@@ -7,7 +7,7 @@
 import { persist } from "zustand/middleware";
 import { useStore } from "zustand/react";
 import { createStore } from "zustand/vanilla";
-import type { Community, Donation, Fundraiser, FollowRelationship, User } from "@/lib/data";
+import type { Comment, Community, Donation, FeedEvent, FollowRelationship, Fundraiser, User } from "@/lib/data";
 import type { CauseCategory } from "@/lib/data";
 import { seed } from "@/lib/data";
 import type { AITrace } from "@/lib/ai/trace";
@@ -25,6 +25,7 @@ export interface StoreState {
   /** Simulated auth — ID of the "logged in" demo user, or null for logged-out */
   currentUser: string | null;
   followRelationships: FollowRelationship[];
+  feedEvents: EntityMap<FeedEvent>;
 }
 
 function toRecord<T extends { id: string }>(arr: T[]): Record<string, T> {
@@ -41,6 +42,7 @@ function getInitialState(): StoreState {
     lastModified: new Date().toISOString(),
     currentUser: "user-6",
     followRelationships: [],
+    feedEvents: {},
   };
 }
 
@@ -50,6 +52,10 @@ function generateDonationId(): string {
 
 function generateFundraiserId(): string {
   return `fund-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+}
+
+function generateCommentId(): string {
+  return `cmt-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
 function slugify(title: string): string {
@@ -96,6 +102,10 @@ export interface StoreActions {
   setCurrentUser: (userId: string | null) => void;
   follow: (followerId: string, followeeId: string) => void;
   unfollow: (followerId: string, followeeId: string) => void;
+  toggleHeart: (eventId: string, userId: string) => void;
+  addComment: (eventId: string, authorId: string, text: string, parentId?: string) => string | null;
+  toggleBookmark: (eventId: string, userId: string) => void;
+  incrementShare: (eventId: string) => void;
 }
 
 export type Store = StoreState & StoreActions;
@@ -319,6 +329,114 @@ export const createFundRightStore = () => {
             };
           });
         },
+
+        toggleHeart: (eventId, userId) => {
+          set((state) => {
+            const event = state.feedEvents[eventId];
+            if (!event) return state;
+            const { engagement } = event;
+            const hearted = engagement.heartedByUserIds.includes(userId);
+            return {
+              feedEvents: {
+                ...state.feedEvents,
+                [eventId]: {
+                  ...event,
+                  engagement: {
+                    ...engagement,
+                    heartCount: engagement.heartCount + (hearted ? -1 : 1),
+                    heartedByUserIds: hearted
+                      ? engagement.heartedByUserIds.filter((id) => id !== userId)
+                      : [...engagement.heartedByUserIds, userId],
+                  },
+                },
+              },
+            };
+          });
+        },
+
+        addComment: (eventId, authorId, text, parentId) => {
+          const commentId = generateCommentId();
+          let valid = false;
+          set((state) => {
+            const event = state.feedEvents[eventId];
+            if (!event) return state;
+            valid = true;
+            const comment: Comment = {
+              id: commentId,
+              authorId,
+              text,
+              createdAt: new Date().toISOString(),
+              ...(parentId ? { parentId } : {}),
+            };
+            return {
+              feedEvents: {
+                ...state.feedEvents,
+                [eventId]: {
+                  ...event,
+                  engagement: {
+                    ...event.engagement,
+                    commentCount: event.engagement.commentCount + 1,
+                    comments: [...event.engagement.comments, comment],
+                  },
+                },
+              },
+            };
+          });
+          return valid ? commentId : null;
+        },
+
+        toggleBookmark: (eventId, userId) => {
+          set((state) => {
+            const event = state.feedEvents[eventId];
+            if (!event) return state;
+            const { engagement } = event;
+            const bookmarked = engagement.bookmarkedByUserIds.includes(userId);
+            const updatedFeedEvents = {
+              ...state.feedEvents,
+              [eventId]: {
+                ...event,
+                engagement: {
+                  ...engagement,
+                  bookmarkedByUserIds: bookmarked
+                    ? engagement.bookmarkedByUserIds.filter((id) => id !== userId)
+                    : [...engagement.bookmarkedByUserIds, userId],
+                },
+              },
+            };
+            const user = state.users[userId];
+            const updatedUsers = user
+              ? {
+                  ...state.users,
+                  [userId]: {
+                    ...user,
+                    bookmarkedIds: bookmarked
+                      ? (user.bookmarkedIds ?? []).filter((id) => id !== eventId)
+                      : [...(user.bookmarkedIds ?? []), eventId],
+                  },
+                }
+              : state.users;
+            return { feedEvents: updatedFeedEvents, users: updatedUsers };
+          });
+        },
+
+        incrementShare: (eventId) => {
+          set((state) => {
+            const event = state.feedEvents[eventId];
+            if (!event) return state;
+            return {
+              feedEvents: {
+                ...state.feedEvents,
+                [eventId]: {
+                  ...event,
+                  engagement: {
+                    ...event.engagement,
+                    shareCount: event.engagement.shareCount + 1,
+                  },
+                },
+              },
+            };
+          });
+        },
       }),
       {
         // Bump when seed data (e.g. image URLs) must reset for all clients; old key is left in localStorage unused.
@@ -331,6 +449,7 @@ export const createFundRightStore = () => {
           lastModified: state.lastModified,
           currentUser: state.currentUser,
           followRelationships: state.followRelationships,
+          feedEvents: state.feedEvents,
         }),
       }
     )

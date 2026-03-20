@@ -380,3 +380,121 @@ describe("follow / unfollow", () => {
     expect(getFollowing(state, u1.id).map((u) => u.id)).toContain(u2.id);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Engagement actions (FR-030)
+// ---------------------------------------------------------------------------
+
+import type { FeedEvent } from "@/lib/data";
+
+/** Insert a minimal test FeedEvent directly into the store. */
+function seedFeedEvent(id: string): FeedEvent {
+  const event: FeedEvent = {
+    id,
+    type: "donation",
+    actorId: firstUser().id,
+    subjectId: firstFundraiser().id,
+    subjectType: "fundraiser",
+    metadata: {},
+    engagement: {
+      heartCount: 0,
+      commentCount: 0,
+      shareCount: 0,
+      heartedByUserIds: [],
+      comments: [],
+      bookmarkedByUserIds: [],
+    },
+    causeCategory: "Medical & Healthcare",
+    createdAt: new Date().toISOString(),
+  };
+  store.setState((s) => ({
+    feedEvents: { ...s.feedEvents, [id]: event },
+  }));
+  return event;
+}
+
+describe("engagement actions", () => {
+  it("toggleHeart adds userId and increments count", () => {
+    seedFeedEvent("evt-1");
+    const userId = firstUser().id;
+
+    getState().toggleHeart("evt-1", userId);
+
+    const eng = getState().feedEvents["evt-1"].engagement;
+    expect(eng.heartCount).toBe(1);
+    expect(eng.heartedByUserIds).toContain(userId);
+  });
+
+  it("toggleHeart removes userId on second call (unheart)", () => {
+    seedFeedEvent("evt-1");
+    const userId = firstUser().id;
+
+    getState().toggleHeart("evt-1", userId);
+    getState().toggleHeart("evt-1", userId);
+
+    const eng = getState().feedEvents["evt-1"].engagement;
+    expect(eng.heartCount).toBe(0);
+    expect(eng.heartedByUserIds).not.toContain(userId);
+  });
+
+  it("addComment creates comment with correct fields and increments count", () => {
+    seedFeedEvent("evt-1");
+    const authorId = firstUser().id;
+
+    const commentId = getState().addComment("evt-1", authorId, "Great cause!");
+
+    expect(commentId).toBeTruthy();
+    const eng = getState().feedEvents["evt-1"].engagement;
+    expect(eng.commentCount).toBe(1);
+    expect(eng.comments).toHaveLength(1);
+    expect(eng.comments[0].authorId).toBe(authorId);
+    expect(eng.comments[0].text).toBe("Great cause!");
+    expect(eng.comments[0].id).toBe(commentId);
+  });
+
+  it("addComment supports parentId for threading", () => {
+    seedFeedEvent("evt-1");
+    const authorId = firstUser().id;
+
+    const parentId = getState().addComment("evt-1", authorId, "Parent");
+    const replyId = getState().addComment("evt-1", authorId, "Reply", parentId!);
+
+    const eng = getState().feedEvents["evt-1"].engagement;
+    expect(eng.comments[1].parentId).toBe(parentId);
+    expect(replyId).toBeTruthy();
+  });
+
+  it("toggleBookmark toggles correctly", () => {
+    seedFeedEvent("evt-1");
+    const userId = firstUser().id;
+
+    getState().toggleBookmark("evt-1", userId);
+    expect(getState().feedEvents["evt-1"].engagement.bookmarkedByUserIds).toContain(userId);
+    expect(getState().users[userId].bookmarkedIds).toContain("evt-1");
+
+    getState().toggleBookmark("evt-1", userId);
+    expect(getState().feedEvents["evt-1"].engagement.bookmarkedByUserIds).not.toContain(userId);
+    expect(getState().users[userId].bookmarkedIds ?? []).not.toContain("evt-1");
+  });
+
+  it("incrementShare increments count", () => {
+    seedFeedEvent("evt-1");
+
+    getState().incrementShare("evt-1");
+    getState().incrementShare("evt-1");
+
+    expect(getState().feedEvents["evt-1"].engagement.shareCount).toBe(2);
+  });
+
+  it("all actions are no-ops for non-existent events", () => {
+    const prevState = getState();
+
+    getState().toggleHeart("nope", "user-1");
+    getState().toggleBookmark("nope", "user-1");
+    getState().incrementShare("nope");
+    const commentResult = getState().addComment("nope", "user-1", "text");
+
+    expect(commentResult).toBeNull();
+    expect(getState().feedEvents).toEqual(prevState.feedEvents);
+  });
+});
