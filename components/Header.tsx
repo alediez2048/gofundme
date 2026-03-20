@@ -8,6 +8,14 @@ import UserAvatar from "./UserAvatar";
 
 const DEFAULT_PROFILE_USERNAME = "janahan";
 
+const DEMO_USERS = [
+  { id: "user-6", name: "Priya Sharma", label: "Donor" },
+  { id: "user-1", name: "Janahan Selvakumaran", label: "Organizer" },
+  { id: "user-3", name: "David Okonkwo", label: "Firefighter" },
+  { id: "user-4", name: "Sarah Lee", label: "Advocate" },
+  { id: "user-7", name: "Alex Kim", label: "Tech" },
+];
+
 const MOBILE_NAV_LINKS = [
   { href: "/search", label: "Search" },
   { href: "/browse", label: "Donate" },
@@ -26,6 +34,7 @@ export default function Header() {
   const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
 
   const usersMap = useFundRightStore((s) => s.users);
+  const setCurrentUser = useFundRightStore((s) => s.setCurrentUser);
   const defaultUser = Object.values(usersMap).find(
     (u) => u.username === DEFAULT_PROFILE_USERNAME
   );
@@ -211,45 +220,38 @@ export default function Header() {
             Start a FundRight
           </Link>
 
-          {/* Profile avatar */}
+          {/* Sign In (demo user picker) */}
           <div className="relative" ref={profileRef}>
             <button
               type="button"
               onClick={() => setProfileOpen((o) => !o)}
-              className="flex items-center gap-2 rounded-pill focus:outline-none focus:ring-2 focus:ring-heading focus:ring-offset-2"
+              className="hrt-btn-secondary px-5 py-2 text-body-sm"
               aria-expanded={profileOpen}
               aria-haspopup="true"
-              aria-label="Profile menu"
             >
-              {defaultUser ? (
-                <UserAvatar src={defaultUser.avatar} size={36} />
-              ) : (
-                <span className="h-9 w-9 rounded-pill bg-surface-medium" aria-hidden />
-              )}
+              Sign In
             </button>
             {profileOpen && (
               <div
-                className="absolute right-0 top-full z-50 mt-2 w-48 rounded-xl border border-neutral-border bg-white py-1 shadow-medium animate-fadeIn"
+                className="absolute right-0 top-full z-50 mt-2 w-64 rounded-xl border border-neutral-border bg-white py-2 shadow-medium animate-fadeIn"
                 role="menu"
               >
-                {defaultUser && (
-                  <Link
-                    href={`/u/${defaultUser.username}`}
-                    className="block px-4 py-2.5 text-body-sm text-heading transition-colors hover:bg-surface-subtle"
+                <p className="px-4 pb-2 text-body-xs text-supporting border-b border-neutral-border mb-1">Sign in as a demo user:</p>
+                {DEMO_USERS.map((u) => (
+                  <button
+                    key={u.id}
+                    type="button"
+                    className="w-full px-4 py-2.5 text-left text-body-sm text-heading transition-colors hover:bg-surface-subtle flex items-center justify-between"
                     role="menuitem"
-                    onClick={() => setProfileOpen(false)}
+                    onClick={() => {
+                      setCurrentUser(u.id);
+                      setProfileOpen(false);
+                    }}
                   >
-                    My profile
-                  </Link>
-                )}
-                <button
-                  type="button"
-                  className="w-full px-4 py-2.5 text-left text-body-sm text-heading transition-colors hover:bg-surface-subtle"
-                  role="menuitem"
-                  onClick={() => setProfileOpen(false)}
-                >
-                  Sign Out
-                </button>
+                    <span className="font-medium">{u.name}</span>
+                    <span className="text-body-xs text-supporting">{u.label}</span>
+                  </button>
+                ))}
               </div>
             )}
           </div>
@@ -341,10 +343,22 @@ export default function Header() {
                   Start a FundRight
                 </Link>
               </div>
-              <div className="mt-2">
-                <span className="block px-4 py-2 text-body-sm text-supporting">
-                  Sign Out
-                </span>
+              <div className="mt-4 border-t border-neutral-border pt-3">
+                <p className="px-4 pb-2 text-body-xs text-supporting">Sign in as:</p>
+                {DEMO_USERS.map((u) => (
+                  <button
+                    key={u.id}
+                    type="button"
+                    className="w-full px-4 py-2 text-left text-body-sm text-heading hover:bg-surface-subtle flex items-center justify-between"
+                    onClick={() => {
+                      setCurrentUser(u.id);
+                      setMobileOpen(false);
+                    }}
+                  >
+                    <span>{u.name}</span>
+                    <span className="text-body-xs text-supporting">{u.label}</span>
+                  </button>
+                ))}
               </div>
             </div>
           </div>
