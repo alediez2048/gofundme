@@ -93,3 +93,71 @@ export interface Donation {
   message?: string;
   createdAt: string;
 }
+
+// ---------------------------------------------------------------------------
+// Feed & Engagement types (FR-026)
+// ---------------------------------------------------------------------------
+
+export type EventType =
+  | "donation"
+  | "fundraiser_launch"
+  | "milestone_reached"
+  | "community_milestone"
+  | "community_join"
+  | "profile_milestone";
+
+export interface Comment {
+  id: string;
+  authorId: string;
+  text: string;
+  createdAt: string;
+  parentId?: string;
+}
+
+export interface EngagementSummary {
+  heartCount: number;
+  commentCount: number;
+  shareCount: number;
+  heartedByUserIds: string[];
+  comments: Comment[];
+  bookmarkedByUserIds: string[];
+}
+
+export interface FeedEvent {
+  id: string;
+  type: EventType;
+  actorId: string;
+  subjectId: string;
+  subjectType: "fundraiser" | "community" | "user";
+  metadata: Record<string, unknown>;
+  engagement: EngagementSummary;
+  causeCategory: CauseCategory;
+  createdAt: string;
+  communityId?: string;
+  fundraiserId?: string;
+}
+
+export interface FollowRelationship {
+  followerId: string;
+  followeeId: string;
+  createdAt: string;
+}
+
+export interface FundraiserMilestone {
+  type: "25%" | "50%" | "75%" | "100%";
+  reachedAt: string;
+  amount: number;
+}
+
+export interface CommunityMilestone {
+  type: "$10K" | "$50K" | "$100K" | "$500K" | "$1M";
+  reachedAt: string;
+  amount: number;
+}
+
+export interface LeaderboardEntry {
+  userId: string;
+  rank: number;
+  amount: number;
+  donationCount: number;
+}
