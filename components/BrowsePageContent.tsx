@@ -50,9 +50,9 @@ function FundraiserCard({
   community: { slug: string; name: string } | undefined;
 }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white transition-colors hover:border-primary/30">
+    <div className="hrt-card hover:shadow-medium">
       <Link href={`/f/${f.slug}`} className="block">
-        <div className="relative aspect-[16/10] w-full bg-gray-200">
+        <div className="hrt-card-image relative aspect-[3/2] w-full bg-surface-medium">
           <Image
             src={f.heroImageUrl}
             alt=""
@@ -64,16 +64,16 @@ function FundraiserCard({
           />
         </div>
         <div className="p-4">
-          <h3 className="font-semibold text-heading line-clamp-2">{f.title}</h3>
+          <h3 className="text-heading-xs text-heading line-clamp-2">{f.title}</h3>
         </div>
       </Link>
       <div className="px-4 pb-4">
         {organizer && (
-          <p className="text-sm text-secondary">
+          <p className="text-body-sm text-supporting">
             By{" "}
             <Link
               href={`/u/${organizer.username}`}
-              className="font-medium text-heading hover:text-primary"
+              className="font-bold text-heading hover:text-brand transition-colors"
             >
               {organizer.name}
             </Link>
@@ -83,17 +83,18 @@ function FundraiserCard({
           <p className="mt-1">
             <Link
               href={`/communities/${community.slug}`}
-              className="inline-block rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-secondary hover:text-primary"
+              className="hrt-tag-neutral text-body-xs hover:text-brand transition-colors"
             >
               {community.name}
             </Link>
           </p>
         )}
         <div className="mt-3">
-          <ProgressBar raised={f.raisedAmount} goal={f.goalAmount} height="h-2" animate={false} />
+          <ProgressBar raised={f.raisedAmount} goal={f.goalAmount} animate={false} />
         </div>
-        <p className="mt-2 text-sm font-medium text-heading">
-          {formatCurrency(f.raisedAmount)} of {formatCurrency(f.goalAmount)}
+        <p className="mt-2 text-body-sm font-bold text-heading">
+          {formatCurrency(f.raisedAmount)}{" "}
+          <span className="font-normal text-supporting">raised</span>
         </p>
       </div>
     </div>
@@ -146,23 +147,23 @@ export default function BrowsePageContent({ activeCategory }: BrowsePageContentP
       <Breadcrumbs items={breadcrumbItems} />
 
       <div>
-        <h1 className="text-3xl font-bold text-heading tracking-tight">
-          Browse Fundraisers
+        <h1 className="text-display-sm text-heading">
+          Browse fundraisers
         </h1>
-        <p className="mt-2 text-secondary">
+        <p className="mt-2 text-body-md text-supporting">
           Explore fundraisers by cause and find campaigns aligned with your interests.
         </p>
       </div>
 
-      {/* Category chip bar */}
+      {/* Category chips */}
       <div className="overflow-x-auto -mx-4 px-4">
         <div className="flex gap-2 min-w-max pb-2">
           <Link
             href="/browse"
-            className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-offset-4 ${
+            className={`shrink-0 rounded-pill px-5 py-2.5 text-body-sm font-bold transition-all duration-hrt ease-hrt ${
               !decodedCategory
-                ? "bg-primary text-primary-foreground"
-                : "border border-gray-200 bg-white text-heading hover:border-primary/50 hover:text-primary"
+                ? "bg-brand-strong text-brand-lime"
+                : "border border-neutral-border bg-white text-heading hover:bg-surface-subtle"
             }`}
           >
             All
@@ -171,10 +172,10 @@ export default function BrowsePageContent({ activeCategory }: BrowsePageContentP
             <Link
               key={cat}
               href={`/browse/${encodeURIComponent(cat)}`}
-              className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-offset-4 ${
+              className={`shrink-0 rounded-pill px-5 py-2.5 text-body-sm font-bold transition-all duration-hrt ease-hrt ${
                 decodedCategory === cat
-                  ? "bg-primary text-primary-foreground"
-                  : "border border-gray-200 bg-white text-heading hover:border-primary/50 hover:text-primary"
+                  ? "bg-brand-strong text-brand-lime"
+                  : "border border-neutral-border bg-white text-heading hover:bg-surface-subtle"
               }`}
             >
               {cat}
@@ -183,13 +184,13 @@ export default function BrowsePageContent({ activeCategory }: BrowsePageContentP
         </div>
       </div>
 
-      {/* Sort + results count */}
+      {/* Sort + count */}
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h2 className="text-sm font-medium text-heading">{heading}</h2>
+        <h2 className="text-body-sm font-bold text-heading">{heading}</h2>
         <select
           value={sortKey}
           onChange={(e) => setSortKey(e.target.value as SortKey)}
-          className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-heading focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          className="rounded-pill border border-neutral-border bg-white px-4 py-2.5 text-body-sm text-heading focus:border-heading focus:outline-none focus:ring-1 focus:ring-heading"
           aria-label="Sort fundraisers"
         >
           {SORT_OPTIONS.map((opt) => (
@@ -200,16 +201,16 @@ export default function BrowsePageContent({ activeCategory }: BrowsePageContentP
         </select>
       </div>
 
-      {/* Fundraiser grid or empty state */}
+      {/* Grid or empty */}
       {sorted.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 py-16 text-center">
-          <p className="text-lg font-semibold text-heading">
+        <div className="rounded-xxl border border-dashed border-neutral-border bg-surface-subtle py-16 text-center">
+          <p className="text-heading-sm text-heading">
             No fundraisers in this category yet.
           </p>
-          <p className="mt-2 text-secondary">Be the first!</p>
+          <p className="mt-2 text-supporting">Be the first!</p>
           <Link
             href="/create"
-            className="mt-4 inline-block rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground hover:opacity-90"
+            className="hrt-btn-primary-lg mt-4 inline-block px-8"
           >
             Start a FundRight
           </Link>

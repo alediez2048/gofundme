@@ -45,14 +45,14 @@ function TrustSummaryBlock({ organizer }: { organizer: User }) {
   if (trust.stats.campaignCount === 0) return null;
 
   return (
-    <div className="rounded-lg bg-gray-50 border border-gray-200 p-4">
-      <h3 className="text-sm font-semibold text-heading mb-2">
+    <div className="rounded-xl bg-brand-mint border border-brand-subtle p-4">
+      <h3 className="text-heading-xs text-heading mb-2">
         Why trust this organizer
       </h3>
-      <p className="text-sm text-heading">{trust.text}</p>
+      <p className="text-body-sm text-heading">{trust.text}</p>
       <Link
         href={`/u/${organizer.username}`}
-        className="mt-2 inline-block text-xs font-medium text-primary hover:underline"
+        className="mt-2 inline-block text-body-xs font-bold text-brand hover:underline"
       >
         View full profile
       </Link>
@@ -82,7 +82,6 @@ function FundraiserBySlug({ slug }: { slug: string }) {
       ).slice(0, 3)
     : [];
 
-  // Recent donors with their donation amounts
   const recentDonationIds = fundraiser.donationIds.slice(-5).reverse();
   const recentDonations = recentDonationIds
     .map((id) => {
@@ -94,7 +93,6 @@ function FundraiserBySlug({ slug }: { slug: string }) {
     })
     .filter(Boolean) as { donor: User; amount: number }[];
 
-  // Top 3 donors for leaderboard (sorted by amount descending)
   const allDonationsForFundraiser = fundraiser.donationIds
     .map((id) => donations[id])
     .filter(Boolean);
@@ -132,7 +130,6 @@ function FundraiserBySlug({ slug }: { slug: string }) {
     { label: fundraiser.title },
   ];
 
-  // Edge-case state calculations
   const pct = calculateProgress(fundraiser.raisedAmount, fundraiser.goalAmount);
   const rawPct = fundraiser.goalAmount > 0
     ? Math.round((fundraiser.raisedAmount / fundraiser.goalAmount) * 100)
@@ -145,11 +142,11 @@ function FundraiserBySlug({ slug }: { slug: string }) {
     <article className="space-y-8">
       <Breadcrumbs items={breadcrumbItems} />
 
-      {/* FR-016: Newly created fundraiser welcome + share prompt */}
+      {/* Newly created welcome */}
       {isNewlyCreated && fundraiser.donationCount === 0 && (
-        <div className="rounded-xl border border-primary/30 bg-emerald-50 p-5">
-          <p className="text-lg font-bold text-primary">Your fundraiser is live!</p>
-          <p className="mt-1 text-sm text-secondary">
+        <div className="rounded-xxl border border-brand bg-brand-mint p-5">
+          <p className="text-heading-sm text-brand">Your fundraiser is live!</p>
+          <p className="mt-1 text-body-sm text-supporting">
             Share it with friends and family to get the word out and receive your first donation.
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
@@ -158,7 +155,7 @@ function FundraiserBySlug({ slug }: { slug: string }) {
               onClick={() => {
                 navigator.clipboard.writeText(window.location.href.split("?")[0]);
               }}
-              className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-heading hover:bg-gray-50"
+              className="hrt-btn-secondary px-4 py-2 text-body-sm"
             >
               Copy link
             </button>
@@ -166,7 +163,7 @@ function FundraiserBySlug({ slug }: { slug: string }) {
               href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`I just launched "${fundraiser.title}" on FundRight! Help me reach my goal:`)}&url=${encodeURIComponent(window.location.href.split("?")[0])}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-heading hover:bg-gray-50"
+              className="hrt-btn-secondary px-4 py-2 text-body-sm"
             >
               Share on X
             </a>
@@ -174,7 +171,7 @@ function FundraiserBySlug({ slug }: { slug: string }) {
               href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href.split("?")[0])}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-heading hover:bg-gray-50"
+              className="hrt-btn-secondary px-4 py-2 text-body-sm"
             >
               Share on Facebook
             </a>
@@ -182,17 +179,17 @@ function FundraiserBySlug({ slug }: { slug: string }) {
         </div>
       )}
 
-      {/* Title at the very top */}
-      <h1 className="text-2xl font-bold text-heading tracking-tight sm:text-3xl">
+      {/* Title */}
+      <h1 className="text-heading-xl sm:text-display-sm text-heading">
         {fundraiser.title}
       </h1>
 
-      {/* Two-column layout: LEFT = content, RIGHT = sticky donation sidebar */}
+      {/* Two-column layout */}
       <div className="lg:grid lg:grid-cols-3 lg:gap-8">
-        {/* ── LEFT COLUMN ── */}
+        {/* LEFT COLUMN */}
         <div className="lg:col-span-2 space-y-6">
           {/* Hero image */}
-          <section className="overflow-hidden rounded-xl bg-gray-200">
+          <section className="hrt-card-image overflow-hidden bg-surface-medium">
             <div className="relative aspect-[16/9] w-full sm:aspect-[21/9]">
               <Image
                 src={fundraiser.heroImageUrl}
@@ -208,31 +205,31 @@ function FundraiserBySlug({ slug }: { slug: string }) {
 
           {/* Organizer byline */}
           {organizer && (
-            <p className="text-secondary">
+            <p className="text-supporting">
               By{" "}
               <Link
                 href={`/u/${organizer.username}`}
-                className="font-medium text-primary hover:underline"
+                className="font-bold text-brand hover:underline"
               >
                 {organizer.name}
               </Link>
               {organizer.verified && (
-                <span className="ml-1.5 text-primary" aria-label="Verified">
+                <span className="ml-1.5 text-brand" aria-label="Verified">
                   ✓
                 </span>
               )}
             </p>
           )}
 
-          {/* Trust cues: verification, history snippet, community */}
-          <div className="flex flex-wrap items-center gap-3 text-sm text-secondary">
+          {/* Trust cues */}
+          <div className="flex flex-wrap items-center gap-3 text-body-sm">
             {organizer?.verified && (
-              <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-emerald-800">
+              <span className="hrt-tag-positive">
                 Verified organizer
               </span>
             )}
             {organizer && organizer.communityIds.length > 0 && (
-              <span>
+              <span className="text-supporting">
                 Part of {organizer.communityIds.length} community
                 {organizer.communityIds.length !== 1 ? "s" : ""}
               </span>
@@ -240,35 +237,35 @@ function FundraiserBySlug({ slug }: { slug: string }) {
             {community && (
               <Link
                 href={`/communities/${community.slug}`}
-                className="rounded-full bg-gray-100 px-2.5 py-1 text-heading hover:bg-gray-200"
+                className="hrt-tag-neutral hover:bg-neutral-border transition-colors"
               >
                 {community.name}
               </Link>
             )}
           </div>
 
-          {/* Story section */}
-          <section className="border-t border-gray-200 pt-6 sm:pt-8">
-            <h2 className="text-lg font-semibold text-heading mb-3 sm:text-xl sm:mb-4">Story</h2>
-            <div className="prose prose-gray max-w-none text-heading">
+          {/* Story */}
+          <section className="border-t border-neutral-border pt-6 sm:pt-8">
+            <h2 className="text-heading-md text-heading mb-3 sm:mb-4">Story</h2>
+            <div className="max-w-none text-body-md text-heading leading-relaxed">
               {formatStory(fundraiser.story)}
             </div>
           </section>
 
-          {/* Organizer updates */}
+          {/* Updates */}
           {fundraiser.updates.length > 0 && (
-            <section className="border-t border-gray-200 pt-6 sm:pt-8">
-              <h2 className="text-lg font-semibold text-heading mb-3 sm:text-xl sm:mb-4">Updates</h2>
+            <section className="border-t border-neutral-border pt-6 sm:pt-8">
+              <h2 className="text-heading-md text-heading mb-3 sm:mb-4">Updates</h2>
               <ul className="space-y-4">
                 {fundraiser.updates.map((up) => (
-                  <li key={up.id} className="rounded-lg bg-gray-50 p-4">
+                  <li key={up.id} className="rounded-xl bg-surface-subtle p-4">
                     <time
                       dateTime={up.date}
-                      className="text-sm text-secondary block mb-1"
+                      className="text-body-sm text-supporting block mb-1"
                     >
                       {new Date(up.date).toLocaleDateString()}
                     </time>
-                    <p className="text-heading">{up.text}</p>
+                    <p className="text-body-md text-heading">{up.text}</p>
                   </li>
                 ))}
               </ul>
@@ -277,77 +274,74 @@ function FundraiserBySlug({ slug }: { slug: string }) {
 
           {/* Organizer section */}
           {organizer && (
-            <section className="border-t border-gray-200 pt-6 sm:pt-8">
-              <h2 className="text-lg font-semibold text-heading mb-4 sm:text-xl">Organizer</h2>
+            <section className="border-t border-neutral-border pt-6 sm:pt-8">
+              <h2 className="text-heading-md text-heading mb-4">Organizer</h2>
               <Link
                 href={`/u/${organizer.username}`}
                 className="flex items-center gap-3 group"
               >
                 <UserAvatar src={organizer.avatar} size={48} />
                 <div>
-                  <p className="font-semibold text-heading group-hover:text-primary">
+                  <p className="font-bold text-heading group-hover:text-brand transition-colors">
                     {organizer.name}
                     {organizer.verified && (
-                      <span className="ml-1.5 text-primary" aria-label="Verified">
+                      <span className="ml-1.5 text-brand" aria-label="Verified">
                         ✓
                       </span>
                     )}
                   </p>
-                  <p className="text-sm text-secondary">Organizer</p>
+                  <p className="text-body-sm text-supporting">Organizer</p>
                 </div>
               </Link>
             </section>
           )}
 
-          {/* Top Donors Leaderboard */}
+          {/* Top Donors */}
           {topDonorsLeaderboard.length > 0 && (
-            <section className="border-t border-gray-200 pt-6 sm:pt-8">
-              <h2 className="text-lg font-semibold text-heading mb-4 sm:text-xl">
+            <section className="border-t border-neutral-border pt-6 sm:pt-8">
+              <h2 className="text-heading-md text-heading mb-4">
                 Top donors
               </h2>
               <div className="flex items-end justify-center gap-4">
-                {/* 2nd place */}
                 {topDonorsLeaderboard[1] && (
                   <div className="flex flex-col items-center">
                     <UserAvatar src={topDonorsLeaderboard[1].donor.avatar} size={40} />
-                    <p className="mt-2 text-sm font-medium text-heading text-center truncate max-w-[80px]">
+                    <p className="mt-2 text-body-sm font-bold text-heading text-center truncate max-w-[80px]">
                       {topDonorsLeaderboard[1].donor.name.split(" ")[0]}
                     </p>
-                    <p className="text-xs text-secondary">
+                    <p className="text-body-xs text-supporting">
                       {formatCurrency(topDonorsLeaderboard[1].total)}
                     </p>
-                    <div className="mt-2 w-16 bg-gray-100 rounded-t-lg flex items-end justify-center" style={{ height: "60px" }}>
-                      <span className="text-lg font-bold text-secondary pb-1">2</span>
+                    <div className="mt-2 w-16 bg-surface-extra rounded-t-lg flex items-end justify-center" style={{ height: "60px" }}>
+                      <span className="text-heading-sm text-supporting pb-1">2</span>
                     </div>
                   </div>
                 )}
-                {/* 1st place */}
                 {topDonorsLeaderboard[0] && (
                   <div className="flex flex-col items-center">
                     <UserAvatar src={topDonorsLeaderboard[0].donor.avatar} size={48} />
-                    <p className="mt-2 text-sm font-semibold text-heading text-center truncate max-w-[80px]">
+                    <p className="mt-2 text-body-sm font-bold text-heading text-center truncate max-w-[80px]">
                       {topDonorsLeaderboard[0].donor.name.split(" ")[0]}
                     </p>
-                    <p className="text-xs text-primary font-medium">
+                    <p className="text-body-xs text-brand font-bold">
                       {formatCurrency(topDonorsLeaderboard[0].total)}
                     </p>
-                    <div className="mt-2 w-16 bg-primary/10 rounded-t-lg flex items-end justify-center" style={{ height: "90px" }}>
-                      <span className="text-lg font-bold text-primary pb-1">1</span>
+                    <div className="mt-2 w-16 bg-brand-subtle rounded-t-lg flex items-end justify-center" style={{ height: "90px" }}>
+                      <span className="text-heading-sm text-brand pb-1">1</span>
                     </div>
                   </div>
                 )}
-                {/* 3rd place */}
                 {topDonorsLeaderboard[2] && (
                   <div className="flex flex-col items-center">
                     <UserAvatar src={topDonorsLeaderboard[2].donor.avatar} size={36} />
-                    <p className="mt-2 text-sm font-medium text-heading text-center truncate max-w-[80px]">
+                    <p className="mt-2 text-body-sm font-bold text-heading text-center truncate max-w-[80px]">
                       {topDonorsLeaderboard[2].donor.name.split(" ")[0]}
                     </p>
-                    <p className="text-xs text-secondary">
+                    <p className="text-body-xs text-supporting">
                       {formatCurrency(topDonorsLeaderboard[2].total)}
                     </p>
-                    <div className="mt-2 w-16 bg-gray-100 rounded-t-lg flex items-end justify-center" style={{ height: "40px" }}>
-                      <span className="text-lg font-bold text-secondary pb-1">3</span>
+                    <div className="mt-2 w-16 bg-surface-extra rounded-t-lg flex items-end justify-center" style={{ height: "40px" }}>
+                      <span className="text-heading-sm text-supporting pb-1">3</span>
                     </div>
                   </div>
                 )}
@@ -355,34 +349,34 @@ function FundraiserBySlug({ slug }: { slug: string }) {
             </section>
           )}
 
-          {/* Parent community badge */}
+          {/* Community badge */}
           {community && (
-            <section className="border-t border-gray-200 pt-6 sm:pt-8">
-              <p className="text-sm text-secondary mb-2">Part of the community</p>
+            <section className="border-t border-neutral-border pt-6 sm:pt-8">
+              <p className="text-body-sm text-supporting mb-2">Part of the community</p>
               <Link
                 href={`/communities/${community.slug}`}
-                className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-heading hover:bg-gray-50"
+                className="hrt-btn-secondary px-4 py-2 text-body-sm"
               >
-                <span className="font-medium">{community.name}</span>
+                {community.name}
               </Link>
             </section>
           )}
 
-          {/* Related fundraisers */}
+          {/* Related */}
           {related.length > 0 && (
-            <section className="border-t border-gray-200 pt-6 sm:pt-8">
-              <h2 className="text-lg font-semibold text-heading mb-3 sm:text-xl sm:mb-4">
+            <section className="border-t border-neutral-border pt-6 sm:pt-8">
+              <h2 className="text-heading-md text-heading mb-3 sm:mb-4">
                 Related fundraisers in this community
               </h2>
-              <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
+              <ul className="grid gap-4 sm:grid-cols-2">
                 {related.map((f) => (
                   <li key={f.id}>
                     <Link
                       href={`/f/${f.slug}`}
-                      className="block rounded-xl border border-gray-200 bg-white p-4 hover:border-primary/30"
+                      className="block rounded-xxl border border-neutral-border bg-white p-4 transition-all duration-hrt ease-hrt hover:shadow-medium hover:border-brand/30"
                     >
-                      <p className="font-semibold text-heading">{f.title}</p>
-                      <p className="mt-1 text-sm text-secondary">
+                      <p className="font-bold text-heading">{f.title}</p>
+                      <p className="mt-1 text-body-sm text-supporting">
                         {formatCurrency(f.raisedAmount)} of{" "}
                         {formatCurrency(f.goalAmount)}
                       </p>
@@ -394,86 +388,76 @@ function FundraiserBySlug({ slug }: { slug: string }) {
           )}
         </div>
 
-        {/* ── RIGHT COLUMN: Sticky Donation Sidebar Widget ── */}
+        {/* RIGHT COLUMN: Donation Sidebar */}
         <div className="lg:col-span-1 mt-8 lg:mt-0">
-          <div className="lg:sticky lg:top-6">
-            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm space-y-4">
-              {/* Raised amount */}
+          <div className="lg:sticky lg:top-24">
+            <div className="rounded-xxl border border-neutral-border bg-white p-6 shadow-medium space-y-4">
               <div>
-                <p className="text-2xl font-bold text-heading">
+                <p className="text-heading-lg text-heading">
                   {formatCurrency(fundraiser.raisedAmount)}
-                  <span className="text-base font-normal text-secondary ml-1">
+                  <span className="text-body-md font-normal text-supporting ml-1">
                     raised of {formatCurrency(fundraiser.goalAmount)} goal
                   </span>
                 </p>
               </div>
 
-              {/* Progress bar */}
-              <ProgressBar raised={fundraiser.raisedAmount} goal={fundraiser.goalAmount} height="h-1.5" />
+              <ProgressBar raised={fundraiser.raisedAmount} goal={fundraiser.goalAmount} />
 
-              {/* Donation count */}
-              <p className="text-sm text-secondary">
+              <p className="text-body-sm text-supporting">
                 {fundraiser.donationCount} donation
                 {fundraiser.donationCount !== 1 ? "s" : ""}
               </p>
 
-              {/* Edge-case state banners inside sidebar */}
-              {/* FR-016: 0% -- Just launched */}
+              {/* Edge-case banners */}
               {fundraiser.donationCount === 0 && (
-                <div className="rounded-lg border border-dashed border-primary/40 bg-emerald-50/50 px-4 py-3">
-                  <p className="font-semibold text-primary text-sm">Just launched — be the first donor!</p>
-                  <p className="mt-1 text-xs text-secondary">
+                <div className="rounded-xl border border-dashed border-brand/40 bg-brand-mint px-4 py-3">
+                  <p className="font-bold text-brand text-body-sm">Just launched — be the first donor!</p>
+                  <p className="mt-1 text-body-xs text-supporting">
                     Every fundraiser starts with one person. Your donation sets the momentum.
                   </p>
                 </div>
               )}
 
-              {/* FR-016: >100% -- Overfunded */}
               {isOverfunded && (
-                <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3">
-                  <p className="font-semibold text-amber-800 text-sm">
+                <div className="rounded-xl bg-surface-warm border border-[#FFD863] px-4 py-3">
+                  <p className="font-bold text-warning text-body-sm">
                     {rawPct}% — Goal exceeded!
                   </p>
-                  <p className="mt-1 text-xs text-amber-700">
+                  <p className="mt-1 text-body-xs text-warning">
                     {formatCurrency(fundraiser.raisedAmount - fundraiser.goalAmount)} over the original goal. Every extra dollar extends the impact.
                   </p>
                 </div>
               )}
 
-              {/* FR-016: 100% -- Goal reached */}
               {isGoalReached && !isOverfunded && (
-                <div className="rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3">
-                  <p className="font-semibold text-emerald-800 text-sm">Goal reached!</p>
-                  <p className="mt-1 text-xs text-emerald-700">
+                <div className="rounded-xl bg-brand-subtle border border-brand px-4 py-3">
+                  <p className="font-bold text-positive text-body-sm">Goal reached!</p>
+                  <p className="mt-1 text-body-xs text-positive">
                     This fundraiser hit its {formatCurrency(fundraiser.goalAmount)} goal. You can still donate to extend the impact.
                   </p>
                 </div>
               )}
 
-              {/* FR-016: 76-99% -- Urgency */}
               {pct >= 76 && pct < 100 && (
-                <div className="rounded-lg bg-blue-50 border border-blue-200 px-4 py-3">
-                  <p className="font-semibold text-blue-800 text-sm">
+                <div className="rounded-xl bg-[#E1F6F6] border border-[#A7E3E3] px-4 py-3">
+                  <p className="font-bold text-informative text-body-sm">
                     Almost there! {formatCurrency(remaining)} to go
                   </p>
-                  <p className="mt-1 text-xs text-blue-700">
+                  <p className="mt-1 text-body-xs text-informative">
                     This fundraiser is {pct}% funded. Help push it over the finish line.
                   </p>
                 </div>
               )}
 
-              {/* Trust Summary inside sidebar */}
               {organizer && <TrustSummaryBlock organizer={organizer} />}
 
-              {/* Donate now button */}
+              {/* Donate button */}
               <button
                 ref={donateButtonRef}
                 type="button"
                 onClick={() => setModalOpen(true)}
-                className={`w-full rounded-full px-6 py-3 font-semibold text-primary-foreground hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
-                  fundraiser.donationCount === 0
-                    ? "bg-primary animate-pulse"
-                    : "bg-primary"
+                className={`hrt-btn-primary-lg w-full ${
+                  fundraiser.donationCount === 0 ? "animate-pulse" : ""
                 }`}
                 aria-label="Donate to this fundraiser"
               >
@@ -486,28 +470,28 @@ function FundraiserBySlug({ slug }: { slug: string }) {
                 onClick={() => {
                   navigator.clipboard.writeText(window.location.href.split("?")[0]);
                 }}
-                className="w-full rounded-full border border-gray-300 px-6 py-3 font-semibold text-heading hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
+                className="hrt-btn-secondary w-full px-6 py-3"
               >
                 Share
               </button>
 
-              {/* Recent donors list */}
+              {/* Recent donors */}
               {recentDonations.length > 0 && (
                 <div className="pt-2 space-y-3">
-                  <h3 className="text-sm font-semibold text-heading">Recent donors</h3>
+                  <h3 className="text-heading-xs text-heading">Recent donors</h3>
                   <ul className="space-y-3">
                     {recentDonations.map(({ donor, amount }, i) => (
                       <li key={`${donor.id}-${i}`}>
                         <Link
                           href={`/u/${donor.username}`}
-                          className="flex items-center gap-3 hover:bg-gray-50 -mx-2 px-2 py-1 rounded-lg transition-colors"
+                          className="flex items-center gap-3 hover:bg-surface-subtle -mx-2 px-2 py-1 rounded-xl transition-colors duration-hrt ease-hrt"
                         >
                           <UserAvatar src={donor.avatar} size={32} />
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-heading truncate">
+                            <p className="text-body-sm font-bold text-heading truncate">
                               {donor.name}
                             </p>
-                            <p className="text-xs text-secondary">
+                            <p className="text-body-xs text-supporting">
                               {formatCurrency(amount)}
                             </p>
                           </div>
@@ -537,7 +521,7 @@ function FundraiserBySlug({ slug }: { slug: string }) {
 
       {toast.show && toast.donorUsername && (
         <div
-          className="fixed bottom-4 right-4 z-50 max-w-sm rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-lg"
+          className="fixed bottom-4 right-4 z-50 max-w-sm rounded-xxl border border-neutral-border bg-white px-4 py-3 shadow-strong"
           role="status"
           aria-live="polite"
         >
@@ -545,7 +529,7 @@ function FundraiserBySlug({ slug }: { slug: string }) {
             Donation added!{" "}
             <Link
               href={`/u/${toast.donorUsername}`}
-              className="font-medium text-primary hover:underline"
+              className="font-bold text-brand hover:underline"
             >
               View it on your profile →
             </Link>

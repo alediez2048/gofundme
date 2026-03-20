@@ -33,49 +33,49 @@ function parseSchemas(): SchemaEntry[] {
 function typeColor(type: string): string {
   switch (type) {
     case "DonateAction":
-      return "bg-emerald-100 text-emerald-800";
+      return "bg-brand-subtle text-brand-strong";
     case "Organization":
-      return "bg-blue-100 text-blue-800";
+      return "bg-[#E1F6F6] text-[#1C456B]";
     case "FAQPage":
-      return "bg-purple-100 text-purple-800";
+      return "bg-[#ECCFF6] text-[#642878]";
     case "ProfilePage":
-      return "bg-amber-100 text-amber-800";
+      return "bg-surface-warm text-warning";
     case "Person":
-      return "bg-pink-100 text-pink-800";
+      return "bg-[#F7CDDB] text-[#7E1946]";
     case "WebSite":
-      return "bg-indigo-100 text-indigo-800";
+      return "bg-[#E1F6F6] text-informative";
     case "BreadcrumbList":
-      return "bg-gray-200 text-heading";
+      return "bg-surface-medium text-heading";
     default:
-      return "bg-gray-100 text-heading";
+      return "bg-surface-extra text-heading";
   }
 }
 
 function highlightKey(key: string): string {
   const aeoKeys = ["@id", "@type", "sameAs", "dateModified", "nonprofitStatus"];
-  if (aeoKeys.includes(key)) return "text-primary font-bold";
-  if (key.startsWith("@")) return "text-blue-600 font-medium";
-  return "text-secondary";
+  if (aeoKeys.includes(key)) return "text-brand font-bold";
+  if (key.startsWith("@")) return "text-informative font-medium";
+  return "text-supporting";
 }
 
 function JsonRenderer({ data, depth = 0 }: { data: unknown; depth?: number }) {
-  if (data === null || data === undefined) return <span className="text-gray-400">null</span>;
-  if (typeof data === "string") return <span className="text-emerald-700">&quot;{data}&quot;</span>;
+  if (data === null || data === undefined) return <span className="text-neutral-disabled">null</span>;
+  if (typeof data === "string") return <span className="text-positive">&quot;{data}&quot;</span>;
   if (typeof data === "number" || typeof data === "boolean")
-    return <span className="text-amber-700">{String(data)}</span>;
+    return <span className="text-warning">{String(data)}</span>;
 
   if (Array.isArray(data)) {
-    if (data.length === 0) return <span className="text-gray-400">[]</span>;
+    if (data.length === 0) return <span className="text-neutral-disabled">[]</span>;
     return (
       <div style={{ marginLeft: depth > 0 ? 16 : 0 }}>
-        <span className="text-gray-400">[</span>
+        <span className="text-neutral-disabled">[</span>
         {data.map((item, i) => (
           <div key={i} style={{ marginLeft: 16 }}>
             <JsonRenderer data={item} depth={depth + 1} />
-            {i < data.length - 1 && <span className="text-gray-400">,</span>}
+            {i < data.length - 1 && <span className="text-neutral-disabled">,</span>}
           </div>
         ))}
-        <span className="text-gray-400">]</span>
+        <span className="text-neutral-disabled">]</span>
       </div>
     );
   }
@@ -84,16 +84,16 @@ function JsonRenderer({ data, depth = 0 }: { data: unknown; depth?: number }) {
     const entries = Object.entries(data as Record<string, unknown>);
     return (
       <div style={{ marginLeft: depth > 0 ? 16 : 0 }}>
-        <span className="text-gray-400">{"{"}</span>
+        <span className="text-neutral-disabled">{"{"}</span>
         {entries.map(([key, value], i) => (
           <div key={key} style={{ marginLeft: 16 }}>
             <span className={highlightKey(key)}>&quot;{key}&quot;</span>
-            <span className="text-gray-400">: </span>
+            <span className="text-neutral-disabled">: </span>
             <JsonRenderer data={value} depth={depth + 1} />
-            {i < entries.length - 1 && <span className="text-gray-400">,</span>}
+            {i < entries.length - 1 && <span className="text-neutral-disabled">,</span>}
           </div>
         ))}
-        <span className="text-gray-400">{"}"}</span>
+        <span className="text-neutral-disabled">{"}"}</span>
       </div>
     );
   }
@@ -107,16 +107,15 @@ export default function SchemaViewer() {
   const [expanded, setExpanded] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
-    // Small delay to ensure page has rendered JSON-LD
     const timer = setTimeout(() => setSchemas(parseSchemas()), 200);
     return () => clearTimeout(timer);
   }, [pathname]);
 
   if (schemas.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 py-8 text-center">
-        <p className="text-secondary">No JSON-LD schemas found on this page.</p>
-        <p className="mt-1 text-sm text-secondary">Navigate to a fundraiser, community, or profile page.</p>
+      <div className="rounded-xxl border border-dashed border-neutral-border bg-surface-subtle py-8 text-center">
+        <p className="text-supporting">No JSON-LD schemas found on this page.</p>
+        <p className="mt-1 text-body-sm text-supporting">Navigate to a fundraiser, community, or profile page.</p>
       </div>
     );
   }
@@ -127,7 +126,6 @@ export default function SchemaViewer() {
     if (s.raw["sameAs"]) features.push("sameAs entity linking");
     if (s.raw["dateModified"]) features.push("dateModified freshness");
     if (s.raw["nonprofitStatus"]) features.push("nonprofitStatus");
-    // Check nested entities
     const checkNested = (obj: Record<string, unknown>) => {
       if (obj["@id"]) features.push(`nested @id: ${String(obj["@type"] ?? "entity")}`);
       if (obj["sameAs"]) features.push(`nested sameAs: ${String(obj["@type"] ?? "entity")}`);
@@ -144,11 +142,11 @@ export default function SchemaViewer() {
   return (
     <div className="space-y-4">
       {/* AEO summary */}
-      <div className="rounded-lg bg-primary/5 border border-primary/20 p-4">
-        <h3 className="text-sm font-semibold text-primary mb-2">
+      <div className="rounded-xl bg-brand-mint border border-brand-subtle p-4">
+        <h3 className="text-body-sm font-bold text-brand-strong mb-2">
           AEO/GEO Features on This Page
         </h3>
-        <p className="text-xs text-secondary mb-2">
+        <p className="text-body-xs text-supporting mb-2">
           {schemas.length} schema{schemas.length !== 1 ? "s" : ""} detected &middot; {pathname}
         </p>
         {uniqueAeo.length > 0 ? (
@@ -156,40 +154,40 @@ export default function SchemaViewer() {
             {uniqueAeo.map((f) => (
               <span
                 key={f}
-                className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"
+                className="hrt-tag-brand text-body-xs"
               >
                 {f}
               </span>
             ))}
           </div>
         ) : (
-          <p className="text-xs text-secondary">Base schema only (no advanced AEO features on this page type).</p>
+          <p className="text-body-xs text-supporting">Base schema only (no advanced AEO features on this page type).</p>
         )}
       </div>
 
       {/* Schema cards */}
       {schemas.map((schema, i) => (
-        <div key={i} className="rounded-lg border border-gray-200 bg-white overflow-hidden">
+        <div key={i} className="rounded-xl border border-neutral-border bg-white overflow-hidden">
           <button
             type="button"
             onClick={() => setExpanded((p) => ({ ...p, [i]: !p[i] }))}
-            className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50"
+            className="w-full flex items-center justify-between px-4 py-3 text-left transition-colors duration-hrt ease-hrt hover:bg-surface-subtle"
           >
             <div className="flex items-center gap-2">
-              <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${typeColor(schema.type)}`}>
+              <span className={`rounded px-2.5 py-0.5 text-body-xs font-bold ${typeColor(schema.type)}`}>
                 {schema.type}
               </span>
               {schema.id && (
-                <span className="text-xs text-secondary truncate max-w-[300px]">
+                <span className="text-body-xs text-supporting truncate max-w-[300px]">
                   {schema.id}
                 </span>
               )}
             </div>
-            <span className="text-xs text-gray-400">{expanded[i] ? "Collapse" : "Expand"}</span>
+            <span className="text-body-xs text-neutral-disabled">{expanded[i] ? "Collapse" : "Expand"}</span>
           </button>
           {expanded[i] && (
-            <div className="border-t border-gray-100 px-4 py-3 overflow-x-auto">
-              <pre className="text-xs font-mono leading-relaxed">
+            <div className="border-t border-surface-medium px-4 py-3 overflow-x-auto">
+              <pre className="text-body-xs font-mono leading-relaxed">
                 <JsonRenderer data={schema.raw} />
               </pre>
             </div>

@@ -8,8 +8,6 @@ import UserAvatar from "./UserAvatar";
 
 const DEFAULT_PROFILE_USERNAME = "janahan";
 
-/* GoFundMe-style nav: Left (Search, Donate, Fundraise) | Center (Logo) | Right (About, Avatar) */
-
 const MOBILE_NAV_LINKS = [
   { href: "/search", label: "Search" },
   { href: "/browse", label: "Donate" },
@@ -32,7 +30,6 @@ export default function Header() {
     (u) => u.username === DEFAULT_PROFILE_USERNAME
   );
 
-  /* Close profile dropdown on outside click */
   useEffect(() => {
     if (!profileOpen) return;
     const handleClick = (e: MouseEvent) => {
@@ -44,7 +41,6 @@ export default function Header() {
     return () => document.removeEventListener("click", handleClick);
   }, [profileOpen]);
 
-  /* Close about dropdown on outside click */
   useEffect(() => {
     if (!aboutOpen) return;
     const handleClick = (e: MouseEvent) => {
@@ -56,12 +52,10 @@ export default function Header() {
     return () => document.removeEventListener("click", handleClick);
   }, [aboutOpen]);
 
-  /* Close mobile drawer on route change */
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
 
-  /* Escape + focus trap when mobile drawer open (same pattern as DonationModal) */
   useEffect(() => {
     if (!mobileOpen) return;
     const el = mobileDrawerRef.current;
@@ -102,16 +96,16 @@ export default function Header() {
   };
 
   return (
-    <header className="border-b border-gray-200 bg-white" role="banner">
+    <header className="sticky top-0 z-40 border-b border-neutral-border bg-white" role="banner">
       <nav
-        className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3"
+        className="mx-auto flex h-20 max-w-content items-center justify-between px-4"
         aria-label="Main"
       >
-        {/* ── Left section: Search, Donate, Fundraise ── */}
-        <div className="hidden items-center gap-5 md:flex">
+        {/* Left: Search, Donate, Fundraise */}
+        <div className="hidden items-center gap-6 md:flex">
           <Link
             href="/search"
-            className="text-secondary hover:text-heading transition-colors"
+            className="text-supporting transition-colors duration-hrt ease-hrt hover:text-heading"
             aria-label="Search"
           >
             <svg
@@ -131,43 +125,43 @@ export default function Header() {
           </Link>
           <Link
             href="/browse"
-            className={`text-sm font-medium transition-colors ${
+            className={`text-body-md transition-colors duration-hrt ease-hrt ${
               isActive("/browse")
-                ? "text-primary"
-                : "text-secondary hover:text-heading"
+                ? "font-bold text-heading"
+                : "text-heading hover:text-brand"
             }`}
           >
             Donate
           </Link>
           <Link
             href="/create"
-            className={`text-sm font-medium transition-colors ${
+            className={`text-body-md transition-colors duration-hrt ease-hrt ${
               isActive("/create")
-                ? "text-primary"
-                : "text-secondary hover:text-heading"
+                ? "font-bold text-heading"
+                : "text-heading hover:text-brand"
             }`}
           >
             Fundraise
           </Link>
         </div>
 
-        {/* ── Center: Logo ── */}
+        {/* Center: Logo */}
         <Link
           href="/"
-          className="text-xl font-bold text-primary tracking-tight hover:opacity-90 transition-opacity"
+          className="text-heading-lg text-brand tracking-tight transition-opacity duration-hrt ease-hrt hover:opacity-90"
         >
-          FundRight
+          fund<span className="font-bold">right</span>
         </Link>
 
-        {/* ── Right section: About dropdown, User avatar ── */}
+        {/* Right: About, CTA, Avatar */}
         <div className="hidden items-center gap-5 md:flex">
           {/* About dropdown */}
           <div className="relative" ref={aboutRef}>
             <button
               type="button"
               onClick={() => setAboutOpen((o) => !o)}
-              className={`flex items-center gap-1 text-sm font-medium transition-colors ${
-                aboutOpen ? "text-primary" : "text-secondary hover:text-heading"
+              className={`flex items-center gap-1 text-body-md transition-colors duration-hrt ease-hrt ${
+                aboutOpen ? "text-brand" : "text-heading hover:text-brand"
               }`}
               aria-expanded={aboutOpen}
               aria-haspopup="true"
@@ -177,7 +171,7 @@ export default function Header() {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
                 fill="currentColor"
-                className={`h-4 w-4 transition-transform ${aboutOpen ? "rotate-180" : ""}`}
+                className={`h-4 w-4 transition-transform duration-hrt ease-hrt ${aboutOpen ? "rotate-180" : ""}`}
                 aria-hidden="true"
               >
                 <path
@@ -189,12 +183,12 @@ export default function Header() {
             </button>
             {aboutOpen && (
               <div
-                className="absolute right-0 top-full z-50 mt-2 w-48 rounded-lg border border-gray-200 bg-white py-1 shadow-lg animate-fadeIn"
+                className="absolute right-0 top-full z-50 mt-2 w-48 rounded-xl border border-neutral-border bg-white py-1 shadow-medium animate-fadeIn"
                 role="menu"
               >
                 <Link
                   href="/communities"
-                  className="block px-4 py-2 text-sm text-heading hover:bg-gray-50"
+                  className="block px-4 py-2.5 text-body-sm text-heading transition-colors hover:bg-surface-subtle"
                   role="menuitem"
                   onClick={() => setAboutOpen(false)}
                 >
@@ -202,7 +196,7 @@ export default function Header() {
                 </Link>
                 <Link
                   href="/"
-                  className="block px-4 py-2 text-sm text-heading hover:bg-gray-50"
+                  className="block px-4 py-2.5 text-body-sm text-heading transition-colors hover:bg-surface-subtle"
                   role="menuitem"
                   onClick={() => setAboutOpen(false)}
                 >
@@ -212,12 +206,17 @@ export default function Header() {
             )}
           </div>
 
-          {/* Profile avatar + dropdown */}
+          {/* CTA button */}
+          <Link href="/create" className="hrt-btn-primary-lg px-6">
+            Start a FundRight
+          </Link>
+
+          {/* Profile avatar */}
           <div className="relative" ref={profileRef}>
             <button
               type="button"
               onClick={() => setProfileOpen((o) => !o)}
-              className="flex items-center gap-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              className="flex items-center gap-2 rounded-pill focus:outline-none focus:ring-2 focus:ring-heading focus:ring-offset-2"
               aria-expanded={profileOpen}
               aria-haspopup="true"
               aria-label="Profile menu"
@@ -225,18 +224,18 @@ export default function Header() {
               {defaultUser ? (
                 <UserAvatar src={defaultUser.avatar} size={36} />
               ) : (
-                <span className="h-9 w-9 rounded-full bg-gray-200" aria-hidden />
+                <span className="h-9 w-9 rounded-pill bg-surface-medium" aria-hidden />
               )}
             </button>
             {profileOpen && (
               <div
-                className="absolute right-0 top-full z-50 mt-2 w-48 rounded-lg border border-gray-200 bg-white py-1 shadow-lg animate-fadeIn"
+                className="absolute right-0 top-full z-50 mt-2 w-48 rounded-xl border border-neutral-border bg-white py-1 shadow-medium animate-fadeIn"
                 role="menu"
               >
                 {defaultUser && (
                   <Link
                     href={`/u/${defaultUser.username}`}
-                    className="block px-4 py-2 text-sm text-heading hover:bg-gray-50"
+                    className="block px-4 py-2.5 text-body-sm text-heading transition-colors hover:bg-surface-subtle"
                     role="menuitem"
                     onClick={() => setProfileOpen(false)}
                   >
@@ -245,7 +244,7 @@ export default function Header() {
                 )}
                 <button
                   type="button"
-                  className="w-full px-4 py-2 text-left text-sm text-heading hover:bg-gray-50"
+                  className="w-full px-4 py-2.5 text-left text-body-sm text-heading transition-colors hover:bg-surface-subtle"
                   role="menuitem"
                   onClick={() => setProfileOpen(false)}
                 >
@@ -256,7 +255,7 @@ export default function Header() {
           </div>
         </div>
 
-        {/* ── Mobile: hamburger + profile avatar ── */}
+        {/* Mobile: hamburger + avatar */}
         <div className="flex items-center gap-2 md:hidden">
           {defaultUser && (
             <Link
@@ -271,22 +270,22 @@ export default function Header() {
             ref={mobileMenuButtonRef}
             type="button"
             onClick={() => setMobileOpen((o) => !o)}
-            className="flex h-10 w-10 flex-col items-center justify-center gap-1 rounded p-2 text-secondary hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="flex h-10 w-10 flex-col items-center justify-center gap-1 rounded-md p-2 text-heading hover:bg-surface-subtle focus:outline-none focus:ring-2 focus:ring-heading"
             aria-expanded={mobileOpen}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
           >
             <span
-              className={`block h-0.5 w-5 rounded bg-current transition-transform ${
+              className={`block h-0.5 w-5 rounded bg-current transition-transform duration-hrt ease-hrt ${
                 mobileOpen ? "translate-y-1.5 rotate-45" : ""
               }`}
             />
             <span
-              className={`block h-0.5 w-5 rounded bg-current ${
+              className={`block h-0.5 w-5 rounded bg-current transition-opacity duration-hrt ease-hrt ${
                 mobileOpen ? "opacity-0" : ""
               }`}
             />
             <span
-              className={`block h-0.5 w-5 rounded bg-current transition-transform ${
+              className={`block h-0.5 w-5 rounded bg-current transition-transform duration-hrt ease-hrt ${
                 mobileOpen ? "-translate-y-1.5 -rotate-45" : ""
               }`}
             />
@@ -294,7 +293,7 @@ export default function Header() {
         </div>
       </nav>
 
-      {/* ── Mobile slide-out drawer ── */}
+      {/* Mobile drawer */}
       {mobileOpen && (
         <>
           <div
@@ -304,7 +303,7 @@ export default function Header() {
           />
           <div
             ref={mobileDrawerRef}
-            className="fixed top-0 right-0 z-50 h-full w-64 max-w-[85vw] bg-white shadow-xl md:hidden"
+            className="fixed top-0 right-0 z-50 h-full w-72 max-w-[85vw] bg-white shadow-strong md:hidden"
             role="dialog"
             aria-modal="true"
             aria-label="Navigation menu"
@@ -314,10 +313,10 @@ export default function Header() {
                 <Link
                   key={href}
                   href={href}
-                  className={`rounded-lg px-4 py-3 text-sm font-medium ${
+                  className={`rounded-xl px-4 py-3 text-body-md font-bold transition-colors duration-hrt ease-hrt ${
                     isActive(href)
-                      ? "bg-primary/10 text-primary"
-                      : "text-heading hover:bg-gray-50"
+                      ? "bg-brand-subtle text-brand-strong"
+                      : "text-heading hover:bg-surface-subtle"
                   }`}
                   onClick={() => setMobileOpen(false)}
                 >
@@ -327,18 +326,23 @@ export default function Header() {
               {defaultUser && (
                 <Link
                   href={`/u/${defaultUser.username}`}
-                  className={`rounded-lg px-4 py-3 text-sm font-medium ${
+                  className={`rounded-xl px-4 py-3 text-body-md font-bold transition-colors ${
                     pathname === `/u/${defaultUser.username}`
-                      ? "bg-primary/10 text-primary"
-                      : "text-heading hover:bg-gray-50"
+                      ? "bg-brand-subtle text-brand-strong"
+                      : "text-heading hover:bg-surface-subtle"
                   }`}
                   onClick={() => setMobileOpen(false)}
                 >
                   My profile
                 </Link>
               )}
-              <div className="mt-4 border-t border-gray-200 pt-4">
-                <span className="block px-4 py-2 text-sm text-secondary">
+              <div className="mt-4 border-t border-neutral-border pt-4">
+                <Link href="/create" className="hrt-btn-primary-lg w-full text-center" onClick={() => setMobileOpen(false)}>
+                  Start a FundRight
+                </Link>
+              </div>
+              <div className="mt-2">
+                <span className="block px-4 py-2 text-body-sm text-supporting">
                   Sign Out
                 </span>
               </div>

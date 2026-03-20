@@ -11,10 +11,10 @@ export default function CommunitiesIndexPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold text-heading tracking-tight">
+      <h1 className="text-display-sm text-heading">
         Communities
       </h1>
-      <p className="text-secondary max-w-xl">
+      <p className="text-body-md text-supporting max-w-xl">
         Explore causes and support fundraisers within each community.
       </p>
       <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -22,9 +22,9 @@ export default function CommunitiesIndexPage() {
           <li key={c.id}>
             <Link
               href={`/communities/${c.slug}`}
-              className="block overflow-hidden rounded-xl border border-gray-200 bg-white transition-colors hover:border-primary/30"
+              className="hrt-card block hover:shadow-medium"
             >
-              <div className="relative aspect-[21/9] w-full bg-gray-200">
+              <div className="hrt-card-image relative aspect-[21/9] w-full bg-surface-medium">
                 <Image
                   src={c.bannerImageUrl}
                   alt=""
@@ -36,23 +36,23 @@ export default function CommunitiesIndexPage() {
                 />
               </div>
               <div className="p-4">
-                <h2 className="font-semibold text-heading">{c.name}</h2>
-                <span className="mt-1 inline-block rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-heading">
+                <h2 className="text-heading-sm text-heading">{c.name}</h2>
+                <span className="hrt-tag-brand mt-1">
                   {c.causeCategory}
                 </span>
-                <p className="mt-2 text-sm text-secondary line-clamp-2">
+                <p className="mt-2 text-body-sm text-supporting line-clamp-2">
                   {c.description}
                 </p>
-                <dl className="mt-3 flex gap-4 text-sm">
+                <dl className="mt-3 flex gap-4 text-body-sm">
                   <div>
-                    <dt className="text-secondary">Raised</dt>
-                    <dd className="font-semibold text-heading">
+                    <dt className="text-supporting">Raised</dt>
+                    <dd className="font-bold text-heading">
                       {formatCurrency(c.totalRaised)}
                     </dd>
                   </div>
                   <div>
-                    <dt className="text-secondary">Fundraisers</dt>
-                    <dd className="font-semibold text-heading">
+                    <dt className="text-supporting">Fundraisers</dt>
+                    <dd className="font-bold text-heading">
                       {c.fundraiserCount}
                     </dd>
                   </div>

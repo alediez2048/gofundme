@@ -3,25 +3,128 @@
 @tailwind utilities;
 
 :root {
-  --color-primary: #02a95c;
-  --color-primary-foreground: #ffffff;
-  --color-accent: #ffc629;
-  --color-heading: #1a1a1a;
-  --color-secondary: #6b6b6b;
+  --hrt-color-brand: #4A9D44;
+  --hrt-color-brand-strong: #274A34;
+  --hrt-color-brand-hover: #2D6339;
+  --hrt-color-brand-lime: #CCF88E;
+  --hrt-color-brand-subtle: #E9FCCE;
+  --hrt-color-brand-darkest: #0B291A;
+  --hrt-color-text-default: #232323;
+  --hrt-color-text-supporting: #6F6F6F;
+  --hrt-color-text-disabled: #B7B7B6;
+  --hrt-color-surface-subtle: #FAFAFA;
+  --hrt-color-surface-extra: #F5F5F5;
+  --hrt-color-surface-medium: #E9E9E9;
+  --hrt-color-border-subtle: #D8D8D8;
+  --hrt-color-negative: #B01509;
+  --hrt-color-positive: #2D6339;
+  --hrt-color-progress-start: #ACF86C;
+  --hrt-color-progress-end: #4A9D44;
 }
 
-/* FR-015: Global focus indicator for all interactive elements */
+@layer base {
+  body {
+    color: var(--hrt-color-text-default);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  .hrt-btn-primary {
+    @apply inline-flex items-center justify-center rounded-pill bg-brand-strong text-brand-lime font-bold transition-all duration-hrt ease-hrt;
+    @apply hover:bg-brand-hover;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heading focus-visible:ring-offset-2;
+  }
+
+  .hrt-btn-primary-sm {
+    @apply hrt-btn-primary px-6 py-1 min-h-[2rem] text-body-sm;
+  }
+
+  .hrt-btn-primary-md {
+    @apply hrt-btn-primary px-6 py-1 min-h-[2.5rem] text-body-md;
+  }
+
+  .hrt-btn-primary-lg {
+    @apply hrt-btn-primary px-6 py-2 min-h-[3rem] text-body-md;
+  }
+
+  .hrt-btn-primary-xl {
+    @apply hrt-btn-primary px-8 py-2 min-h-[3.5rem] text-body-lg;
+  }
+
+  .hrt-btn-special {
+    @apply inline-flex items-center justify-center rounded-pill bg-brand-lime text-brand-strong font-bold transition-all duration-hrt ease-hrt;
+    @apply hover:bg-brand-subtle;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heading focus-visible:ring-offset-2;
+  }
+
+  .hrt-btn-secondary {
+    @apply inline-flex items-center justify-center rounded-pill border border-neutral-border bg-transparent text-heading font-bold transition-all duration-hrt ease-hrt;
+    @apply hover:bg-[rgba(35,35,35,0.05)];
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heading focus-visible:ring-offset-2;
+  }
+
+  .hrt-tag {
+    @apply inline-flex items-center rounded text-body-sm font-bold border border-transparent px-2 min-h-[1.5rem] leading-none;
+  }
+
+  .hrt-tag-neutral {
+    @apply hrt-tag bg-surface-medium text-[#424242];
+  }
+
+  .hrt-tag-brand {
+    @apply hrt-tag bg-brand-lime text-brand-strong;
+  }
+
+  .hrt-tag-positive {
+    @apply hrt-tag bg-brand-subtle text-brand-strong;
+  }
+
+  .hrt-tag-feature {
+    @apply hrt-tag bg-[#ECCFF6] text-[#642878];
+  }
+
+  .hrt-tag-informative {
+    @apply hrt-tag bg-[#E1F6F6] text-[#1C456B];
+  }
+
+  .hrt-tag-warning {
+    @apply hrt-tag bg-surface-warm text-warning;
+  }
+
+  .hrt-card {
+    @apply rounded-xxl bg-surface-subtle overflow-hidden transition-all duration-hrt ease-hrt;
+  }
+
+  .hrt-card-image {
+    @apply rounded-xl overflow-hidden;
+  }
+
+  .hrt-progress-track {
+    @apply rounded-pill h-2 w-full overflow-hidden;
+    background-color: rgba(35, 35, 35, 0.05);
+  }
+
+  .hrt-progress-fill {
+    @apply h-full rounded-pill;
+    background: linear-gradient(90deg, var(--hrt-color-progress-start), var(--hrt-color-progress-end) 93.27%);
+    min-width: 0.25rem;
+  }
+}
+
+/* Focus indicator */
 a:focus-visible,
 button:focus-visible,
 select:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--hrt-color-text-default);
   outline-offset: 2px;
 }
 
-/* FR-015: Disable animations when user prefers reduced motion */
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

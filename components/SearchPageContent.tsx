@@ -62,7 +62,7 @@ function SearchResults() {
       <div className="space-y-8">
         <Breadcrumbs items={breadcrumbItems} />
         <div className="text-center py-16">
-          <p className="text-lg font-semibold text-heading">
+          <p className="text-heading-sm text-heading">
             Enter a search term to find fundraisers, communities, and people.
           </p>
         </div>
@@ -74,13 +74,13 @@ function SearchResults() {
     return (
       <div className="space-y-8">
         <Breadcrumbs items={breadcrumbItems} />
-        <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 py-16 text-center">
-          <p className="text-lg font-semibold text-heading">
+        <div className="rounded-xxl border border-dashed border-neutral-border bg-surface-subtle py-16 text-center">
+          <p className="text-heading-sm text-heading">
             No results for &ldquo;{q}&rdquo;
           </p>
-          <p className="mt-2 text-secondary">
+          <p className="mt-2 text-supporting">
             Try a different search or{" "}
-            <Link href="/browse" className="font-medium text-primary hover:underline">
+            <Link href="/browse" className="font-bold text-brand hover:underline">
               browse by category
             </Link>
             .
@@ -95,10 +95,10 @@ function SearchResults() {
       <Breadcrumbs items={breadcrumbItems} />
 
       <div>
-        <h1 className="text-3xl font-bold text-heading tracking-tight">
+        <h1 className="text-display-sm text-heading">
           Search results for &ldquo;{q}&rdquo;
         </h1>
-        <p className="mt-2 text-secondary">
+        <p className="mt-2 text-body-md text-supporting">
           {totalResults} result{totalResults !== 1 ? "s" : ""} found
         </p>
       </div>
@@ -106,7 +106,7 @@ function SearchResults() {
       {/* Fundraisers */}
       {matchedFundraisers.length > 0 && (
         <section>
-          <h2 className="text-xl font-semibold text-heading mb-4">
+          <h2 className="text-heading-md text-heading mb-4">
             Fundraisers ({matchedFundraisers.length})
           </h2>
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -116,9 +116,9 @@ function SearchResults() {
                 <li key={f.id}>
                   <Link
                     href={`/f/${f.slug}`}
-                    className="block overflow-hidden rounded-xl border border-gray-200 bg-white transition-colors hover:border-primary/30"
+                    className="hrt-card block hover:shadow-medium"
                   >
-                    <div className="relative aspect-[16/10] w-full bg-gray-200">
+                    <div className="hrt-card-image relative aspect-[3/2] w-full bg-surface-medium">
                       <Image
                         src={f.heroImageUrl}
                         alt=""
@@ -130,11 +130,11 @@ function SearchResults() {
                       />
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-heading line-clamp-2">
+                      <h3 className="text-heading-xs text-heading line-clamp-2">
                         {f.title}
                       </h3>
                       {organizer && (
-                        <p className="mt-1 text-sm text-secondary">
+                        <p className="mt-1 text-body-sm text-supporting">
                           By {organizer.name}
                         </p>
                       )}
@@ -142,13 +142,12 @@ function SearchResults() {
                         <ProgressBar
                           raised={f.raisedAmount}
                           goal={f.goalAmount}
-                          height="h-2"
                           animate={false}
                         />
                       </div>
-                      <p className="mt-2 text-sm font-medium text-heading">
-                        {formatCurrency(f.raisedAmount)} of{" "}
-                        {formatCurrency(f.goalAmount)}
+                      <p className="mt-2 text-body-sm font-bold text-heading">
+                        {formatCurrency(f.raisedAmount)}{" "}
+                        <span className="font-normal text-supporting">raised</span>
                       </p>
                     </div>
                   </Link>
@@ -157,7 +156,7 @@ function SearchResults() {
             })}
           </ul>
           {matchedFundraisers.length > MAX_PER_GROUP && (
-            <p className="mt-3 text-sm text-secondary">
+            <p className="mt-3 text-body-sm text-supporting">
               Showing {MAX_PER_GROUP} of {matchedFundraisers.length} fundraisers
             </p>
           )}
@@ -167,7 +166,7 @@ function SearchResults() {
       {/* Communities */}
       {matchedCommunities.length > 0 && (
         <section>
-          <h2 className="text-xl font-semibold text-heading mb-4">
+          <h2 className="text-heading-md text-heading mb-4">
             Communities ({matchedCommunities.length})
           </h2>
           <ul className="grid gap-4 sm:grid-cols-2">
@@ -175,9 +174,9 @@ function SearchResults() {
               <li key={c.id}>
                 <Link
                   href={`/communities/${c.slug}`}
-                  className="block overflow-hidden rounded-xl border border-gray-200 bg-white transition-colors hover:border-primary/30"
+                  className="hrt-card block hover:shadow-medium"
                 >
-                  <div className="relative aspect-[21/9] w-full bg-gray-200">
+                  <div className="hrt-card-image relative aspect-[21/9] w-full bg-surface-medium">
                     <Image
                       src={c.bannerImageUrl}
                       alt=""
@@ -189,11 +188,11 @@ function SearchResults() {
                     />
                   </div>
                   <div className="p-4">
-                    <h3 className="font-semibold text-heading">{c.name}</h3>
-                    <span className="mt-1 inline-block rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-heading">
+                    <h3 className="text-heading-sm text-heading">{c.name}</h3>
+                    <span className="hrt-tag-brand mt-1">
                       {c.causeCategory}
                     </span>
-                    <p className="mt-2 text-sm text-secondary">
+                    <p className="mt-2 text-body-sm text-supporting">
                       {formatCurrency(c.totalRaised)} raised ·{" "}
                       {c.fundraiserCount} fundraisers
                     </p>
@@ -208,7 +207,7 @@ function SearchResults() {
       {/* People */}
       {matchedUsers.length > 0 && (
         <section>
-          <h2 className="text-xl font-semibold text-heading mb-4">
+          <h2 className="text-heading-md text-heading mb-4">
             People ({matchedUsers.length})
           </h2>
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -216,12 +215,12 @@ function SearchResults() {
               <li key={u.id}>
                 <Link
                   href={`/u/${u.username}`}
-                  className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 transition-colors hover:border-primary/30"
+                  className="flex items-center gap-4 rounded-xxl border border-neutral-border bg-white p-4 transition-all duration-hrt ease-hrt hover:shadow-medium hover:border-brand/30"
                 >
                   <UserAvatar src={u.avatar} size={48} />
                   <div>
-                    <h3 className="font-semibold text-heading">{u.name}</h3>
-                    <p className="text-sm text-secondary line-clamp-1">{u.bio}</p>
+                    <h3 className="font-bold text-heading">{u.name}</h3>
+                    <p className="text-body-sm text-supporting line-clamp-1">{u.bio}</p>
                   </div>
                 </Link>
               </li>
@@ -238,7 +237,7 @@ export default function SearchPageContent() {
     <PageTransition>
     <Suspense
       fallback={
-        <div className="py-16 text-center text-secondary">Loading search...</div>
+        <div className="py-16 text-center text-supporting">Loading search...</div>
       }
     >
       <SearchResults />

@@ -237,7 +237,8 @@ export const createFundRightStore = () => {
         },
       }),
       {
-        name: "fundright-store",
+        // Bump when seed data (e.g. image URLs) must reset for all clients; old key is left in localStorage unused.
+        name: "fundright-store-v4",
         partialize: (state) => ({
           users: state.users,
           fundraisers: state.fundraisers,

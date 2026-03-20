@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
+import { TEST_HERO_IMAGE_URL } from "@/lib/data";
 import { createFundRightStore, type Store } from "@/lib/store";
 
 let store: ReturnType<typeof createFundRightStore>;
@@ -140,7 +141,7 @@ describe("addDonation", () => {
       story: "A test fundraiser with no community.",
       organizerId: organizer.id,
       causeCategory: "Medical & Healthcare",
-      heroImageUrl: "https://picsum.photos/seed/solo/800/400",
+      heroImageUrl: TEST_HERO_IMAGE_URL,
     });
     expect(result).toBeTruthy();
 
@@ -186,7 +187,7 @@ describe("addFundraiser", () => {
       story: "This is a test fundraiser story.",
       organizerId: organizer.id,
       causeCategory: "Medical & Healthcare",
-      heroImageUrl: "https://picsum.photos/seed/test/800/400",
+      heroImageUrl: TEST_HERO_IMAGE_URL,
     });
 
     expect(result).toBeTruthy();
@@ -216,7 +217,7 @@ describe("addFundraiser", () => {
       organizerId: organizer.id,
       causeCategory: community.causeCategory,
       communityId: community.id,
-      heroImageUrl: "https://picsum.photos/seed/comm/800/400",
+      heroImageUrl: TEST_HERO_IMAGE_URL,
     });
 
     expect(result).toBeTruthy();
@@ -235,7 +236,7 @@ describe("addFundraiser", () => {
       story: "Should not be created.",
       organizerId: "nonexistent-user",
       causeCategory: "Medical & Healthcare",
-      heroImageUrl: "https://picsum.photos/seed/bad/800/400",
+      heroImageUrl: TEST_HERO_IMAGE_URL,
     });
 
     expect(result).toBeNull();
@@ -250,7 +251,7 @@ describe("addFundraiser", () => {
       story: "First fundraiser.",
       organizerId: organizer.id,
       causeCategory: "Medical & Healthcare" as const,
-      heroImageUrl: "https://picsum.photos/seed/dup/800/400",
+      heroImageUrl: TEST_HERO_IMAGE_URL,
     };
 
     const first = getState().addFundraiser(params);
@@ -272,7 +273,7 @@ describe("addFundraiser", () => {
       story: "Testing special characters.",
       organizerId: organizer.id,
       causeCategory: "Medical & Healthcare",
-      heroImageUrl: "https://picsum.photos/seed/special/800/400",
+      heroImageUrl: TEST_HERO_IMAGE_URL,
     });
 
     expect(result).toBeTruthy();
@@ -289,7 +290,7 @@ describe("addFundraiser", () => {
       story: "  Spacey story.  ",
       organizerId: organizer.id,
       causeCategory: "Medical & Healthcare",
-      heroImageUrl: "https://picsum.photos/seed/space/800/400",
+      heroImageUrl: TEST_HERO_IMAGE_URL,
     });
 
     expect(result).toBeTruthy();

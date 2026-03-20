@@ -101,30 +101,30 @@ export default function DonationModal({
         onClick={onClose}
         onKeyDown={(e) => e.key === "Escape" && onClose()}
       />
-      <div className="relative z-10 w-full max-w-md rounded-xl bg-white p-4 shadow-xl sm:p-6">
-        <h2 id="donation-modal-title" className="text-lg font-semibold text-heading sm:text-xl">
+      <div className="relative z-10 w-full max-w-md rounded-xxl bg-white p-5 shadow-strong sm:p-6">
+        <h2 id="donation-modal-title" className="text-heading-md text-heading">
           Donate to {fundraiserTitle}
         </h2>
 
-        <div className="mt-4">
-          <p className="text-sm font-medium text-heading">Amount</p>
+        <div className="mt-5">
+          <p className="text-body-sm font-bold text-heading">Amount</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {PRESETS.map((n) => (
               <button
                 key={n}
                 type="button"
                 onClick={() => setAmount(n)}
-                className={`rounded-lg border px-4 py-2 text-sm font-medium ${
+                className={`rounded-pill border px-5 py-2.5 text-body-sm font-bold transition-all duration-hrt ease-hrt ${
                   amount === n
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-gray-300 bg-white text-heading hover:bg-gray-50"
+                    ? "border-brand-strong bg-brand-strong text-brand-lime"
+                    : "border-neutral-border bg-white text-heading hover:bg-surface-subtle"
                 }`}
               >
                 ${n}
               </button>
             ))}
           </div>
-          <label className="mt-3 block text-sm text-secondary">
+          <label className="mt-3 block text-body-sm text-supporting">
             Custom amount ($)
             <input
               type="number"
@@ -134,15 +134,15 @@ export default function DonationModal({
               onChange={(e) =>
                 setAmount(e.target.value === "" ? "" : Number(e.target.value) || "")
               }
-              className="mt-1 block w-full rounded border border-gray-300 px-3 py-2 text-heading sm:ml-2 sm:inline sm:w-32"
+              className="mt-1 block w-full rounded-md border border-neutral-border px-3 py-2.5 text-heading focus:border-heading focus:ring-1 focus:ring-heading sm:ml-2 sm:inline sm:w-32"
             />
           </label>
 
-          {/* FR-024: Impact Projection */}
+          {/* Impact Projection */}
           {causeCategory && typeof amount === "number" && amount > 0 && (() => {
             const impact = getImpactProjection(amount, causeCategory);
             return impact ? (
-              <p className="mt-2 rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+              <p className="mt-2 rounded-xl bg-brand-mint px-3 py-2 text-body-sm text-positive">
                 {impact}
               </p>
             ) : null;
@@ -150,7 +150,7 @@ export default function DonationModal({
         </div>
 
         <div className="mt-4">
-          <label className="block text-sm font-medium text-heading">
+          <label className="block text-body-sm font-bold text-heading">
             Message (optional)
           </label>
           <textarea
@@ -158,19 +158,19 @@ export default function DonationModal({
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Add a message of support..."
             rows={2}
-            className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-heading placeholder:text-gray-400"
+            className="mt-1 w-full rounded-md border border-neutral-border px-3 py-2.5 text-heading placeholder:text-neutral-disabled focus:border-heading focus:ring-1 focus:ring-heading"
           />
         </div>
 
         {userList.length > 1 && (
           <div className="mt-4">
-            <label className="block text-sm font-medium text-heading">
+            <label className="block text-body-sm font-bold text-heading">
               Donating as
             </label>
             <select
               value={effectiveDonorId}
               onChange={(e) => setDonorId(e.target.value)}
-              className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-heading"
+              className="mt-1 w-full rounded-md border border-neutral-border px-3 py-2.5 text-heading focus:border-heading focus:ring-1 focus:ring-heading"
             >
               {userList.map((u) => (
                 <option key={u.id} value={u.id}>
@@ -185,7 +185,7 @@ export default function DonationModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-heading hover:bg-gray-50"
+            className="hrt-btn-secondary px-5 py-2.5 text-body-sm"
           >
             Cancel
           </button>
@@ -195,7 +195,7 @@ export default function DonationModal({
             disabled={
               (typeof amount === "number" ? amount : Number(amount) || 0) <= 0
             }
-            className="rounded-lg bg-primary px-4 py-2 font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
+            className="hrt-btn-primary-md px-5 disabled:opacity-50"
           >
             Confirm
           </button>

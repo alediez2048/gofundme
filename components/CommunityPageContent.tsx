@@ -15,15 +15,11 @@ import PageTransition from "./PageTransition";
 import ProgressBar from "./ProgressBar";
 import UserAvatar from "./UserAvatar";
 
-/* ------------------------------------------------------------------ */
-/*  FundraiserCard                                                     */
-/* ------------------------------------------------------------------ */
-
 function FundraiserCard({ f, organizer, explanation }: { f: Fundraiser; organizer: User | undefined; explanation?: string }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white overflow-hidden hover:border-primary/30 transition-colors">
+    <div className="hrt-card hover:shadow-medium">
       <Link href={`/f/${f.slug}`} className="block">
-        <div className="relative aspect-[16/10] w-full bg-gray-200">
+        <div className="hrt-card-image relative aspect-[3/2] w-full bg-surface-medium">
           <Image
             src={f.heroImageUrl}
             alt=""
@@ -35,38 +31,35 @@ function FundraiserCard({ f, organizer, explanation }: { f: Fundraiser; organize
           />
         </div>
         <div className="p-4">
-          <h3 className="font-semibold text-heading line-clamp-2">{f.title}</h3>
+          <h3 className="text-heading-xs text-heading line-clamp-2">{f.title}</h3>
         </div>
       </Link>
       <div className="px-4 pb-4">
         {organizer && (
-          <p className="mt-1 text-sm text-secondary">
+          <p className="mt-1 text-body-sm text-supporting">
             By{" "}
             <Link
               href={`/u/${organizer.username}`}
-              className="font-medium text-heading hover:text-primary"
+              className="font-bold text-heading hover:text-brand transition-colors"
             >
               {organizer.name}
             </Link>
           </p>
         )}
         <div className="mt-3">
-          <ProgressBar raised={f.raisedAmount} goal={f.goalAmount} height="h-2" animate={false} />
+          <ProgressBar raised={f.raisedAmount} goal={f.goalAmount} animate={false} />
         </div>
-        <p className="mt-2 text-sm font-medium text-heading">
-          {formatCurrency(f.raisedAmount)} of {formatCurrency(f.goalAmount)}
+        <p className="mt-2 text-body-sm font-bold text-heading">
+          {formatCurrency(f.raisedAmount)}{" "}
+          <span className="font-normal text-supporting">raised</span>
         </p>
         {explanation && (
-          <p className="mt-2 text-xs text-primary/80 italic">{explanation}</p>
+          <p className="mt-2 text-body-xs text-brand italic">{explanation}</p>
         )}
       </div>
     </div>
   );
 }
-
-/* ------------------------------------------------------------------ */
-/*  FundraiserSearch (Smart Search + keyword filter)                    */
-/* ------------------------------------------------------------------ */
 
 type SortOption = "popular" | "closest" | "most-funded" | "just-launched";
 
@@ -100,7 +93,7 @@ function FundraiserSearch({
         }
       }
     } catch {
-      // Silently fail, fall back to keyword
+      // fall back to keyword
     } finally {
       setAiLoading(false);
     }
@@ -113,7 +106,6 @@ function FundraiserSearch({
     }
   };
 
-  // If AI returned ranked results, use those
   const aiFilteredFundraisers = useMemo(() => {
     if (!aiRanked || aiRanked.length === 0) return null;
     const idOrder = aiRanked.map((r) => r.fundraiserId);
@@ -124,7 +116,6 @@ function FundraiserSearch({
     return { fundraisers: result, explanationMap };
   }, [aiRanked, fundraisers]);
 
-  // Keyword filtered + sorted fundraisers (fallback)
   const filteredFundraisers = useMemo(() => {
     let list = query.trim() ? keywordFilter(query, fundraisers) : [...fundraisers];
 
@@ -142,7 +133,7 @@ function FundraiserSearch({
       case "just-launched":
         list.sort((a, b) => a.donationCount - b.donationCount);
         break;
-      default: // popular
+      default:
         list.sort((a, b) => b.donationCount - a.donationCount);
     }
 
@@ -154,7 +145,6 @@ function FundraiserSearch({
 
   return (
     <div>
-      {/* Search bar */}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1">
           <input
@@ -170,21 +160,20 @@ function FundraiserSearch({
                 ? "Describe what you're looking for..."
                 : "Filter by keyword..."
             }
-            className="block w-full rounded-lg border border-gray-300 px-4 py-2 pr-10 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary"
+            className="block w-full rounded-pill border border-neutral-border px-5 py-2.5 pr-10 text-body-sm text-heading focus:border-heading focus:ring-1 focus:ring-heading"
           />
           {aiLoading && (
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 animate-pulse">
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-body-xs text-neutral-disabled animate-pulse">
               Searching...
             </span>
           )}
         </div>
 
-        {/* Sort dropdown (keyword mode only) */}
         {!smartSearch && (
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as SortOption)}
-            className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-heading focus:border-primary focus:ring-1 focus:ring-primary"
+            className="rounded-pill border border-neutral-border px-4 py-2.5 text-body-sm text-heading focus:border-heading focus:ring-1 focus:ring-heading"
           >
             <option value="popular">Most Popular</option>
             <option value="closest">Closest to Goal</option>
@@ -193,17 +182,16 @@ function FundraiserSearch({
           </select>
         )}
 
-        {/* Smart Search toggle */}
         <button
           type="button"
           onClick={() => {
             setSmartSearch(!smartSearch);
             setAiRanked(null);
           }}
-          className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
+          className={`flex items-center gap-1.5 rounded-pill px-4 py-2.5 text-body-xs font-bold transition-all duration-hrt ease-hrt ${
             smartSearch
-              ? "bg-primary text-primary-foreground"
-              : "bg-gray-100 text-secondary hover:bg-gray-200"
+              ? "bg-brand-strong text-brand-lime"
+              : "bg-surface-extra text-supporting hover:bg-surface-medium"
           }`}
           title="AI-powered natural language search"
         >
@@ -216,24 +204,22 @@ function FundraiserSearch({
             type="button"
             onClick={handleSmartSearch}
             disabled={aiLoading}
-            className="rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50"
+            className="hrt-btn-primary-sm px-4 disabled:opacity-50"
           >
             Search
           </button>
         )}
       </div>
 
-      {/* AI attribution */}
       {aiFilteredFundraisers && (
-        <p className="mb-3 text-xs text-secondary italic">
+        <p className="mb-3 text-body-xs text-supporting italic">
           AI-ranked results for &ldquo;{query}&rdquo;
         </p>
       )}
 
-      {/* Results */}
       {displayList.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 py-8 text-center">
-          <p className="text-secondary">No fundraisers match your search.</p>
+        <div className="rounded-xxl border border-dashed border-neutral-border bg-surface-subtle py-8 text-center">
+          <p className="text-supporting">No fundraisers match your search.</p>
         </div>
       ) : (
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -252,10 +238,6 @@ function FundraiserSearch({
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  FAQAccordion                                                       */
-/* ------------------------------------------------------------------ */
-
 function FAQAccordion({ faq }: { faq: { id: string; question: string; answer: string }[] }) {
   const [openId, setOpenId] = useState<string | null>(null);
   return (
@@ -263,22 +245,22 @@ function FAQAccordion({ faq }: { faq: { id: string; question: string; answer: st
       {faq.map((item) => (
         <div
           key={item.id}
-          className="rounded-lg border border-gray-200 bg-white overflow-hidden"
+          className="rounded-xl border border-neutral-border bg-white overflow-hidden"
         >
           <button
             type="button"
             onClick={() => setOpenId(openId === item.id ? null : item.id)}
-            className="w-full flex items-center justify-between px-4 py-3 text-left font-medium text-heading hover:bg-gray-50 focus-visible:outline-offset-[-2px]"
+            className="w-full flex items-center justify-between px-4 py-3.5 text-left font-bold text-heading transition-colors duration-hrt ease-hrt hover:bg-surface-subtle"
             aria-expanded={openId === item.id}
             aria-label={`${openId === item.id ? "Collapse" : "Expand"}: ${item.question}`}
           >
             {item.question}
-            <span className="text-gray-400 shrink-0 ml-2" aria-hidden="true">
+            <span className="text-neutral-disabled shrink-0 ml-2" aria-hidden="true">
               {openId === item.id ? "\u2212" : "+"}
             </span>
           </button>
           {openId === item.id && (
-            <div className="px-4 pb-3 text-secondary text-sm border-t border-gray-100">
+            <div className="px-4 pb-4 text-supporting text-body-sm border-t border-surface-medium">
               {item.answer}
             </div>
           )}
@@ -288,15 +270,7 @@ function FAQAccordion({ faq }: { faq: { id: string; question: string; answer: st
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  Tab type                                                           */
-/* ------------------------------------------------------------------ */
-
 type Tab = "activity" | "fundraisers" | "about";
-
-/* ------------------------------------------------------------------ */
-/*  CommunityBySlug (main page body)                                   */
-/* ------------------------------------------------------------------ */
 
 interface CommunityBySlugProps {
   slug: string;
@@ -336,12 +310,12 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
   const mostUrgent = [...sortedFundraisers].sort((a, b) => pctOf(a) - pctOf(b))[0] ?? null;
 
   const seen = new Set<string>();
-  const featured: { label: string; color: string; item: Fundraiser; detail: string }[] = [];
+  const featured: { label: string; tagClass: string; item: Fundraiser; detail: string }[] = [];
   if (mostUrgent && !seen.has(mostUrgent.id)) {
     seen.add(mostUrgent.id);
     featured.push({
       label: "Most urgent",
-      color: "border-amber-200 bg-amber-50/50 text-amber-800",
+      tagClass: "hrt-tag-warning",
       item: mostUrgent,
       detail: `${pctOf(mostUrgent)}% to goal`,
     });
@@ -350,7 +324,7 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
     seen.add(mostMomentum.id);
     featured.push({
       label: "Most momentum",
-      color: "border-emerald-200 bg-emerald-50/50 text-emerald-800",
+      tagClass: "hrt-tag-positive",
       item: mostMomentum,
       detail: `${mostMomentum.donationCount} donations`,
     });
@@ -359,13 +333,12 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
     seen.add(closestToGoal.id);
     featured.push({
       label: "Closest to goal",
-      color: "border-gray-200 bg-gray-50 text-secondary",
+      tagClass: "hrt-tag-neutral",
       item: closestToGoal,
       detail: `${formatCurrency(closestToGoal.goalAmount - closestToGoal.raisedAmount)} to go`,
     });
   }
 
-  /* Derive recent donations for the Activity tab */
   const communityFundraiserIds = new Set(communityFundraisers.map((f) => f.id));
   const recentDonations = useMemo(() => {
     return Object.values(donations)
@@ -375,7 +348,6 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [donations, communityFundraisers.length]);
 
-  /* Top donors leaderboard */
   const topDonors = useMemo(() => {
     const donorTotals = new Map<string, number>();
     Object.values(donations)
@@ -407,52 +379,48 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
     <article className="space-y-8">
       <Breadcrumbs items={breadcrumbItems} />
 
-      {/* ---- HEADER: two-column layout ---- */}
+      {/* HEADER */}
       <section className="flex flex-col gap-6 md:flex-row md:items-start md:gap-10">
-        {/* Left column: name, badge, description, stats */}
         <div className="flex-1 min-w-0">
-          <h1 className="text-2xl font-bold text-heading tracking-tight sm:text-3xl">
+          <h1 className="text-heading-xl sm:text-display-sm text-heading">
             {community.name}
           </h1>
-          <span className="mt-2 inline-block rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
+          <span className="hrt-tag-brand mt-2">
             {community.causeCategory}
           </span>
-          <p className="mt-3 text-secondary leading-relaxed">{community.description}</p>
+          <p className="mt-3 text-body-md text-supporting leading-relaxed">{community.description}</p>
 
-          {/* Stats row */}
           <div className="mt-5 flex flex-wrap items-center gap-6">
             <div>
-              <span className="text-xl font-bold text-primary sm:text-2xl">
+              <span className="text-heading-lg sm:text-heading-xl text-brand">
                 {formatCurrency(community.totalRaised)}
               </span>
-              <span className="ml-1 text-sm text-secondary">raised</span>
+              <span className="ml-1 text-body-sm text-supporting">raised</span>
             </div>
             <div>
-              <span className="text-xl font-bold text-heading sm:text-2xl">
+              <span className="text-heading-lg sm:text-heading-xl text-heading">
                 {community.donationCount}
               </span>
-              <span className="ml-1 text-sm text-secondary">donations</span>
+              <span className="ml-1 text-body-sm text-supporting">donations</span>
             </div>
             <div>
-              <span className="text-xl font-bold text-heading sm:text-2xl">
+              <span className="text-heading-lg sm:text-heading-xl text-heading">
                 {community.fundraiserCount}
               </span>
-              <span className="ml-1 text-sm text-secondary">fundraisers</span>
+              <span className="ml-1 text-body-sm text-supporting">fundraisers</span>
             </div>
           </div>
 
-          {/* Yellow CTA */}
           <Link
             href="/create"
-            className="mt-6 inline-block bg-accent text-accent-foreground font-bold rounded-full px-6 py-3 hover:opacity-90 transition-opacity"
+            className="hrt-btn-special mt-6 inline-block px-6 py-3"
           >
             Start a FundRight
           </Link>
         </div>
 
-        {/* Right column: banner image */}
         <div className="w-full md:w-[420px] shrink-0">
-          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl bg-gray-200">
+          <div className="hrt-card-image relative aspect-[16/10] w-full bg-surface-medium">
             <Image
               src={community.bannerImageUrl}
               alt=""
@@ -466,22 +434,22 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
         </div>
       </section>
 
-      {/* ---- TOP DONORS LEADERBOARD ---- */}
+      {/* TOP DONORS */}
       {topDonors.length > 0 && (
-        <section className="rounded-xl border border-gray-200 bg-white p-5">
-          <h2 className="text-lg font-semibold text-heading mb-4">Top donors</h2>
+        <section className="rounded-xxl border border-neutral-border bg-white p-5">
+          <h2 className="text-heading-md text-heading mb-4">Top donors</h2>
           <ol className="space-y-3">
             {topDonors.map((entry, i) => (
               <li key={entry.user!.id} className="flex items-center gap-3">
-                <span className="w-6 text-center text-sm font-bold text-secondary">{i + 1}</span>
+                <span className="w-6 text-center text-body-sm font-bold text-supporting">{i + 1}</span>
                 <UserAvatar src={entry.user!.avatar} size={32} />
                 <Link
                   href={`/u/${entry.user!.username}`}
-                  className="text-sm font-medium text-heading hover:text-primary flex-1 min-w-0 truncate"
+                  className="text-body-sm font-bold text-heading hover:text-brand transition-colors flex-1 min-w-0 truncate"
                 >
                   {entry.user!.name}
                 </Link>
-                <span className="text-sm font-semibold text-primary">
+                <span className="text-body-sm font-bold text-brand">
                   {formatCurrency(entry.total)}
                 </span>
               </li>
@@ -490,38 +458,37 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
         </section>
       )}
 
-      {/* ---- TABS ---- */}
+      {/* TABS */}
       <div>
-        <div className="flex border-b border-gray-200">
+        <div className="flex border-b border-neutral-border">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               type="button"
               onClick={() => setActiveTab(tab.key)}
-              className={`px-5 py-3 text-sm font-semibold transition-colors relative ${
+              className={`px-5 py-3 text-body-sm font-bold transition-colors duration-hrt ease-hrt relative ${
                 activeTab === tab.key
                   ? "text-heading"
-                  : "text-secondary hover:text-heading"
+                  : "text-supporting hover:text-heading"
               }`}
             >
               {tab.label}
               {activeTab === tab.key && (
-                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary rounded-full" />
+                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-brand rounded-pill" />
               )}
             </button>
           ))}
         </div>
 
         <div className="mt-6">
-          {/* ======== ACTIVITY TAB ======== */}
           {activeTab === "activity" && (
             <section className="space-y-4">
               {recentDonations.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 py-12 text-center">
-                  <p className="text-secondary">No activity yet in this community.</p>
+                <div className="rounded-xxl border border-dashed border-neutral-border bg-surface-subtle py-12 text-center">
+                  <p className="text-supporting">No activity yet in this community.</p>
                 </div>
               ) : (
-                <ul className="divide-y divide-gray-100">
+                <ul className="divide-y divide-surface-medium">
                   {recentDonations.map((d) => {
                     const donor = users[d.donorId];
                     const fundraiser = fundraisers[d.fundraiserId];
@@ -531,21 +498,21 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
                       <li key={d.id} className="flex items-start gap-3 py-4">
                         <UserAvatar src={donor.avatar} size={36} />
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm text-heading">
-                            <Link href={`/u/${donor.username}`} className="font-semibold hover:text-primary">
+                          <p className="text-body-sm text-heading">
+                            <Link href={`/u/${donor.username}`} className="font-bold hover:text-brand transition-colors">
                               {donor.name}
                             </Link>
                             {" donated "}
-                            <span className="font-semibold text-primary">{formatCurrency(d.amount)}</span>
+                            <span className="font-bold text-brand">{formatCurrency(d.amount)}</span>
                             {" to "}
-                            <Link href={`/f/${fundraiser.slug}`} className="font-medium hover:text-primary">
+                            <Link href={`/f/${fundraiser.slug}`} className="font-bold hover:text-brand transition-colors">
                               {fundraiser.title}
                             </Link>
                           </p>
                           {d.message && (
-                            <p className="mt-1 text-sm text-secondary italic">&ldquo;{d.message}&rdquo;</p>
+                            <p className="mt-1 text-body-sm text-supporting italic">&ldquo;{d.message}&rdquo;</p>
                           )}
-                          <p className="mt-1 text-xs text-gray-400">{timeAgo}</p>
+                          <p className="mt-1 text-body-xs text-neutral-disabled">{timeAgo}</p>
                         </div>
                       </li>
                     );
@@ -555,46 +522,43 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
             </section>
           )}
 
-          {/* ======== FUNDRAISERS TAB ======== */}
           {activeTab === "fundraisers" && (
             <section className="space-y-8">
-              {/* Guided discovery cards */}
               {featured.length > 0 && (
                 <div>
-                  <h2 className="text-lg font-semibold text-heading mb-4 sm:text-xl">
+                  <h2 className="text-heading-md text-heading mb-4">
                     Find a campaign to support
                   </h2>
                   <div className="grid gap-4 sm:grid-cols-3">
                     {featured.map((f) => (
-                      <div key={f.item.id} className={`rounded-lg border p-4 ${f.color}`}>
-                        <p className="text-xs font-semibold uppercase tracking-wide">
+                      <div key={f.item.id} className="rounded-xl border border-neutral-border bg-white p-4">
+                        <span className={`${f.tagClass} text-body-xs uppercase tracking-wide`}>
                           {f.label}
-                        </p>
+                        </span>
                         <Link
                           href={`/f/${f.item.slug}`}
-                          className="mt-1 font-medium text-heading hover:text-primary block"
+                          className="mt-2 font-bold text-heading hover:text-brand transition-colors block"
                         >
                           {f.item.title}
                         </Link>
-                        <p className="text-sm text-secondary mt-1">{f.detail}</p>
+                        <p className="text-body-sm text-supporting mt-1">{f.detail}</p>
                       </div>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* Fundraiser directory with search/filter */}
               <div>
-                <h2 className="text-lg font-semibold text-heading mb-4 sm:text-xl">
+                <h2 className="text-heading-md text-heading mb-4">
                   Active fundraisers
                 </h2>
                 {sortedFundraisers.length === 0 ? (
-                  <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 py-12 text-center">
-                    <p className="text-lg font-semibold text-heading">No fundraisers yet.</p>
-                    <p className="mt-2 text-secondary">Be the first to start one!</p>
+                  <div className="rounded-xxl border border-dashed border-neutral-border bg-surface-subtle py-12 text-center">
+                    <p className="text-heading-sm text-heading">No fundraisers yet.</p>
+                    <p className="mt-2 text-supporting">Be the first to start one!</p>
                     <Link
                       href="/create"
-                      className="mt-4 inline-block bg-accent text-accent-foreground font-bold rounded-full px-6 py-3 hover:opacity-90 transition-opacity"
+                      className="hrt-btn-special mt-4 inline-block px-6 py-3"
                     >
                       Start a FundRight
                     </Link>
@@ -606,43 +570,39 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
             </section>
           )}
 
-          {/* ======== ABOUT TAB ======== */}
           {activeTab === "about" && (
             <section className="space-y-8">
-              {/* Cause summary */}
               <div>
-                <h2 className="text-lg font-semibold text-heading mb-3 sm:text-xl">
+                <h2 className="text-heading-md text-heading mb-3">
                   About this cause
                 </h2>
-                <div className="text-heading mb-2 whitespace-pre-line">{causeSummary.text}</div>
+                <div className="text-body-md text-heading mb-2 whitespace-pre-line leading-relaxed">{causeSummary.text}</div>
                 {causeSummary.isAiGenerated && (
-                  <p className="text-sm text-secondary mb-2">
+                  <p className="text-body-sm text-supporting mb-2">
                     <span className="italic">AI-generated summary</span>
                     {fundraiserCount > 0 && (
                       <> &middot; Based on {fundraiserCount} active fundraiser{fundraiserCount !== 1 ? "s" : ""} in this community</>
                     )}
                   </p>
                 )}
-                <div className="rounded-lg bg-gray-50 p-4 space-y-2 text-sm text-heading">
+                <div className="rounded-xl bg-surface-subtle p-4 space-y-2 text-body-sm text-heading">
                   <p><strong>How can I help?</strong> Donate to any campaign below, start a fundraiser, or share this community with others.</p>
                   <p><strong>Where does the money go?</strong> Directly to the campaigns you choose. Organizers post updates so you can see impact.</p>
                 </div>
               </div>
 
-              {/* FAQ */}
               {faqList.length > 0 && (
                 <div>
-                  <h2 className="text-lg font-semibold text-heading mb-4 sm:text-xl">
+                  <h2 className="text-heading-md text-heading mb-4">
                     Frequently asked questions
                   </h2>
                   <FAQAccordion faq={faqList} />
                 </div>
               )}
 
-              {/* Members */}
               {displayMembers.length > 0 && (
                 <div>
-                  <h2 className="text-lg font-semibold text-heading mb-4 sm:text-xl">
+                  <h2 className="text-heading-md text-heading mb-4">
                     Community members
                   </h2>
                   <ul className="flex flex-wrap gap-4 items-center">
@@ -650,15 +610,15 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
                       <li key={u.id}>
                         <Link
                           href={`/u/${u.username}`}
-                          className="flex items-center gap-2 text-heading hover:text-primary"
+                          className="flex items-center gap-2 text-heading hover:text-brand transition-colors"
                         >
                           <UserAvatar src={u.avatar} size={40} />
-                          <span className="text-sm font-medium">{u.name}</span>
+                          <span className="text-body-sm font-bold">{u.name}</span>
                         </Link>
                       </li>
                     ))}
                     {overflowCount > 0 && (
-                      <li className="text-sm text-secondary">
+                      <li className="text-body-sm text-supporting">
                         +{overflowCount} more
                       </li>
                     )}
@@ -673,10 +633,6 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  Utility: relative time string                                      */
-/* ------------------------------------------------------------------ */
-
 function formatTimeAgo(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
   const seconds = Math.floor(diff / 1000);
@@ -690,10 +646,6 @@ function formatTimeAgo(iso: string): string {
   const months = Math.floor(days / 30);
   return `${months}mo ago`;
 }
-
-/* ------------------------------------------------------------------ */
-/*  Page wrapper (default export)                                      */
-/* ------------------------------------------------------------------ */
 
 interface CommunityPageContentProps {
   slug: string;

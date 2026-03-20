@@ -11,11 +11,11 @@ type FeatureFilter = "all" | string;
 function statusColor(status: AITrace["status"]): string {
   switch (status) {
     case "success":
-      return "bg-emerald-100 text-emerald-800";
+      return "bg-brand-subtle text-brand-strong";
     case "fallback":
-      return "bg-amber-100 text-amber-800";
+      return "bg-surface-warm text-warning";
     case "error":
-      return "bg-red-100 text-red-800";
+      return "bg-[#FEF0EA] text-negative";
   }
 }
 
@@ -23,51 +23,49 @@ function TraceCard({ trace }: { trace: AITrace }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
+    <div className="rounded-xl border border-neutral-border bg-white overflow-hidden">
       <button
         type="button"
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50"
+        className="w-full flex items-center justify-between px-4 py-3 text-left transition-colors duration-hrt ease-hrt hover:bg-surface-subtle"
       >
         <div className="flex items-center gap-2 min-w-0">
           <span
-            className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${statusColor(trace.status)}`}
+            className={`shrink-0 rounded px-2 py-0.5 text-body-xs font-bold ${statusColor(trace.status)}`}
           >
             {trace.status}
           </span>
-          <span className="text-sm font-medium text-heading truncate">
+          <span className="text-body-sm font-bold text-heading truncate">
             {trace.feature}
           </span>
-          <span className="text-xs text-secondary shrink-0">
+          <span className="text-body-xs text-supporting shrink-0">
             {trace.metrics.latencyMs}ms
           </span>
         </div>
-        <span className="text-xs text-gray-400 shrink-0 ml-2">
+        <span className="text-body-xs text-neutral-disabled shrink-0 ml-2">
           {new Date(trace.timestamp).toLocaleTimeString()}
         </span>
       </button>
 
       {expanded && (
-        <div className="border-t border-gray-100 px-4 py-3 space-y-3 text-sm">
-          {/* Input */}
+        <div className="border-t border-surface-medium px-4 py-3 space-y-3 text-body-sm">
           <div>
-            <p className="text-xs font-semibold text-secondary uppercase tracking-wide">Input</p>
-            <pre className="mt-1 whitespace-pre-wrap rounded bg-gray-50 p-2 text-xs text-heading max-h-32 overflow-auto">
+            <p className="text-body-xs font-bold text-supporting uppercase tracking-wide">Input</p>
+            <pre className="mt-1 whitespace-pre-wrap rounded-lg bg-surface-subtle p-2 text-body-xs text-heading max-h-32 overflow-auto">
               {trace.input.prompt}
             </pre>
           </div>
 
-          {/* Tool calls */}
           {trace.output.toolCalls && trace.output.toolCalls.length > 0 && (
             <div>
-              <p className="text-xs font-semibold text-secondary uppercase tracking-wide">
+              <p className="text-body-xs font-bold text-supporting uppercase tracking-wide">
                 Tool Calls ({trace.output.toolCalls.length})
               </p>
               <ul className="mt-1 space-y-1">
                 {trace.output.toolCalls.map((tc, i) => (
-                  <li key={i} className="rounded bg-blue-50 p-2 text-xs">
-                    <span className="font-medium text-blue-800">{tc.name}</span>
-                    <pre className="mt-1 whitespace-pre-wrap text-blue-700 max-h-20 overflow-auto">
+                  <li key={i} className="rounded-lg bg-[#E1F6F6] p-2 text-body-xs">
+                    <span className="font-bold text-informative">{tc.name}</span>
+                    <pre className="mt-1 whitespace-pre-wrap text-informative max-h-20 overflow-auto">
                       {JSON.stringify(tc.input, null, 2)}
                     </pre>
                   </li>
@@ -76,44 +74,41 @@ function TraceCard({ trace }: { trace: AITrace }) {
             </div>
           )}
 
-          {/* Output */}
           <div>
-            <p className="text-xs font-semibold text-secondary uppercase tracking-wide">Output</p>
-            <pre className="mt-1 whitespace-pre-wrap rounded bg-gray-50 p-2 text-xs text-heading max-h-32 overflow-auto">
+            <p className="text-body-xs font-bold text-supporting uppercase tracking-wide">Output</p>
+            <pre className="mt-1 whitespace-pre-wrap rounded-lg bg-surface-subtle p-2 text-body-xs text-heading max-h-32 overflow-auto">
               {trace.output.text}
             </pre>
           </div>
 
-          {/* Metrics */}
           <div>
-            <p className="text-xs font-semibold text-secondary uppercase tracking-wide">Metrics</p>
-            <dl className="mt-1 grid grid-cols-2 gap-x-4 gap-y-1 text-xs sm:grid-cols-4">
+            <p className="text-body-xs font-bold text-supporting uppercase tracking-wide">Metrics</p>
+            <dl className="mt-1 grid grid-cols-2 gap-x-4 gap-y-1 text-body-xs sm:grid-cols-4">
               <div>
-                <dt className="text-secondary">Latency</dt>
-                <dd className="font-medium text-heading">{trace.metrics.latencyMs}ms</dd>
+                <dt className="text-supporting">Latency</dt>
+                <dd className="font-bold text-heading">{trace.metrics.latencyMs}ms</dd>
               </div>
               <div>
-                <dt className="text-secondary">Input tokens</dt>
-                <dd className="font-medium text-heading">{trace.metrics.inputTokens}</dd>
+                <dt className="text-supporting">Input tokens</dt>
+                <dd className="font-bold text-heading">{trace.metrics.inputTokens}</dd>
               </div>
               <div>
-                <dt className="text-secondary">Output tokens</dt>
-                <dd className="font-medium text-heading">{trace.metrics.outputTokens}</dd>
+                <dt className="text-supporting">Output tokens</dt>
+                <dd className="font-bold text-heading">{trace.metrics.outputTokens}</dd>
               </div>
               <div>
-                <dt className="text-secondary">Total tokens</dt>
-                <dd className="font-medium text-heading">{trace.metrics.totalTokens}</dd>
+                <dt className="text-supporting">Total tokens</dt>
+                <dd className="font-bold text-heading">{trace.metrics.totalTokens}</dd>
               </div>
             </dl>
           </div>
 
-          {/* Fallback reason */}
           {trace.fallbackReason && (
             <div>
-              <p className="text-xs font-semibold text-secondary uppercase tracking-wide">
+              <p className="text-body-xs font-bold text-supporting uppercase tracking-wide">
                 Fallback Reason
               </p>
-              <p className="mt-1 text-xs text-amber-700">{trace.fallbackReason}</p>
+              <p className="mt-1 text-body-xs text-warning">{trace.fallbackReason}</p>
             </div>
           )}
         </div>
@@ -128,7 +123,6 @@ export default function AITracesPanel() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [featureFilter, setFeatureFilter] = useState<FeatureFilter>("all");
 
-  // Fetch server-side traces on mount
   const fetchServerTraces = useCallback(async () => {
     try {
       const res = await fetch("/api/ai/traces");
@@ -145,7 +139,6 @@ export default function AITracesPanel() {
     fetchServerTraces();
   }, [fetchServerTraces]);
 
-  // Merge client + server traces, deduplicate by ID
   const traces = useMemo(() => {
     const seen = new Set<string>();
     const merged: AITrace[] = [];
@@ -164,7 +157,7 @@ export default function AITracesPanel() {
   }, [traces]);
 
   const filtered = useMemo(() => {
-    let list = [...traces].reverse(); // most recent first
+    let list = [...traces].reverse();
     if (statusFilter !== "all") {
       list = list.filter((t) => t.status === statusFilter);
     }
@@ -174,7 +167,6 @@ export default function AITracesPanel() {
     return list;
   }, [traces, statusFilter, featureFilter]);
 
-  // Summary stats
   const stats = useMemo(() => {
     if (traces.length === 0) return null;
     const avgLatency = Math.round(
@@ -199,46 +191,44 @@ export default function AITracesPanel() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-heading">AI Traces</h2>
+        <h2 className="text-heading-lg text-heading">AI Traces</h2>
         <button
           type="button"
           onClick={handleClear}
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-heading hover:bg-gray-50"
+          className="hrt-btn-secondary px-3 py-1.5 text-body-xs"
         >
           Clear traces
         </button>
       </div>
 
-      {/* Summary stats */}
       {stats && (
-        <dl className="grid grid-cols-2 gap-4 sm:grid-cols-4 text-center rounded-lg bg-gray-50 p-4">
+        <dl className="grid grid-cols-2 gap-4 sm:grid-cols-4 text-center rounded-xl bg-surface-subtle p-4">
           <div>
-            <dt className="text-xs text-secondary">Total traces</dt>
-            <dd className="text-lg font-semibold text-heading">{stats.total}</dd>
+            <dt className="text-body-xs text-supporting">Total traces</dt>
+            <dd className="text-heading-md text-heading">{stats.total}</dd>
           </div>
           <div>
-            <dt className="text-xs text-secondary">Avg latency</dt>
-            <dd className="text-lg font-semibold text-heading">{stats.avgLatency}ms</dd>
+            <dt className="text-body-xs text-supporting">Avg latency</dt>
+            <dd className="text-heading-md text-heading">{stats.avgLatency}ms</dd>
           </div>
           <div>
-            <dt className="text-xs text-secondary">Total tokens</dt>
-            <dd className="text-lg font-semibold text-heading">
+            <dt className="text-body-xs text-supporting">Total tokens</dt>
+            <dd className="text-heading-md text-heading">
               {stats.totalTokens.toLocaleString()}
             </dd>
           </div>
           <div>
-            <dt className="text-xs text-secondary">Fallback rate</dt>
-            <dd className="text-lg font-semibold text-heading">{stats.fallbackRate}%</dd>
+            <dt className="text-body-xs text-supporting">Fallback rate</dt>
+            <dd className="text-heading-md text-heading">{stats.fallbackRate}%</dd>
           </div>
         </dl>
       )}
 
-      {/* Filters */}
       <div className="flex flex-wrap gap-3">
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
-          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-heading"
+          className="rounded-pill border border-neutral-border px-4 py-2 text-body-sm text-heading focus:border-heading focus:ring-1 focus:ring-heading"
         >
           <option value="all">All statuses</option>
           <option value="success">Success</option>
@@ -248,7 +238,7 @@ export default function AITracesPanel() {
         <select
           value={featureFilter}
           onChange={(e) => setFeatureFilter(e.target.value)}
-          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-heading"
+          className="rounded-pill border border-neutral-border px-4 py-2 text-body-sm text-heading focus:border-heading focus:ring-1 focus:ring-heading"
         >
           <option value="all">All features</option>
           {features.map((f) => (
@@ -259,11 +249,10 @@ export default function AITracesPanel() {
         </select>
       </div>
 
-      {/* Trace list */}
       {filtered.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 py-12 text-center">
-          <p className="text-secondary">No AI traces yet.</p>
-          <p className="mt-1 text-sm text-secondary">
+        <div className="rounded-xxl border border-dashed border-neutral-border bg-surface-subtle py-12 text-center">
+          <p className="text-supporting">No AI traces yet.</p>
+          <p className="mt-1 text-body-sm text-supporting">
             Use AI features (create with AI Assist, Smart Search, etc.) to see traces here.
           </p>
         </div>

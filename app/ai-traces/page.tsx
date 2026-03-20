@@ -13,15 +13,14 @@ export default function AITracesPage() {
   return (
     <PageTransition>
       <div className="space-y-6">
-        {/* Tab bar */}
-        <div className="flex gap-1 rounded-lg bg-stone-100 p-1">
+        <div className="flex gap-1 rounded-xl bg-surface-extra p-1">
           <button
             type="button"
             onClick={() => setTab("traces")}
-            className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+            className={`flex-1 rounded-lg px-4 py-2.5 text-body-sm font-bold transition-all duration-hrt ease-hrt ${
               tab === "traces"
-                ? "bg-white text-stone-900 shadow-sm"
-                : "text-stone-600 hover:text-stone-900"
+                ? "bg-white text-heading shadow-soft"
+                : "text-supporting hover:text-heading"
             }`}
           >
             AI Traces
@@ -29,10 +28,10 @@ export default function AITracesPage() {
           <button
             type="button"
             onClick={() => setTab("schema")}
-            className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+            className={`flex-1 rounded-lg px-4 py-2.5 text-body-sm font-bold transition-all duration-hrt ease-hrt ${
               tab === "schema"
-                ? "bg-white text-stone-900 shadow-sm"
-                : "text-stone-600 hover:text-stone-900"
+                ? "bg-white text-heading shadow-soft"
+                : "text-supporting hover:text-heading"
             }`}
           >
             Schema / JSON-LD
@@ -43,8 +42,8 @@ export default function AITracesPage() {
         {tab === "schema" && (
           <div className="space-y-4">
             <div>
-              <h2 className="text-xl font-bold text-stone-900">JSON-LD Schema Viewer</h2>
-              <p className="mt-1 text-sm text-stone-600">
+              <h2 className="text-heading-lg text-heading">JSON-LD Schema Viewer</h2>
+              <p className="mt-1 text-body-sm text-supporting">
                 Navigate to any page, then come back here to inspect its structured data. AEO-specific fields are highlighted in green.
               </p>
             </div>

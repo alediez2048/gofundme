@@ -3,7 +3,7 @@ import { calculateProgress } from "@/lib/utils";
 export default function ProgressBar({
   raised,
   goal,
-  height = "h-1.5",
+  height = "h-2",
   animate = true,
 }: {
   raised: number;
@@ -14,7 +14,7 @@ export default function ProgressBar({
   const pct = calculateProgress(raised, goal);
   return (
     <div
-      className={`rounded-full bg-gray-200 ${height} overflow-hidden`}
+      className={`hrt-progress-track ${height}`}
       role="progressbar"
       aria-valuenow={raised}
       aria-valuemin={0}
@@ -22,8 +22,8 @@ export default function ProgressBar({
       aria-label={`${pct}% funded`}
     >
       <div
-        className={`h-full rounded-full bg-primary ${animate ? "transition-all duration-500 ease-out" : ""}`}
-        style={{ width: `${pct}%` }}
+        className={`hrt-progress-fill ${animate ? "transition-all duration-500 ease-out" : ""}`}
+        style={{ width: `${pct}%`, maxWidth: "calc(100% - 0.5rem)" }}
       />
     </div>
   );
