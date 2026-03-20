@@ -12,7 +12,11 @@ export type SocialPlatform =
 
 export type CauseCategory =
   | "Disaster Relief & Wildfire Safety"
-  | "Medical & Healthcare";
+  | "Medical & Healthcare"
+  | "Education"
+  | "Environment & Climate"
+  | "Animals & Wildlife"
+  | "Community & Neighbors";
 
 export interface SocialLink {
   platform: SocialPlatform;
@@ -33,6 +37,16 @@ export interface User {
   totalDonated: number;
   /** External profile URLs for Person schema `sameAs` (AEO) */
   sameAs?: string[];
+  // --- Feed extensions (FR-027) ---
+  coverPhoto?: string;
+  causeIdentity?: CauseCategory;
+  stats?: { totalRaised: number; peopleHelped: number; fundraisersSupported: number };
+  highlights?: string[];
+  givingStreak?: number;
+  impactSummary?: string;
+  followerIds?: string[];
+  followingIds?: string[];
+  bookmarkedIds?: string[];
 }
 
 export interface FundraiserUpdate {
@@ -57,6 +71,10 @@ export interface Fundraiser {
   donationIds: string[];
   heroImageUrl: string;
   updates: FundraiserUpdate[];
+  // --- Feed extensions (FR-027) ---
+  donationVelocity?: number;
+  milestones?: FundraiserMilestone[];
+  status?: "active" | "completed" | "paused";
 }
 
 export interface FAQItem {
@@ -83,6 +101,9 @@ export interface Community {
   sameAs?: string[];
   /** For Organization schema `nonprofitStatus` (AEO) */
   nonprofitStatus?: string;
+  // --- Feed extensions (FR-027) ---
+  milestones?: CommunityMilestone[];
+  leaderboard?: LeaderboardEntry[];
 }
 
 export interface Donation {
@@ -92,6 +113,8 @@ export interface Donation {
   fundraiserId: string;
   message?: string;
   createdAt: string;
+  // --- Feed extensions (FR-027) ---
+  isPublic?: boolean;
 }
 
 // ---------------------------------------------------------------------------

@@ -103,6 +103,26 @@ const causeImpactMap: Record<CauseCategory, ImpactUnit> = {
     rate: 0.5, // $1 = 0.5 patients helped (i.e. $2 per patient)
     verb: "helps fund treatment for",
   },
+  Education: {
+    unit: "students",
+    rate: 2, // $1 = supplies for 2 students
+    verb: "provides learning materials for",
+  },
+  "Environment & Climate": {
+    unit: "trees",
+    rate: 1, // $1 = 1 tree planted
+    verb: "plants",
+  },
+  "Animals & Wildlife": {
+    unit: "animals",
+    rate: 0.25, // $1 = 0.25 animals sheltered (i.e. $4 per animal)
+    verb: "helps shelter",
+  },
+  "Community & Neighbors": {
+    unit: "neighbors",
+    rate: 1.5, // $1 = meals/supplies for 1.5 people
+    verb: "provides support for",
+  },
 };
 
 /**

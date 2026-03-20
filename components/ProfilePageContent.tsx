@@ -26,6 +26,26 @@ const CAUSE_SHIELD: Record<
     emoji: "🌲",
     className: "bg-emerald-100 text-emerald-900",
   },
+  Education: {
+    shortLabel: "Education",
+    emoji: "📚",
+    className: "bg-blue-100 text-blue-900",
+  },
+  "Environment & Climate": {
+    shortLabel: "Environment",
+    emoji: "🌍",
+    className: "bg-green-100 text-green-900",
+  },
+  "Animals & Wildlife": {
+    shortLabel: "Animals",
+    emoji: "🐾",
+    className: "bg-amber-100 text-amber-900",
+  },
+  "Community & Neighbors": {
+    shortLabel: "Community",
+    emoji: "🏘️",
+    className: "bg-orange-100 text-orange-900",
+  },
 };
 
 function buildImpactSummary(
