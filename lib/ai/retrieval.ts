@@ -3,7 +3,7 @@
  * Extracts and generalizes the context-building pattern from cause-intelligence.
  */
 
-import type { Community, Donation, Fundraiser } from "@/lib/data";
+import type { Community, Donation, Fundraiser, User } from "@/lib/data";
 
 const MAX_STORY_CHARS = 800;
 
@@ -116,6 +116,70 @@ export function buildOrganizerContext(
   return {
     text,
     sourceCount: orgFundraisers.length,
+    tokenEstimate: Math.ceil(text.length / 4),
+  };
+}
+
+/**
+ * Build RAG context for a donor's impact summary by pulling their
+ * donation history, causes supported, and communities.
+ */
+export function buildDonorContext(
+  user: User,
+  donations: Donation[],
+  fundraisers: Record<string, Fundraiser>,
+  communities: Record<string, Community>
+): RetrievalContext {
+  const userDonations = donations.filter((d) => d.donorId === user.id);
+
+  // Per-cause breakdown
+  const causeAmounts: Record<string, number> = {};
+  const causeFundraisers: Record<string, string[]> = {};
+  for (const d of userDonations) {
+    const fund = fundraisers[d.fundraiserId];
+    if (!fund) continue;
+    const cause = fund.causeCategory;
+    causeAmounts[cause] = (causeAmounts[cause] ?? 0) + d.amount;
+    if (!causeFundraisers[cause]) causeFundraisers[cause] = [];
+    if (!causeFundraisers[cause].includes(fund.title)) {
+      causeFundraisers[cause].push(fund.title);
+    }
+  }
+
+  // Per-community breakdown
+  const communityNames = user.communityIds
+    .map((id) => communities[id]?.name)
+    .filter(Boolean);
+
+  // Recent messages
+  const recentMessages = userDonations
+    .filter((d) => d.message)
+    .slice(-5)
+    .map((d) => `"${d.message}" (to ${fundraisers[d.fundraiserId]?.title ?? "a fundraiser"})`);
+
+  const parts: string[] = [
+    `Donor: ${user.name}`,
+    `Total donated: $${user.totalDonated.toLocaleString()}`,
+    `Number of donations: ${userDonations.length}`,
+    `Communities: ${communityNames.join(", ") || "none"}`,
+    "",
+    "--- Giving breakdown by cause ---",
+  ];
+
+  for (const [cause, amount] of Object.entries(causeAmounts)) {
+    const funds = causeFundraisers[cause] ?? [];
+    parts.push(`${cause}: $${amount.toLocaleString()} across ${funds.length} fundraiser(s) (${funds.join(", ")})`);
+  }
+
+  if (recentMessages.length > 0) {
+    parts.push("", "--- Recent donor messages ---");
+    parts.push(...recentMessages);
+  }
+
+  const text = parts.join("\n");
+  return {
+    text,
+    sourceCount: userDonations.length,
     tokenEstimate: Math.ceil(text.length / 4),
   };
 }
