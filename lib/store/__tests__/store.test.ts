@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { TEST_HERO_IMAGE_URL } from "@/lib/data";
-import { createFundRightStore, type Store } from "@/lib/store";
+import { createFundRightStore, isFollowing, getFollowers, getFollowing, type Store } from "@/lib/store";
 
 let store: ReturnType<typeof createFundRightStore>;
 const getState = () => store.getState();
@@ -297,5 +297,86 @@ describe("addFundraiser", () => {
     const fund = getState().fundraisers[result!.id];
     expect(fund.title).toBe("Spacey Title");
     expect(fund.story).toBe("Spacey story.");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// follow / unfollow (FR-029)
+// ---------------------------------------------------------------------------
+describe("follow / unfollow", () => {
+  it("creates relationship and updates both users", () => {
+    const u1 = firstUser();
+    const u2 = secondUser();
+
+    getState().follow(u1.id, u2.id);
+
+    const state = getState();
+    expect(state.followRelationships).toHaveLength(1);
+    expect(state.followRelationships[0].followerId).toBe(u1.id);
+    expect(state.followRelationships[0].followeeId).toBe(u2.id);
+    expect(state.users[u1.id].followingIds).toContain(u2.id);
+    expect(state.users[u2.id].followerIds).toContain(u1.id);
+  });
+
+  it("unfollow removes relationship and updates both users", () => {
+    const u1 = firstUser();
+    const u2 = secondUser();
+
+    getState().follow(u1.id, u2.id);
+    getState().unfollow(u1.id, u2.id);
+
+    const state = getState();
+    expect(state.followRelationships).toHaveLength(0);
+    expect(state.users[u1.id].followingIds ?? []).not.toContain(u2.id);
+    expect(state.users[u2.id].followerIds ?? []).not.toContain(u1.id);
+  });
+
+  it("double-follow is idempotent", () => {
+    const u1 = firstUser();
+    const u2 = secondUser();
+
+    getState().follow(u1.id, u2.id);
+    getState().follow(u1.id, u2.id);
+
+    expect(getState().followRelationships).toHaveLength(1);
+  });
+
+  it("self-follow is prevented", () => {
+    const u1 = firstUser();
+
+    getState().follow(u1.id, u1.id);
+
+    expect(getState().followRelationships).toHaveLength(0);
+  });
+
+  it("follow with invalid user is a no-op", () => {
+    const u1 = firstUser();
+
+    getState().follow(u1.id, "nonexistent");
+    getState().follow("nonexistent", u1.id);
+
+    expect(getState().followRelationships).toHaveLength(0);
+  });
+
+  it("unfollow non-existing relationship is a no-op", () => {
+    const u1 = firstUser();
+    const u2 = secondUser();
+
+    getState().unfollow(u1.id, u2.id);
+
+    expect(getState().followRelationships).toHaveLength(0);
+  });
+
+  it("selectors return correct data", () => {
+    const u1 = firstUser();
+    const u2 = secondUser();
+
+    getState().follow(u1.id, u2.id);
+
+    const state = getState();
+    expect(isFollowing(state, u1.id, u2.id)).toBe(true);
+    expect(isFollowing(state, u2.id, u1.id)).toBe(false);
+    expect(getFollowers(state, u2.id).map((u) => u.id)).toContain(u1.id);
+    expect(getFollowing(state, u1.id).map((u) => u.id)).toContain(u2.id);
   });
 });

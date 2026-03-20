@@ -7,7 +7,7 @@
 import { persist } from "zustand/middleware";
 import { useStore } from "zustand/react";
 import { createStore } from "zustand/vanilla";
-import type { Community, Donation, Fundraiser, User } from "@/lib/data";
+import type { Community, Donation, Fundraiser, FollowRelationship, User } from "@/lib/data";
 import type { CauseCategory } from "@/lib/data";
 import { seed } from "@/lib/data";
 import type { AITrace } from "@/lib/ai/trace";
@@ -24,6 +24,7 @@ export interface StoreState {
   lastModified: string;
   /** Simulated auth — ID of the "logged in" demo user, or null for logged-out */
   currentUser: string | null;
+  followRelationships: FollowRelationship[];
 }
 
 function toRecord<T extends { id: string }>(arr: T[]): Record<string, T> {
@@ -39,6 +40,7 @@ function getInitialState(): StoreState {
     traces: [],
     lastModified: new Date().toISOString(),
     currentUser: "user-6",
+    followRelationships: [],
   };
 }
 
@@ -92,6 +94,8 @@ export interface StoreActions {
   addTrace: (trace: AITrace) => void;
   clearTraces: () => void;
   setCurrentUser: (userId: string | null) => void;
+  follow: (followerId: string, followeeId: string) => void;
+  unfollow: (followerId: string, followeeId: string) => void;
 }
 
 export type Store = StoreState & StoreActions;
@@ -246,6 +250,75 @@ export const createFundRightStore = () => {
             return { currentUser: userId };
           });
         },
+
+        follow: (followerId, followeeId) => {
+          set((state) => {
+            if (followerId === followeeId) return state;
+            const follower = state.users[followerId];
+            const followee = state.users[followeeId];
+            if (!follower || !followee) return state;
+            const exists = state.followRelationships.some(
+              (r) => r.followerId === followerId && r.followeeId === followeeId
+            );
+            if (exists) return state;
+
+            const rel: FollowRelationship = {
+              followerId,
+              followeeId,
+              createdAt: new Date().toISOString(),
+            };
+            return {
+              followRelationships: [...state.followRelationships, rel],
+              users: {
+                ...state.users,
+                [followerId]: {
+                  ...follower,
+                  followingIds: [...(follower.followingIds ?? []), followeeId],
+                },
+                [followeeId]: {
+                  ...followee,
+                  followerIds: [...(followee.followerIds ?? []), followerId],
+                },
+              },
+            };
+          });
+        },
+
+        unfollow: (followerId, followeeId) => {
+          set((state) => {
+            const exists = state.followRelationships.some(
+              (r) => r.followerId === followerId && r.followeeId === followeeId
+            );
+            if (!exists) return state;
+
+            const follower = state.users[followerId];
+            const followee = state.users[followeeId];
+            return {
+              followRelationships: state.followRelationships.filter(
+                (r) => !(r.followerId === followerId && r.followeeId === followeeId)
+              ),
+              users: {
+                ...state.users,
+                ...(follower
+                  ? {
+                      [followerId]: {
+                        ...follower,
+                        followingIds: (follower.followingIds ?? []).filter((id) => id !== followeeId),
+                      },
+                    }
+                  : {}),
+                ...(followee
+                  ? {
+                      [followeeId]: {
+                        ...followee,
+                        followerIds: (followee.followerIds ?? []).filter((id) => id !== followerId),
+                      },
+                    }
+                  : {}),
+              },
+            };
+          });
+        },
       }),
       {
         // Bump when seed data (e.g. image URLs) must reset for all clients; old key is left in localStorage unused.
@@ -257,6 +330,7 @@ export const createFundRightStore = () => {
           donations: state.donations,
           lastModified: state.lastModified,
           currentUser: state.currentUser,
+          followRelationships: state.followRelationships,
         }),
       }
     )
@@ -276,4 +350,24 @@ export function getStore(): FundRightStore {
 /** Subscribe to specific state (e.g. (s) => s.fundraisers[slug]) to avoid unnecessary re-renders. */
 export function useFundRightStore<T>(selector: (state: Store) => T): T {
   return useStore(getStore(), selector);
+}
+
+// ---------------------------------------------------------------------------
+// Follow selectors (FR-029)
+// ---------------------------------------------------------------------------
+
+export function isFollowing(state: Store, followerId: string, followeeId: string): boolean {
+  return state.followRelationships.some(
+    (r) => r.followerId === followerId && r.followeeId === followeeId
+  );
+}
+
+export function getFollowers(state: Store, userId: string): User[] {
+  const ids = state.users[userId]?.followerIds ?? [];
+  return ids.map((id) => state.users[id]).filter(Boolean);
+}
+
+export function getFollowing(state: Store, userId: string): User[] {
+  const ids = state.users[userId]?.followingIds ?? [];
+  return ids.map((id) => state.users[id]).filter(Boolean);
 }
