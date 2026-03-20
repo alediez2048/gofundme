@@ -618,3 +618,127 @@ describe("feed event generation", () => {
     expect(getState().communities[community.id].memberCount).toBe(prevCount);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Feed algorithm (FR-032)
+// ---------------------------------------------------------------------------
+import { getCauseSimilarity, computeUserCauseProfile, scoreCauseRelevance } from "@/lib/feed/causeEmbeddings";
+import { getForYouFeed, getFollowingFeed, getTrendingFeed } from "@/lib/feed/algorithm";
+import { createEmptySignals, updateSignals } from "@/lib/feed/behaviorModel";
+
+describe("cause embeddings", () => {
+  it("returns 1.0 for identical causes", () => {
+    expect(getCauseSimilarity("Education", "Education")).toBe(1.0);
+  });
+
+  it("returns high similarity for related causes", () => {
+    const sim = getCauseSimilarity("Disaster Relief & Wildfire Safety", "Environment & Climate");
+    expect(sim).toBeGreaterThanOrEqual(0.7);
+  });
+
+  it("returns lower similarity for unrelated causes", () => {
+    const sim = getCauseSimilarity("Animals & Wildlife", "Medical & Healthcare");
+    expect(sim).toBeLessThan(0.5);
+  });
+});
+
+describe("user cause profile", () => {
+  it("weights donations by amount", () => {
+    // user-1 donated to Disaster Relief fundraisers
+    const profile = computeUserCauseProfile("user-1", getState());
+    // Should have some weight on Disaster Relief (from community + donations)
+    expect(profile["Disaster Relief & Wildfire Safety"]).toBeGreaterThan(0);
+  });
+
+  it("cold start user gets non-zero profile from communities", () => {
+    // user with community memberships but no donations should still have a profile
+    const users = Object.values(getState().users);
+    const user = users.find((u) => u.communityIds.length > 0);
+    if (!user) return;
+    const profile = computeUserCauseProfile(user.id, getState());
+    const total = Object.values(profile).reduce((a, b) => a + b, 0);
+    expect(total).toBeGreaterThan(0);
+  });
+});
+
+describe("feed tabs", () => {
+  // Seed some feed events for testing
+  function seedMultipleEvents() {
+    const organizer = firstUser();
+    const donor = secondUser();
+
+    // Create a fundraiser to generate events
+    const result = getState().addFundraiser({
+      title: "Feed Test Fund",
+      goalAmount: 1000,
+      story: "For testing feed",
+      organizerId: organizer.id,
+      causeCategory: "Medical & Healthcare",
+      heroImageUrl: TEST_HERO_IMAGE_URL,
+    });
+
+    // Add donations to generate events
+    if (result) {
+      getState().addDonation(result.id, 100, donor.id, "Test 1");
+      getState().addDonation(result.id, 200, donor.id, "Test 2");
+    }
+  }
+
+  it("getForYouFeed returns scored events sorted by score", () => {
+    seedMultipleEvents();
+    const feed = getForYouFeed("user-1", getState());
+    expect(feed.length).toBeGreaterThan(0);
+    // Verify sorted descending by score (approximately — exploration slots may shift order)
+    for (let i = 0; i < feed.length - 1; i++) {
+      // Allow exploration slots to break strict ordering
+      if (feed[i].signals.explorationBoost === 0 && feed[i + 1].signals.explorationBoost === 0) {
+        expect(feed[i].score).toBeGreaterThanOrEqual(feed[i + 1].score);
+      }
+    }
+    // Every item has a reason
+    for (const item of feed) {
+      expect(item.reason).toBeTruthy();
+    }
+  });
+
+  it("getFollowingFeed only includes events from followed users", () => {
+    const u1 = firstUser();
+    const u2 = secondUser();
+    getState().follow(u1.id, u2.id);
+
+    seedMultipleEvents();
+    const feed = getFollowingFeed(u1.id, getState());
+    for (const item of feed) {
+      expect(item.event.actorId).toBe(u2.id);
+    }
+  });
+
+  it("getTrendingFeed returns events sorted by momentum", () => {
+    seedMultipleEvents();
+    const feed = getTrendingFeed(getState());
+    for (let i = 0; i < feed.length - 1; i++) {
+      expect(feed[i].score).toBeGreaterThanOrEqual(feed[i + 1].score);
+    }
+  });
+
+  it("getFollowingFeed returns empty for user with no follows", () => {
+    const feed = getFollowingFeed("user-8", getState());
+    expect(feed).toHaveLength(0);
+  });
+});
+
+describe("behavior signals", () => {
+  it("updateSignals tracks cause interactions", () => {
+    let signals = createEmptySignals();
+    signals = updateSignals(signals, "heart", "Education");
+    expect(signals.heartedCauses["Education"]).toBe(0.4);
+    expect(signals.lastInteractionTimes["Education"]).toBeTruthy();
+  });
+
+  it("updateBehaviorSignals updates store", () => {
+    seedFeedEvent("evt-beh-1");
+    getState().updateBehaviorSignals("user-1", "heart", "evt-beh-1");
+    expect(getState().behaviorSignals["user-1"]).toBeDefined();
+    expect(getState().behaviorSignals["user-1"].heartedCauses).toBeDefined();
+  });
+});

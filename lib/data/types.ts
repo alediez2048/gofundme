@@ -184,3 +184,17 @@ export interface LeaderboardEntry {
   amount: number;
   donationCount: number;
 }
+
+// ---------------------------------------------------------------------------
+// Feed algorithm types (FR-032)
+// ---------------------------------------------------------------------------
+
+export type CauseProfile = Record<CauseCategory, number>;
+
+export interface UserBehaviorSignals {
+  donatedCauses: Record<string, number>;
+  heartedCauses: Record<string, number>;
+  clickedCauses: Record<string, number>;
+  skippedCauses: Record<string, number>;
+  lastInteractionTimes: Record<string, string>;
+}

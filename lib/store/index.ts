@@ -7,11 +7,12 @@
 import { persist } from "zustand/middleware";
 import { useStore } from "zustand/react";
 import { createStore } from "zustand/vanilla";
-import type { Comment, Community, CommunityMilestone, Donation, FeedEvent, FollowRelationship, Fundraiser, FundraiserMilestone, User } from "@/lib/data";
+import type { Comment, Community, CommunityMilestone, Donation, FeedEvent, FollowRelationship, Fundraiser, FundraiserMilestone, User, UserBehaviorSignals } from "@/lib/data";
 import type { CauseCategory } from "@/lib/data";
 import { seed } from "@/lib/data";
 import type { AITrace } from "@/lib/ai/trace";
 import { buildFeedEvent } from "@/lib/feed/eventGenerator";
+import { type BehaviorAction, createEmptySignals, updateSignals } from "@/lib/feed/behaviorModel";
 
 export type EntityMap<T> = Record<string, T>;
 
@@ -27,6 +28,7 @@ export interface StoreState {
   currentUser: string | null;
   followRelationships: FollowRelationship[];
   feedEvents: EntityMap<FeedEvent>;
+  behaviorSignals: Record<string, UserBehaviorSignals>;
 }
 
 function toRecord<T extends { id: string }>(arr: T[]): Record<string, T> {
@@ -44,6 +46,7 @@ function getInitialState(): StoreState {
     currentUser: "user-6",
     followRelationships: [],
     feedEvents: {},
+    behaviorSignals: {},
   };
 }
 
@@ -108,6 +111,7 @@ export interface StoreActions {
   addComment: (eventId: string, authorId: string, text: string, parentId?: string) => string | null;
   toggleBookmark: (eventId: string, userId: string) => void;
   incrementShare: (eventId: string) => void;
+  updateBehaviorSignals: (userId: string, action: BehaviorAction, eventId: string) => void;
 }
 
 export type Store = StoreState & StoreActions;
@@ -590,6 +594,20 @@ export const createFundRightStore = () => {
             };
           });
         },
+
+        updateBehaviorSignals: (userId, action, eventId) => {
+          set((state) => {
+            const event = state.feedEvents[eventId];
+            if (!event) return state;
+            const existing = state.behaviorSignals[userId] ?? createEmptySignals();
+            return {
+              behaviorSignals: {
+                ...state.behaviorSignals,
+                [userId]: updateSignals(existing, action, event.causeCategory),
+              },
+            };
+          });
+        },
       }),
       {
         // Bump when seed data (e.g. image URLs) must reset for all clients; old key is left in localStorage unused.
@@ -603,6 +621,7 @@ export const createFundRightStore = () => {
           currentUser: state.currentUser,
           followRelationships: state.followRelationships,
           feedEvents: state.feedEvents,
+          behaviorSignals: state.behaviorSignals,
         }),
       }
     )
