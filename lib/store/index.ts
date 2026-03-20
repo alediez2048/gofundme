@@ -7,10 +7,11 @@
 import { persist } from "zustand/middleware";
 import { useStore } from "zustand/react";
 import { createStore } from "zustand/vanilla";
-import type { Comment, Community, Donation, FeedEvent, FollowRelationship, Fundraiser, User } from "@/lib/data";
+import type { Comment, Community, CommunityMilestone, Donation, FeedEvent, FollowRelationship, Fundraiser, FundraiserMilestone, User } from "@/lib/data";
 import type { CauseCategory } from "@/lib/data";
 import { seed } from "@/lib/data";
 import type { AITrace } from "@/lib/ai/trace";
+import { buildFeedEvent } from "@/lib/feed/eventGenerator";
 
 export type EntityMap<T> = Record<string, T>;
 
@@ -102,6 +103,7 @@ export interface StoreActions {
   setCurrentUser: (userId: string | null) => void;
   follow: (followerId: string, followeeId: string) => void;
   unfollow: (followerId: string, followeeId: string) => void;
+  joinCommunity: (userId: string, communityId: string) => void;
   toggleHeart: (eventId: string, userId: string) => void;
   addComment: (eventId: string, authorId: string, text: string, parentId?: string) => string | null;
   toggleBookmark: (eventId: string, userId: string) => void;
@@ -158,9 +160,21 @@ export const createFundRightStore = () => {
 
             result = { id, slug };
 
+            const launchEvent = buildFeedEvent({
+              type: "fundraiser_launch",
+              actorId: organizerId,
+              subjectId: id,
+              subjectType: "fundraiser",
+              metadata: { title: title.trim(), goalAmount, causeCategory },
+              causeCategory,
+              communityId: communityId || undefined,
+              fundraiserId: id,
+            });
+
             const next: StoreState & StoreActions = {
               ...s,
               fundraisers: { ...s.fundraisers, [id]: fundraiser },
+              feedEvents: { ...s.feedEvents, [launchEvent.id]: launchEvent },
               lastModified: new Date().toISOString(),
             };
             if (communityId && s.communities[communityId]) {
@@ -204,8 +218,94 @@ export const createFundRightStore = () => {
             const communityId = fundraiser.communityId;
             const community = communityId ? state.communities[communityId] : undefined;
 
+            const newRaised = fundraiser.raisedAmount + amount;
+            const newCommunityRaised = community ? community.totalRaised + amount : 0;
+
+            // --- Emit donation event ---
+            const donationEvent = buildFeedEvent({
+              type: "donation",
+              actorId: donorId,
+              subjectId: fundraiserId,
+              subjectType: "fundraiser",
+              metadata: { amount, message: message ?? null, donorName: donor.name },
+              causeCategory: fundraiser.causeCategory,
+              communityId: communityId || undefined,
+              fundraiserId,
+            });
+            let newFeedEvents: EntityMap<FeedEvent> = {
+              ...state.feedEvents,
+              [donationEvent.id]: donationEvent,
+            };
+
+            // --- Fundraiser milestone detection ---
+            const FUNDRAISER_THRESHOLDS: Array<FundraiserMilestone["type"]> = ["25%", "50%", "75%", "100%"];
+            const existingFundMilestones = fundraiser.milestones ?? [];
+            const newFundMilestones = [...existingFundMilestones];
+            for (const threshold of FUNDRAISER_THRESHOLDS) {
+              const pct = parseInt(threshold) / 100;
+              const target = fundraiser.goalAmount * pct;
+              if (
+                newRaised >= target &&
+                fundraiser.raisedAmount < target &&
+                !existingFundMilestones.some((m) => m.type === threshold)
+              ) {
+                newFundMilestones.push({ type: threshold, reachedAt: createdAt, amount: newRaised });
+                const milestoneEvent = buildFeedEvent({
+                  type: "milestone_reached",
+                  actorId: fundraiser.organizerId,
+                  subjectId: fundraiserId,
+                  subjectType: "fundraiser",
+                  metadata: { percentage: threshold, amount: newRaised, goalAmount: fundraiser.goalAmount },
+                  causeCategory: fundraiser.causeCategory,
+                  communityId: communityId || undefined,
+                  fundraiserId,
+                });
+                newFeedEvents = { ...newFeedEvents, [milestoneEvent.id]: milestoneEvent };
+              }
+            }
+
+            // --- Community milestone detection ---
+            const COMMUNITY_THRESHOLDS: Array<{ type: CommunityMilestone["type"]; value: number }> = [
+              { type: "$10K", value: 10_000 },
+              { type: "$50K", value: 50_000 },
+              { type: "$100K", value: 100_000 },
+              { type: "$500K", value: 500_000 },
+              { type: "$1M", value: 1_000_000 },
+            ];
+            let updatedCommunity = community;
+            if (community && communityId) {
+              const existingCommMilestones = community.milestones ?? [];
+              const newCommMilestones = [...existingCommMilestones];
+              for (const { type, value } of COMMUNITY_THRESHOLDS) {
+                if (
+                  newCommunityRaised >= value &&
+                  community.totalRaised < value &&
+                  !existingCommMilestones.some((m) => m.type === type)
+                ) {
+                  newCommMilestones.push({ type, reachedAt: createdAt, amount: newCommunityRaised });
+                  const commEvent = buildFeedEvent({
+                    type: "community_milestone",
+                    actorId: communityId,
+                    subjectId: communityId,
+                    subjectType: "community",
+                    metadata: { threshold: type, amount: newCommunityRaised },
+                    causeCategory: community.causeCategory,
+                    communityId,
+                  });
+                  newFeedEvents = { ...newFeedEvents, [commEvent.id]: commEvent };
+                }
+              }
+              updatedCommunity = {
+                ...community,
+                totalRaised: newCommunityRaised,
+                donationCount: community.donationCount + 1,
+                milestones: newCommMilestones,
+              };
+            }
+
             return {
               lastModified: new Date().toISOString(),
+              feedEvents: newFeedEvents,
               donations: {
                 ...state.donations,
                 [donationId]: donation,
@@ -214,9 +314,10 @@ export const createFundRightStore = () => {
                 ...state.fundraisers,
                 [fundraiserId]: {
                   ...fundraiser,
-                  raisedAmount: fundraiser.raisedAmount + amount,
+                  raisedAmount: newRaised,
                   donationCount: fundraiser.donationCount + 1,
                   donationIds: [...fundraiser.donationIds, donationId],
+                  milestones: newFundMilestones,
                 },
               },
               users: {
@@ -228,15 +329,8 @@ export const createFundRightStore = () => {
                 },
               },
               communities:
-                community && communityId
-                  ? {
-                      ...state.communities,
-                      [communityId]: {
-                        ...community,
-                        totalRaised: community.totalRaised + amount,
-                        donationCount: community.donationCount + 1,
-                      },
-                    }
+                updatedCommunity && communityId
+                  ? { ...state.communities, [communityId]: updatedCommunity }
                   : state.communities,
             };
           });
@@ -277,8 +371,29 @@ export const createFundRightStore = () => {
               followeeId,
               createdAt: new Date().toISOString(),
             };
+            const newFollowerIds = [...(followee.followerIds ?? []), followerId];
+            let newFeedEvents = state.feedEvents;
+
+            // Profile milestone at 10/50/100 followers
+            const FOLLOWER_THRESHOLDS = [10, 50, 100];
+            const prevCount = (followee.followerIds ?? []).length;
+            for (const threshold of FOLLOWER_THRESHOLDS) {
+              if (newFollowerIds.length >= threshold && prevCount < threshold) {
+                const evt = buildFeedEvent({
+                  type: "profile_milestone",
+                  actorId: followeeId,
+                  subjectId: followeeId,
+                  subjectType: "user",
+                  metadata: { followerCount: newFollowerIds.length, threshold },
+                  causeCategory: followee.causeIdentity ?? "Community & Neighbors",
+                });
+                newFeedEvents = { ...newFeedEvents, [evt.id]: evt };
+              }
+            }
+
             return {
               followRelationships: [...state.followRelationships, rel],
+              feedEvents: newFeedEvents,
               users: {
                 ...state.users,
                 [followerId]: {
@@ -287,7 +402,7 @@ export const createFundRightStore = () => {
                 },
                 [followeeId]: {
                   ...followee,
-                  followerIds: [...(followee.followerIds ?? []), followerId],
+                  followerIds: newFollowerIds,
                 },
               },
             };
@@ -325,6 +440,44 @@ export const createFundRightStore = () => {
                       },
                     }
                   : {}),
+              },
+            };
+          });
+        },
+
+        joinCommunity: (userId, communityId) => {
+          set((state) => {
+            const user = state.users[userId];
+            const community = state.communities[communityId];
+            if (!user || !community) return state;
+            if (community.memberIds.includes(userId)) return state;
+
+            const joinEvent = buildFeedEvent({
+              type: "community_join",
+              actorId: userId,
+              subjectId: communityId,
+              subjectType: "community",
+              metadata: { communityName: community.name },
+              causeCategory: community.causeCategory,
+              communityId,
+            });
+
+            return {
+              feedEvents: { ...state.feedEvents, [joinEvent.id]: joinEvent },
+              users: {
+                ...state.users,
+                [userId]: {
+                  ...user,
+                  communityIds: [...user.communityIds, communityId],
+                },
+              },
+              communities: {
+                ...state.communities,
+                [communityId]: {
+                  ...community,
+                  memberIds: [...community.memberIds, userId],
+                  memberCount: community.memberCount + 1,
+                },
               },
             };
           });

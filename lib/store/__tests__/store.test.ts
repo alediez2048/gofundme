@@ -498,3 +498,123 @@ describe("engagement actions", () => {
     expect(getState().feedEvents).toEqual(prevState.feedEvents);
   });
 });
+
+// ---------------------------------------------------------------------------
+// FeedEvent generation (FR-031)
+// ---------------------------------------------------------------------------
+describe("feed event generation", () => {
+  it("addDonation emits a donation FeedEvent", () => {
+    const fund = firstFundraiser();
+    const donor = secondUser();
+
+    getState().addDonation(fund.id, 50, donor.id, "Love it");
+
+    const events = Object.values(getState().feedEvents);
+    const donationEvents = events.filter((e) => e.type === "donation");
+    expect(donationEvents.length).toBeGreaterThanOrEqual(1);
+    const evt = donationEvents[donationEvents.length - 1];
+    expect(evt.actorId).toBe(donor.id);
+    expect(evt.subjectId).toBe(fund.id);
+    expect(evt.metadata.amount).toBe(50);
+  });
+
+  it("addFundraiser emits a fundraiser_launch FeedEvent", () => {
+    const organizer = firstUser();
+
+    const result = getState().addFundraiser({
+      title: "Launch Test",
+      goalAmount: 1000,
+      story: "Testing launch event",
+      organizerId: organizer.id,
+      causeCategory: "Medical & Healthcare",
+      heroImageUrl: TEST_HERO_IMAGE_URL,
+    });
+
+    expect(result).toBeTruthy();
+    const events = Object.values(getState().feedEvents);
+    const launchEvents = events.filter((e) => e.type === "fundraiser_launch");
+    expect(launchEvents.length).toBeGreaterThanOrEqual(1);
+    expect(launchEvents[launchEvents.length - 1].actorId).toBe(organizer.id);
+  });
+
+  it("detects fundraiser milestones at 25/50/75/100%", () => {
+    const organizer = firstUser();
+    const donor = secondUser();
+
+    const result = getState().addFundraiser({
+      title: "Milestone Test",
+      goalAmount: 100,
+      story: "Testing milestones",
+      organizerId: organizer.id,
+      causeCategory: "Medical & Healthcare",
+      heroImageUrl: TEST_HERO_IMAGE_URL,
+    });
+    const fundId = result!.id;
+
+    // Donate 25 → 25% milestone
+    getState().addDonation(fundId, 25, donor.id);
+    expect(getState().fundraisers[fundId].milestones).toHaveLength(1);
+    expect(getState().fundraisers[fundId].milestones![0].type).toBe("25%");
+
+    // Donate 25 more → 50% milestone
+    getState().addDonation(fundId, 25, donor.id);
+    expect(getState().fundraisers[fundId].milestones).toHaveLength(2);
+
+    // Donate 50 more → 75% and 100% milestones
+    getState().addDonation(fundId, 50, donor.id);
+    expect(getState().fundraisers[fundId].milestones).toHaveLength(4);
+
+    // Verify milestone events were emitted
+    const milestoneEvents = Object.values(getState().feedEvents).filter(
+      (e) => e.type === "milestone_reached" && e.subjectId === fundId
+    );
+    expect(milestoneEvents).toHaveLength(4);
+  });
+
+  it("does not emit duplicate milestones", () => {
+    const organizer = firstUser();
+    const donor = secondUser();
+
+    const result = getState().addFundraiser({
+      title: "No Dup Test",
+      goalAmount: 100,
+      story: "Test",
+      organizerId: organizer.id,
+      causeCategory: "Medical & Healthcare",
+      heroImageUrl: TEST_HERO_IMAGE_URL,
+    });
+    const fundId = result!.id;
+
+    getState().addDonation(fundId, 30, donor.id); // crosses 25%
+    getState().addDonation(fundId, 5, donor.id);  // still above 25%, no new milestone
+
+    expect(getState().fundraisers[fundId].milestones).toHaveLength(1);
+  });
+
+  it("joinCommunity emits community_join event", () => {
+    const users = Object.values(getState().users);
+    const community = Object.values(getState().communities)[0];
+    // Find a user not already in this community
+    const outsider = users.find((u) => !community.memberIds.includes(u.id));
+    if (!outsider) return; // skip if all users are members
+
+    const prevMembers = community.memberCount;
+    getState().joinCommunity(outsider.id, community.id);
+
+    expect(getState().communities[community.id].memberCount).toBe(prevMembers + 1);
+    const joinEvents = Object.values(getState().feedEvents).filter(
+      (e) => e.type === "community_join" && e.actorId === outsider.id
+    );
+    expect(joinEvents).toHaveLength(1);
+  });
+
+  it("joinCommunity is idempotent for existing members", () => {
+    const community = Object.values(getState().communities)[0];
+    const existingMember = community.memberIds[0];
+
+    const prevCount = community.memberCount;
+    getState().joinCommunity(existingMember, community.id);
+
+    expect(getState().communities[community.id].memberCount).toBe(prevCount);
+  });
+});
