@@ -27,6 +27,29 @@ export default function EngagementBar({ eventId, currentUserId, compact }: Engag
   const shareBtnRef = useRef<HTMLButtonElement>(null);
   const commentInputRef = useRef<HTMLInputElement>(null);
 
+  // Close share menu on outside click or Escape (must be before early return)
+  useEffect(() => {
+    if (!showShareMenu) return;
+    const handleClick = (e: MouseEvent) => {
+      if (shareRef.current && !shareRef.current.contains(e.target as Node)) {
+        setShowShareMenu(false);
+        shareBtnRef.current?.focus();
+      }
+    };
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setShowShareMenu(false);
+        shareBtnRef.current?.focus();
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("keydown", handleKey);
+    };
+  }, [showShareMenu]);
+
   if (!event) return null;
 
   const { engagement } = event;
@@ -76,29 +99,6 @@ export default function EngagementBar({ eventId, currentUserId, compact }: Engag
     incrementShare(eventId);
     setShowShareMenu(false);
   };
-
-  // Close share menu on outside click or Escape
-  useEffect(() => {
-    if (!showShareMenu) return;
-    const handleClick = (e: MouseEvent) => {
-      if (shareRef.current && !shareRef.current.contains(e.target as Node)) {
-        setShowShareMenu(false);
-        shareBtnRef.current?.focus();
-      }
-    };
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setShowShareMenu(false);
-        shareBtnRef.current?.focus();
-      }
-    };
-    document.addEventListener("mousedown", handleClick);
-    document.addEventListener("keydown", handleKey);
-    return () => {
-      document.removeEventListener("mousedown", handleClick);
-      document.removeEventListener("keydown", handleKey);
-    };
-  }, [showShareMenu]);
 
   const recentComments = engagement.comments.slice(-3);
 
