@@ -5,6 +5,7 @@
 
 export * from "./types";
 export { seed, users, fundraisersSeed as fundraisers, communities, donations } from "./seed";
+export { seedFollowRelationships, seedFeedEvents, buildFollowMaps, priyaBookmarkedIds } from "./seed-social";
 export {
   FUNDRAISER_COVER_PRESETS,
   TEST_HERO_IMAGE_URL,

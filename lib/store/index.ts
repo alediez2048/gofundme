@@ -10,6 +10,7 @@ import { createStore } from "zustand/vanilla";
 import type { Comment, Community, CommunityMilestone, Donation, FeedEvent, FollowRelationship, Fundraiser, FundraiserMilestone, User, UserBehaviorSignals } from "@/lib/data";
 import type { CauseCategory } from "@/lib/data";
 import { seed } from "@/lib/data";
+import { seedFollowRelationships, seedFeedEvents, buildFollowMaps, priyaBookmarkedIds } from "@/lib/data/seed-social";
 import type { AITrace } from "@/lib/ai/trace";
 import { buildFeedEvent } from "@/lib/feed/eventGenerator";
 import { type BehaviorAction, createEmptySignals, updateSignals } from "@/lib/feed/behaviorModel";
@@ -36,16 +37,25 @@ function toRecord<T extends { id: string }>(arr: T[]): Record<string, T> {
 }
 
 function getInitialState(): StoreState {
+  // Merge follow graph into user entities
+  const { followerIds, followingIds } = buildFollowMaps();
+  const usersWithSocial = seed.users.map((u) => ({
+    ...u,
+    followerIds: followerIds[u.id] ?? [],
+    followingIds: followingIds[u.id] ?? [],
+    ...(u.id === "user-6" ? { bookmarkedIds: priyaBookmarkedIds } : {}),
+  }));
+
   return {
-    users: toRecord(seed.users),
+    users: toRecord(usersWithSocial),
     fundraisers: toRecord(seed.fundraisers),
     communities: toRecord(seed.communities),
     donations: toRecord(seed.donations),
     traces: [],
     lastModified: new Date().toISOString(),
     currentUser: "user-6",
-    followRelationships: [],
-    feedEvents: {},
+    followRelationships: seedFollowRelationships,
+    feedEvents: toRecord(seedFeedEvents),
     behaviorSignals: {},
   };
 }
@@ -611,7 +621,7 @@ export const createFundRightStore = () => {
       }),
       {
         // Bump when seed data (e.g. image URLs) must reset for all clients; old key is left in localStorage unused.
-        name: "fundright-store-v4",
+        name: "fundright-store-v5",
         partialize: (state) => ({
           users: state.users,
           fundraisers: state.fundraisers,

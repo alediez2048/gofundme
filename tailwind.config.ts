@@ -18,6 +18,12 @@ const config: Config = {
           darkest: "#0B291A",
           mint: "#F0FCE9",
         },
+        // GoFundMe-native tokens (FR-033B)
+        gfm: {
+          green: "#00b964",
+          "green-light": "#e6f9f0",
+          "green-hover": "#00a358",
+        },
         primary: {
           DEFAULT: "#274A34",
           foreground: "#CCF88E",
@@ -51,6 +57,20 @@ const config: Config = {
           "border-strong": "#424242",
           disabled: "#B7B7B6",
         },
+        // Feed-specific (FR-033B)
+        "feed-text": {
+          heading: "#1a1a1a",
+          body: "#333333",
+          secondary: "#6b6b6b",
+          tertiary: "#999999",
+        },
+        "feed-border": "#e0e0e0",
+        "feed-bg": {
+          page: "#fafafa",
+          card: "#ffffff",
+          hover: "#f5f5f5",
+        },
+        "feed-heart": "#e74c3c",
       },
       fontFamily: {
         sans: ['"DM Sans"', "Trebuchet MS", "Helvetica", "Arial", "sans-serif"],
@@ -72,6 +92,9 @@ const config: Config = {
       },
       borderRadius: {
         pill: "624.9375rem",
+        card: "16px",
+        "card-sm": "10px",
+        "pill-gfm": "50px",
         xxl: "1.25rem",
         xl: "1rem",
         lg: "0.75rem",
@@ -79,6 +102,7 @@ const config: Config = {
       },
       boxShadow: {
         soft: "0px 1px 2px rgba(0,0,0,0.1)",
+        card: "0 1px 3px rgba(0,0,0,0.04)",
         medium: "0px 2px 6px rgba(0,0,0,0.1)",
         "medium-strong": "0px 4px 8px rgba(0,0,0,0.1)",
         strong: "0px 6px 14px rgba(0,0,0,0.1)",

@@ -20,6 +20,25 @@
   --hrt-color-positive: #2D6339;
   --hrt-color-progress-start: #ACF86C;
   --hrt-color-progress-end: #4A9D44;
+
+  /* GoFundMe-native design tokens (FR-033B) */
+  --gfm-green: #00b964;
+  --gfm-green-light: #e6f9f0;
+  --gfm-green-hover: #00a358;
+  --gfm-black: #1a1a1a;
+  --gfm-body: #333333;
+  --gfm-secondary: #6b6b6b;
+  --gfm-tertiary: #999999;
+  --gfm-border: #e0e0e0;
+  --gfm-hover-bg: #f5f5f5;
+  --gfm-page-bg: #fafafa;
+  --gfm-card-bg: #ffffff;
+  --gfm-heart: #e74c3c;
+  --gfm-card-radius: 16px;
+  --gfm-card-sm-radius: 10px;
+  --gfm-pill-radius: 50px;
+  --gfm-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --gfm-gradient: linear-gradient(135deg, #b2f5d8 0%, #6ee7a8 50%, #00b964 100%);
 }
 
 @layer base {
