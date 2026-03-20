@@ -3,18 +3,22 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useFundRightStore } from "@/lib/store";
 import { getFeedForUser, type FeedTab, type ScoredFeedEvent } from "@/lib/feed/algorithm";
+import { emit } from "@/lib/analytics/emitter";
 import PostComposer from "./PostComposer";
 import FeedTabs from "./FeedTabs";
 import FeedCard from "./FeedCard";
 
 const BATCH_SIZE = 10;
 
+// FR-058: Module-level cache preserves state across navigations
+const feedCache = { tab: "forYou" as FeedTab, count: BATCH_SIZE, scrollY: 0 };
+
 export default function FeedColumn() {
   const currentUserId = useFundRightStore((s) => s.currentUser);
   const state = useFundRightStore((s) => s);
 
-  const [activeTab, setActiveTab] = useState<FeedTab>("forYou");
-  const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
+  const [activeTab, setActiveTab] = useState<FeedTab>(feedCache.tab);
+  const [visibleCount, setVisibleCount] = useState(Math.max(feedCache.count, BATCH_SIZE));
   const [showBackToTop, setShowBackToTop] = useState(false);
 
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -28,11 +32,25 @@ export default function FeedColumn() {
   const visibleItems = allItems.slice(0, visibleCount);
   const hasMore = visibleCount < allItems.length;
 
+  // FR-058: Restore scroll position on mount
+  useEffect(() => {
+    if (feedCache.scrollY > 0) {
+      window.scrollTo(0, feedCache.scrollY);
+    }
+    emit("feed", "feed_view", { label: activeTab });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // FR-058: Persist state on changes
+  useEffect(() => { feedCache.tab = activeTab; }, [activeTab]);
+  useEffect(() => { feedCache.count = visibleCount; }, [visibleCount]);
+
   // Reset on tab switch
   const handleTabChange = useCallback((tab: FeedTab) => {
     setActiveTab(tab);
     setVisibleCount(BATCH_SIZE);
-    columnRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    feedCache.scrollY = 0;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    emit("feed", "tab_switch", { label: tab });
   }, []);
 
   // Infinite scroll via IntersectionObserver
@@ -52,10 +70,11 @@ export default function FeedColumn() {
     return () => observer.disconnect();
   }, [hasMore]);
 
-  // Show "back to top" after scrolling past 10 cards
+  // Show "back to top" after scrolling past 10 cards + persist scroll position
   useEffect(() => {
     const handleScroll = () => {
       setShowBackToTop(window.scrollY > 1200);
+      feedCache.scrollY = window.scrollY;
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
