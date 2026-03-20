@@ -11,6 +11,7 @@ import Breadcrumbs from "./Breadcrumbs";
 import PageTransition from "./PageTransition";
 import ProgressBar from "./ProgressBar";
 import UserAvatar from "./UserAvatar";
+import ProfileActivityFeed from "./feed/ProfileActivityFeed";
 
 const CAUSE_SHIELD: Record<
   CauseCategory,
@@ -499,6 +500,9 @@ function ProfileByUsername({ username }: { username: string }) {
           </ul>
         )}
       </section>
+
+      {/* Enhanced activity feed with recommendations (FR-049) */}
+      <ProfileActivityFeed userId={user.id} />
     </article>
   );
 }

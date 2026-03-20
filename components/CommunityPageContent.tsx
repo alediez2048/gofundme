@@ -13,6 +13,7 @@ import type { RankedFundraiser } from "@/lib/ai/community-discovery";
 import Breadcrumbs from "./Breadcrumbs";
 import PageTransition from "./PageTransition";
 import ProgressBar from "./ProgressBar";
+import CommunityActivityFeed from "./feed/CommunityActivityFeed";
 import UserAvatar from "./UserAvatar";
 
 function FundraiserCard({ f, organizer, explanation }: { f: Fundraiser; organizer: User | undefined; explanation?: string }) {
@@ -519,6 +520,8 @@ function CommunityBySlug({ slug, causeSummary, fundraiserCount }: CommunityBySlu
                   })}
                 </ul>
               )}
+              {/* Enhanced feed with leaderboard, milestones, follows (FR-050) */}
+              <CommunityActivityFeed communityId={community.id} />
             </section>
           )}
 
