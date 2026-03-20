@@ -22,6 +22,8 @@ export interface StoreState {
   traces: AITrace[];
   /** ISO timestamp of last store mutation — used for `dateModified` in schema (AEO) */
   lastModified: string;
+  /** Simulated auth — ID of the "logged in" demo user, or null for logged-out */
+  currentUser: string | null;
 }
 
 function toRecord<T extends { id: string }>(arr: T[]): Record<string, T> {
@@ -36,6 +38,7 @@ function getInitialState(): StoreState {
     donations: toRecord(seed.donations),
     traces: [],
     lastModified: new Date().toISOString(),
+    currentUser: "user-6",
   };
 }
 
@@ -88,6 +91,7 @@ export interface StoreActions {
   ) => string | null;
   addTrace: (trace: AITrace) => void;
   clearTraces: () => void;
+  setCurrentUser: (userId: string | null) => void;
 }
 
 export type Store = StoreState & StoreActions;
@@ -235,6 +239,13 @@ export const createFundRightStore = () => {
         clearTraces: () => {
           set({ traces: [] });
         },
+
+        setCurrentUser: (userId) => {
+          set((state) => {
+            if (userId !== null && !state.users[userId]) return state;
+            return { currentUser: userId };
+          });
+        },
       }),
       {
         // Bump when seed data (e.g. image URLs) must reset for all clients; old key is left in localStorage unused.
@@ -245,6 +256,7 @@ export const createFundRightStore = () => {
           communities: state.communities,
           donations: state.donations,
           lastModified: state.lastModified,
+          currentUser: state.currentUser,
         }),
       }
     )
