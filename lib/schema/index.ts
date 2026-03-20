@@ -198,3 +198,28 @@ export function buildBreadcrumbSchema(items: BreadcrumbItem[]) {
     })),
   };
 }
+
+// ---------------------------------------------------------------------------
+// Profile: ItemList of organized fundraisers (FR-052)
+// ---------------------------------------------------------------------------
+
+export function buildProfileItemListSchema(
+  user: User,
+  fundraisers: Fundraiser[]
+): object | null {
+  const userFundraisers = fundraisers.filter((f) => f.organizerId === user.id);
+  if (userFundraisers.length === 0) return null;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `Fundraisers organized by ${user.name}`,
+    numberOfItems: userFundraisers.length,
+    itemListElement: userFundraisers.map((f, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: f.title,
+      url: absoluteUrl(`/f/${f.slug}`),
+    })),
+  };
+}

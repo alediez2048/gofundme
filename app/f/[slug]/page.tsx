@@ -20,7 +20,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     organizer?.name && organizer.name.length > 0
       ? `Support ${fundraiser.title} by ${organizer.name}. ${fundraiser.raisedAmount.toLocaleString()} raised of ${fundraiser.goalAmount.toLocaleString()} goal.`
       : `Support ${fundraiser.title}. ${fundraiser.raisedAmount.toLocaleString()} raised of ${fundraiser.goalAmount.toLocaleString()} goal.`;
-  return { title, description };
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://fundright.vercel.app";
+  return {
+    title,
+    description,
+    alternates: { canonical: `${baseUrl}/f/${fundraiser.slug}` },
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      url: `${baseUrl}/f/${fundraiser.slug}`,
+      images: [{ url: fundraiser.heroImageUrl, width: 1200, height: 630, alt: fundraiser.title }],
+      siteName: "FundRight",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [fundraiser.heroImageUrl],
+    },
+  };
 }
 
 export default async function FundraiserPage({ params }: Props) {
@@ -35,7 +54,12 @@ export default async function FundraiserPage({ params }: Props) {
 
   const schemas: object[] = [];
   if (fundraiser && organizer) {
-    schemas.push(buildFundraiserSchema(fundraiser, organizer, community, new Date().toISOString()));
+    // FR-053: use most recent donation timestamp for dateModified
+    const fundDonations = seed.donations
+      .filter((d) => d.fundraiserId === fundraiser.id)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    const lastModified = fundDonations[0]?.createdAt ?? new Date().toISOString();
+    schemas.push(buildFundraiserSchema(fundraiser, organizer, community, lastModified));
   }
   schemas.push(
     buildBreadcrumbSchema([

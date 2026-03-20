@@ -13,7 +13,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!community) return { title: "Community | FundRight" };
   const title = `${community.name} | FundRight`;
   const description = `${community.description} $${community.totalRaised.toLocaleString()} raised · ${community.donationCount} donations · ${community.fundraiserCount} active campaigns.`;
-  return { title, description };
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://fundright.vercel.app";
+  return {
+    title,
+    description,
+    alternates: { canonical: `${baseUrl}/communities/${community.slug}` },
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url: `${baseUrl}/communities/${community.slug}`,
+      images: [{ url: community.bannerImageUrl, width: 1200, height: 630, alt: community.name }],
+      siteName: "FundRight",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [community.bannerImageUrl],
+    },
+  };
 }
 
 export default async function CommunityPage({ params }: Props) {
@@ -30,8 +49,14 @@ export default async function CommunityPage({ params }: Props) {
     seed.donations
   );
 
+  // FR-053: use most recent community donation timestamp for dateModified
+  const communityDonations = seed.donations
+    .filter((d) => communityFundraisers.some((f) => f.id === d.fundraiserId))
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  const lastModified = communityDonations[0]?.createdAt ?? new Date().toISOString();
+
   const schemas = [
-    ...buildCommunitySchema(community, community.faq, new Date().toISOString()),
+    ...buildCommunitySchema(community, community.faq, lastModified),
     buildBreadcrumbSchema([
       { label: "Home", href: "/" },
       { label: "Communities", href: "/communities" },

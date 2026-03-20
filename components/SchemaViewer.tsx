@@ -46,6 +46,8 @@ function typeColor(type: string): string {
       return "bg-[#E1F6F6] text-informative";
     case "BreadcrumbList":
       return "bg-surface-medium text-heading";
+    case "ItemList":
+      return "bg-[#D4EDDA] text-[#155724]";
     default:
       return "bg-surface-extra text-heading";
   }
