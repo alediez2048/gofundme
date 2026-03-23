@@ -14,6 +14,26 @@ export const communityBanner = {
   mutualAid: unsplashCrop("photo-1529156069898-49953e39b3ac", 1200, 400),
   /** Cozy family moment — good for medical / healthcare network */
   familyHome: unsplashCrop("photo-1511895426328-dc8714191300", 1200, 400),
+  /** Students learning together — good for education communities */
+  classroom: unsplashCrop("photo-1503676260728-1c00da094a0b", 1200, 400),
+  /** Reforestation / climate action — good for environment communities */
+  climateAction: unsplashCrop("photo-1466611653911-95081537e5b7", 1200, 400),
+  /** Animal care and rescue — good for rescue communities */
+  animalCare: unsplashCrop("photo-1517849845537-4d257902454a", 1200, 400),
+  /** Neighbors supporting each other — good for mutual aid communities */
+  neighborsSupport: unsplashCrop("photo-1517486808906-6ca8b3f04846", 1200, 400),
+  /** Outdoor youth activity — good for neighborhood community programs */
+  youthPrograms: unsplashCrop("photo-1500530855697-b586d89ba3ee", 1200, 400),
+  /** Ocean and shoreline stewardship — good for environmental communities */
+  coastalCare: unsplashCrop("photo-1500375592092-40eb2168fd21", 1200, 400),
+  /** Group study and scholarships — good for student support communities */
+  scholarshipSupport: unsplashCrop("photo-1497633762265-9d179a990aa6", 1200, 400),
+  /** Neighborhood food support — good for local aid communities */
+  communityKitchen: unsplashCrop("photo-1488521787991-ed7bbaae773c", 1200, 400),
+  /** Wildlife habitat outdoors — good for animal and habitat communities */
+  wildlifeHabitat: unsplashCrop("photo-1474511320723-9a56873867b5", 1200, 400),
+  /** Clean air and urban climate action — good for resilience communities */
+  cleanAirAction: unsplashCrop("photo-1493246507139-91e8fad9978e", 1200, 400),
 } as const;
 
 /** Fundraiser hero covers matched to campaign tone. */

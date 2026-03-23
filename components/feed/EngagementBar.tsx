@@ -15,12 +15,15 @@ export default function EngagementBar({ eventId, currentUserId, compact }: Engag
   const users = useFundRightStore((s) => s.users);
   const toggleHeart = useFundRightStore((s) => s.toggleHeart);
   const addComment = useFundRightStore((s) => s.addComment);
+  const addSharePost = useFundRightStore((s) => s.addSharePost);
   const toggleBookmark = useFundRightStore((s) => s.toggleBookmark);
   const incrementShare = useFundRightStore((s) => s.incrementShare);
 
   const [showComments, setShowComments] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [commentText, setCommentText] = useState("");
+  const [shareCommentary, setShareCommentary] = useState("");
+  const [showShareComposer, setShowShareComposer] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const shareRef = useRef<HTMLDivElement>(null);
@@ -75,6 +78,15 @@ export default function EngagementBar({ eventId, currentUserId, compact }: Engag
 
   const handleShare = () => setShowShareMenu((v) => !v);
 
+  const handleShareToFeed = () => {
+    if (!currentUserId) return;
+    const result = addSharePost(currentUserId, eventId, shareCommentary);
+    if (!result) return;
+    setShareCommentary("");
+    setShowShareComposer(false);
+    setShowShareMenu(false);
+  };
+
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
@@ -103,19 +115,19 @@ export default function EngagementBar({ eventId, currentUserId, compact }: Engag
   const recentComments = engagement.comments.slice(-3);
 
   const btnBase = compact
-    ? "flex items-center gap-1 py-1.5 px-2 rounded-card-sm text-xs font-semibold transition-colors"
-    : "flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-card-sm text-[13px] font-semibold transition-colors";
+    ? "gfm-feed-action-button gap-1 px-2 text-[14px] leading-5"
+    : "gfm-feed-action-button flex-1 text-[14px] leading-5";
 
   return (
     <div>
       {/* Action buttons */}
-      <div className={`flex ${compact ? "gap-1" : "gap-0.5"} border-t border-feed-border pt-1`}>
+      <div className={`flex ${compact ? "gap-1" : "gap-1"} border-t border-black/5 pt-3`}>
         {/* Heart */}
         <button
           onClick={handleHeart}
           aria-pressed={hearted}
           aria-label={`${engagement.heartCount} hearts, press to ${hearted ? "unheart" : "heart"}`}
-          className={`${btnBase} ${hearted ? "text-feed-heart" : "text-feed-text-secondary hover:bg-feed-bg-hover hover:text-feed-text-heading"}`}
+          className={`${btnBase} ${hearted ? "bg-[#e9fcce] text-brand-strong" : "text-[#232323]"}`}
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill={hearted ? "currentColor" : "none"} stroke="currentColor" strokeWidth={hearted ? 0 : 2}>
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
@@ -127,7 +139,7 @@ export default function EngagementBar({ eventId, currentUserId, compact }: Engag
         <button
           onClick={handleComment}
           aria-label={`${engagement.commentCount} comments, press to comment`}
-          className={`${btnBase} text-feed-text-secondary hover:bg-feed-bg-hover hover:text-feed-text-heading`}
+          className={`${btnBase} text-[#232323]`}
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
@@ -142,7 +154,7 @@ export default function EngagementBar({ eventId, currentUserId, compact }: Engag
             onClick={handleShare}
             aria-label={`${engagement.shareCount} shares, press to share`}
             aria-expanded={showShareMenu}
-            className={`${btnBase} text-feed-text-secondary hover:bg-feed-bg-hover hover:text-feed-text-heading`}
+            className={`${btnBase} text-[#232323]`}
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
               <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
@@ -153,22 +165,31 @@ export default function EngagementBar({ eventId, currentUserId, compact }: Engag
           </button>
 
           {showShareMenu && (
-            <div className="absolute bottom-full left-0 mb-2 bg-feed-bg-card border border-feed-border rounded-card-sm shadow-card py-1 min-w-[160px] z-10">
+            <div className="gfm-feed-card absolute bottom-full left-0 z-10 mb-2 min-w-[180px] py-1">
+              <button
+                onClick={() => {
+                  setShowShareComposer((current) => !current);
+                  setShowShareMenu(false);
+                }}
+                className="w-full px-4 py-2 text-left text-[14px] leading-5 hover:bg-[#f5f5f5]"
+              >
+                Share to feed
+              </button>
               <button
                 onClick={handleCopyLink}
-                className="w-full text-left px-3 py-2 text-sm text-feed-text-body hover:bg-feed-bg-hover"
+                className="w-full px-4 py-2 text-left text-[14px] leading-5 hover:bg-[#f5f5f5]"
               >
                 {copied ? "Copied!" : "Copy link"}
               </button>
               <button
                 onClick={() => handleExternalShare("twitter")}
-                className="w-full text-left px-3 py-2 text-sm text-feed-text-body hover:bg-feed-bg-hover"
+                className="w-full px-4 py-2 text-left text-[14px] leading-5 hover:bg-[#f5f5f5]"
               >
                 Share on X
               </button>
               <button
                 onClick={() => handleExternalShare("facebook")}
-                className="w-full text-left px-3 py-2 text-sm text-feed-text-body hover:bg-feed-bg-hover"
+                className="w-full px-4 py-2 text-left text-[14px] leading-5 hover:bg-[#f5f5f5]"
               >
                 Share on Facebook
               </button>
@@ -181,7 +202,7 @@ export default function EngagementBar({ eventId, currentUserId, compact }: Engag
           onClick={handleBookmark}
           aria-pressed={bookmarked}
           aria-label={`press to ${bookmarked ? "remove bookmark" : "bookmark"}`}
-          className={`${btnBase} ${bookmarked ? "text-gfm-green" : "text-feed-text-secondary hover:bg-feed-bg-hover hover:text-feed-text-heading"}`}
+          className={`${btnBase} ${bookmarked ? "bg-[#e9fcce] text-brand-strong" : "text-[#232323]"}`}
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill={bookmarked ? "currentColor" : "none"} stroke="currentColor" strokeWidth={2}>
             <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
@@ -191,7 +212,7 @@ export default function EngagementBar({ eventId, currentUserId, compact }: Engag
 
       {/* Inline comments */}
       {showComments && (
-        <div className="mt-2 space-y-2">
+        <div className="mt-3 space-y-3 rounded-xl bg-[#f5f5f5] p-4">
           {recentComments.map((c) => {
             const author = users[c.authorId];
             return (
@@ -200,14 +221,14 @@ export default function EngagementBar({ eventId, currentUserId, compact }: Engag
                   {author && <UserAvatar src={author.avatar} size={28} />}
                 </div>
                 <div className="min-w-0">
-                  <span className="text-xs font-semibold text-feed-text-heading">{author?.name ?? "User"}</span>
-                  <p className="text-xs text-feed-text-body">{c.text}</p>
+                  <span className="text-[14px] leading-5 text-[#232323]">{author?.name ?? "User"}</span>
+                  <p className="text-[14px] leading-5 text-[#232323]">{c.text}</p>
                 </div>
               </div>
             );
           })}
           {engagement.commentCount > 3 && (
-            <button className="text-xs text-gfm-green font-semibold hover:underline">
+            <button className="text-[14px] leading-5 text-brand-strong">
               View all {engagement.commentCount} comments
             </button>
           )}
@@ -219,14 +240,44 @@ export default function EngagementBar({ eventId, currentUserId, compact }: Engag
               onChange={(e) => setCommentText(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSubmitComment()}
               placeholder="Add a comment..."
-              className="flex-1 text-sm border border-feed-border rounded-pill-gfm px-3 py-1.5 focus:outline-none focus:border-gfm-green"
+              className="gfm-feed-input flex-1 px-4 py-2 text-[14px] leading-5 focus:border-brand-strong focus:outline-none"
             />
             <button
               onClick={handleSubmitComment}
               disabled={!commentText.trim()}
-              className="text-sm font-semibold text-gfm-green disabled:opacity-40 hover:underline"
+              className="gfm-feed-pill-primary disabled:opacity-40"
             >
               Post
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showShareComposer && (
+        <div className="mt-3 space-y-3 rounded-xl bg-[#f5f5f5] p-4">
+          <textarea
+            value={shareCommentary}
+            onChange={(e) => setShareCommentary(e.target.value)}
+            placeholder="Add a thought before you share..."
+            className="gfm-feed-textarea min-h-[88px] w-full resize-none px-4 py-3 text-[14px] leading-5 focus:border-brand-strong focus:outline-none"
+          />
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setShareCommentary("");
+                setShowShareComposer(false);
+              }}
+              className="gfm-feed-pill-secondary"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleShareToFeed}
+              className="gfm-feed-pill-primary"
+            >
+              Share post
             </button>
           </div>
         </div>

@@ -27,7 +27,7 @@ export default function FeedTabs({ activeTab, onTabChange }: FeedTabsProps) {
     <div
       role="tablist"
       aria-label="Feed tabs"
-      className="flex border-b border-feed-border"
+      className="gfm-feed-card-muted flex gap-1 p-1"
     >
       {TABS.map((tab, idx) => {
         const active = tab.id === activeTab;
@@ -41,16 +41,13 @@ export default function FeedTabs({ activeTab, onTabChange }: FeedTabsProps) {
             tabIndex={active ? 0 : -1}
             onClick={() => onTabChange(tab.id)}
             onKeyDown={(e) => handleKeyDown(e, idx)}
-            className={`flex-1 py-3 text-sm font-semibold transition-colors relative ${
+            className={`relative flex-1 rounded-full px-4 py-2.5 text-center text-[16px] leading-6 transition-colors ${
               active
-                ? "text-feed-text-heading"
-                : "text-feed-text-tertiary hover:text-feed-text-secondary hover:bg-feed-bg-hover"
+                ? "bg-brand-lime text-brand-strong"
+                : "bg-white text-[#232323] hover:bg-[#fafafa]"
             }`}
           >
             {tab.label}
-            {active && (
-              <span className="absolute bottom-0 left-1/4 right-1/4 h-0.5 bg-gfm-green rounded-full" />
-            )}
           </button>
         );
       })}

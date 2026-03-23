@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useRef, useEffect, useState } from "react";
 import { useFundRightStore } from "@/lib/store";
 import UserAvatar from "./UserAvatar";
@@ -18,13 +18,13 @@ const DEMO_USERS = [
 
 const MOBILE_NAV_LINKS = [
   { href: "/search", label: "Search" },
-  { href: "/browse", label: "Donate" },
-  { href: "/create", label: "Fundraise" },
+  { href: "/browse", label: "Fundraisers" },
   { href: "/communities", label: "Communities" },
 ] as const;
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const [profileOpen, setProfileOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -110,7 +110,7 @@ export default function Header() {
         className="mx-auto flex h-20 max-w-content items-center justify-between px-4"
         aria-label="Main"
       >
-        {/* Left: Search, Donate, Fundraise */}
+        {/* Left: Search, Fundraisers, Communities, About */}
         <div className="hidden items-center gap-6 md:flex">
           <Link
             href="/search"
@@ -140,31 +140,18 @@ export default function Header() {
                 : "text-heading hover:text-brand"
             }`}
           >
-            Donate
+            Fundraisers
           </Link>
           <Link
-            href="/create"
+            href="/communities"
             className={`text-body-md transition-colors duration-hrt ease-hrt ${
-              isActive("/create")
+              isActive("/communities")
                 ? "font-bold text-heading"
                 : "text-heading hover:text-brand"
             }`}
           >
-            Fundraise
+            Communities
           </Link>
-        </div>
-
-        {/* Center: Logo */}
-        <Link
-          href="/"
-          className="text-heading-lg text-brand tracking-tight transition-opacity duration-hrt ease-hrt hover:opacity-90"
-        >
-          fund<span className="font-bold">right</span>
-        </Link>
-
-        {/* Right: About, CTA, Avatar */}
-        <div className="hidden items-center gap-5 md:flex">
-          {/* About dropdown */}
           <div className="relative" ref={aboutRef}>
             <button
               type="button"
@@ -192,17 +179,9 @@ export default function Header() {
             </button>
             {aboutOpen && (
               <div
-                className="absolute right-0 top-full z-50 mt-2 w-48 rounded-xl border border-neutral-border bg-white py-1 shadow-medium animate-fadeIn"
+                className="absolute left-0 top-full z-50 mt-2 w-48 rounded-xl border border-neutral-border bg-white py-1 shadow-medium animate-fadeIn"
                 role="menu"
               >
-                <Link
-                  href="/communities"
-                  className="block px-4 py-2.5 text-body-sm text-heading transition-colors hover:bg-surface-subtle"
-                  role="menuitem"
-                  onClick={() => setAboutOpen(false)}
-                >
-                  Communities
-                </Link>
                 <Link
                   href="/"
                   className="block px-4 py-2.5 text-body-sm text-heading transition-colors hover:bg-surface-subtle"
@@ -214,7 +193,18 @@ export default function Header() {
               </div>
             )}
           </div>
+        </div>
 
+        {/* Center: Logo */}
+        <Link
+          href="/"
+          className="text-heading-lg text-brand tracking-tight transition-opacity duration-hrt ease-hrt hover:opacity-90"
+        >
+          fund<span className="font-bold">right</span>
+        </Link>
+
+        {/* Right: CTA, Avatar */}
+        <div className="hidden items-center gap-5 md:flex">
           {/* CTA button */}
           <Link href="/create" className="hrt-btn-primary-lg px-6">
             Start a FundRight
@@ -223,6 +213,7 @@ export default function Header() {
           {/* Sign In (demo user picker) */}
           <div className="relative" ref={profileRef}>
             <button
+              id="sign-in-trigger"
               type="button"
               onClick={() => setProfileOpen((o) => !o)}
               className="hrt-btn-secondary px-5 py-2 text-body-sm"
@@ -246,6 +237,7 @@ export default function Header() {
                     onClick={() => {
                       setCurrentUser(u.id);
                       setProfileOpen(false);
+                      router.push("/");
                     }}
                   >
                     <span className="font-medium">{u.name}</span>
@@ -353,6 +345,7 @@ export default function Header() {
                     onClick={() => {
                       setCurrentUser(u.id);
                       setMobileOpen(false);
+                      router.push("/");
                     }}
                   >
                     <span>{u.name}</span>

@@ -130,6 +130,129 @@
     background: linear-gradient(90deg, var(--hrt-color-progress-start), var(--hrt-color-progress-end) 93.27%);
     min-width: 0.25rem;
   }
+
+  .gfm-feed-view {
+    font-family: "GoFundMe Sans", Trebuchet, Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    font-variation-settings: "wght" 175;
+    color: var(--hrt-color-text-default);
+  }
+
+  .gfm-feed-view a,
+  .gfm-feed-view button,
+  .gfm-feed-view input,
+  .gfm-feed-view select,
+  .gfm-feed-view textarea {
+    font: inherit;
+    font-weight: inherit;
+    color: inherit;
+  }
+
+  .gfm-feed-card {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid rgba(35, 35, 35, 0.08);
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .gfm-feed-card-muted {
+    background: #f5f5f5;
+    border-radius: 28px;
+    border: 1px solid rgba(35, 35, 35, 0.06);
+  }
+
+  .gfm-feed-pill-primary {
+    @apply inline-flex items-center justify-center transition-colors duration-150;
+    min-height: 40px;
+    padding: 4px 16px;
+    border: 1px solid transparent;
+    border-radius: 9999px;
+    background: #274a34;
+    color: #ccf88e;
+  }
+
+  .gfm-feed-pill-primary:hover {
+    background: #315d41;
+  }
+
+  .gfm-feed-pill-secondary {
+    @apply inline-flex items-center justify-center transition-colors duration-150;
+    min-height: 40px;
+    padding: 4px 16px;
+    border: 1px solid #d8d8d8;
+    border-radius: 9999px;
+    background: #ffffff;
+    color: #232323;
+  }
+
+  .gfm-feed-pill-secondary:hover {
+    background: #f5f5f5;
+  }
+
+  .gfm-feed-badge {
+    @apply inline-flex items-center gap-2;
+    min-height: 32px;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    background: #e9fcce;
+    border: 1px solid rgba(74, 157, 68, 0.12);
+    color: #232323;
+  }
+
+  .gfm-feed-heading-lg {
+    font-size: clamp(1.5rem, 1.35rem + 0.75vw, 2rem);
+    line-height: 1.2;
+  }
+
+  .gfm-feed-heading-md {
+    font-size: clamp(1.25rem, 1.15rem + 0.4vw, 1.5rem);
+    line-height: 1.2;
+  }
+
+  .gfm-feed-heading-sm {
+    font-size: clamp(0.875rem, 0.82rem + 0.15vw, 1rem);
+    line-height: 1.35;
+  }
+
+  .gfm-feed-meta {
+    font-size: 14px;
+    line-height: 20px;
+    color: #6f6f6f;
+  }
+
+  .gfm-feed-body {
+    font-size: 16px;
+    line-height: 24px;
+    color: #232323;
+  }
+
+  .gfm-feed-input {
+    border: 1px solid #d8d8d8;
+    border-radius: 9999px;
+    background: #f5f5f5;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    color: #232323;
+  }
+
+  .gfm-feed-textarea {
+    border: 1px solid #d8d8d8;
+    border-radius: 12px;
+    background: #f5f5f5;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    color: #232323;
+  }
+
+  .gfm-feed-action-button {
+    @apply inline-flex items-center justify-center gap-1.5 transition-colors duration-150;
+    min-height: 40px;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    color: #232323;
+  }
+
+  .gfm-feed-action-button:hover {
+    background: #f5f5f5;
+  }
 }
 
 /* Focus indicator */

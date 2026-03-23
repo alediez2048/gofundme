@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useFundRightStore } from "@/lib/store";
+import { getUnreadMessageCount } from "@/lib/data/seed-messages";
 import UserAvatar from "@/components/UserAvatar";
 
 export default function FeedHeader() {
   const router = useRouter();
+  const pathname = usePathname();
   const currentUserId = useFundRightStore((s) => s.currentUser);
   const user = useFundRightStore((s) => (currentUserId ? s.users[currentUserId] : null));
   const setCurrentUser = useFundRightStore((s) => s.setCurrentUser);
@@ -15,6 +17,7 @@ export default function FeedHeader() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const unreadMessages = currentUserId ? getUnreadMessageCount(currentUserId) : 0;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,17 +46,20 @@ export default function FeedHeader() {
   }, [showProfileMenu]);
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-feed-border">
-      <div className="max-w-[1200px] mx-auto px-4 flex items-center h-16 gap-4">
+    <header className="gfm-feed-view sticky top-0 z-50 border-b border-black/5 bg-white/95 backdrop-blur">
+      <div className="mx-auto flex h-16 max-w-[1200px] items-center gap-4 px-4 md:px-6">
         {/* Logo */}
-        <Link href="/" className="flex-shrink-0 text-lg font-bold text-gfm-green">
-          FundRight
+        <Link
+          href="/"
+          className="text-heading-lg shrink-0 tracking-tight text-brand-strong transition-opacity duration-hrt ease-hrt hover:opacity-90"
+        >
+          fund<span className="font-bold">right</span>
         </Link>
 
         {/* Search */}
-        <form onSubmit={handleSearch} className="flex-1 max-w-md mx-auto hidden sm:block">
+        <form onSubmit={handleSearch} className="mx-auto hidden max-w-md flex-1 sm:block">
           <div className="relative">
-            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-feed-text-tertiary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+            <svg className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6f6f6f]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
               <circle cx="11" cy="11" r="8" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
@@ -62,7 +68,7 @@ export default function FeedHeader() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search"
-              className="w-full pl-9 pr-4 py-2 text-sm bg-feed-bg-hover border border-transparent rounded-pill-gfm focus:bg-white focus:border-gfm-green focus:outline-none transition-colors"
+              className="gfm-feed-input w-full py-2 pl-9 pr-4 text-[16px] leading-6 focus:border-brand-strong focus:bg-white focus:outline-none"
               aria-label="Search FundRight"
             />
           </div>
@@ -70,17 +76,33 @@ export default function FeedHeader() {
 
         {/* Icon nav */}
         <nav className="flex items-center gap-1" aria-label="Feed navigation">
-          <NavIcon href="/" label="Feed" active>
+          <NavIcon href="/" label="Feed" active={pathname === "/"}>
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
             <polyline points="9 22 9 12 15 12 15 22" />
           </NavIcon>
-          <NavIcon href="/communities" label="Communities">
+          <NavIcon
+            href="/messages"
+            label="Messages"
+            active={pathname.startsWith("/messages")}
+            badge={unreadMessages}
+          >
+            <path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </NavIcon>
+          <NavIcon
+            href="/communities"
+            label="Communities"
+            active={pathname.startsWith("/communities")}
+          >
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
             <circle cx="9" cy="7" r="4" />
             <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
             <path d="M16 3.13a4 4 0 0 1 0 7.75" />
           </NavIcon>
-          <NavIcon href="/browse" label="Discover">
+          <NavIcon
+            href="/browse"
+            label="Fundraisers"
+            active={pathname.startsWith("/browse")}
+          >
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </NavIcon>
@@ -90,7 +112,7 @@ export default function FeedHeader() {
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setShowProfileMenu((v) => !v)}
-            className="flex items-center gap-1 p-1 rounded-full hover:bg-feed-bg-hover transition-colors"
+            className="flex items-center gap-1 rounded-full p-1 transition-colors hover:bg-[#f5f5f5]"
             aria-label="Profile menu"
             aria-expanded={showProfileMenu}
           >
@@ -98,15 +120,15 @@ export default function FeedHeader() {
           </button>
 
           {showProfileMenu && user && (
-            <div className="absolute right-0 top-full mt-1 bg-white border border-feed-border rounded-card-sm shadow-medium py-1 min-w-[200px] z-50">
-              <div className="px-4 py-2 border-b border-feed-border">
-                <p className="text-sm font-semibold text-feed-text-heading">{user.name}</p>
-                <p className="text-xs text-feed-text-tertiary">@{user.username}</p>
+            <div className="gfm-feed-card absolute right-0 top-full z-50 mt-2 min-w-[220px] py-1">
+              <div className="border-b border-black/5 px-4 py-3">
+                <p className="text-[16px] leading-6 text-[#232323]">{user.name}</p>
+                <p className="gfm-feed-meta">@{user.username}</p>
               </div>
               <Link
                 href={`/u/${user.username}`}
                 onClick={() => setShowProfileMenu(false)}
-                className="block px-4 py-2 text-sm text-feed-text-body hover:bg-feed-bg-hover"
+                className="block px-4 py-2 text-[16px] leading-6 text-[#232323] hover:bg-[#f5f5f5]"
               >
                 View Profile
               </Link>
@@ -115,7 +137,7 @@ export default function FeedHeader() {
                   setCurrentUser(null);
                   setShowProfileMenu(false);
                 }}
-                className="w-full text-left px-4 py-2 text-sm text-feed-text-body hover:bg-feed-bg-hover"
+                className="w-full px-4 py-2 text-left text-[16px] leading-6 text-[#232323] hover:bg-[#f5f5f5]"
               >
                 Sign Out
               </button>
@@ -131,27 +153,36 @@ function NavIcon({
   href,
   label,
   active,
+  badge,
   children,
 }: {
   href: string;
   label: string;
   active?: boolean;
+  badge?: number;
   children: React.ReactNode;
 }) {
   return (
     <Link
       href={href}
-      className={`flex flex-col items-center px-3 py-1 rounded-card-sm transition-colors ${
+      className={`flex min-w-[72px] flex-col items-center rounded-xl px-3 py-1.5 transition-colors ${
         active
-          ? "text-feed-text-heading"
-          : "text-feed-text-tertiary hover:text-feed-text-secondary hover:bg-feed-bg-hover"
+          ? "bg-[#f5f5f5] text-[#232323]"
+          : "text-[#6f6f6f] hover:bg-[#f5f5f5] hover:text-[#232323]"
       }`}
       aria-label={label}
     >
-      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-        {children}
-      </svg>
-      <span className="text-[10px] mt-0.5">{label}</span>
+      <span className="relative">
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+          {children}
+        </svg>
+        {!!badge && (
+          <span className="absolute -right-2 -top-2 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold leading-none text-white">
+            {badge}
+          </span>
+        )}
+      </span>
+      <span className="mt-0.5 text-[11px]">{label}</span>
     </Link>
   );
 }

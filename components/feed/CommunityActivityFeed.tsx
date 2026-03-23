@@ -54,14 +54,14 @@ export default function CommunityActivityFeed({ communityId }: CommunityActivity
   const milestones = community.milestones ?? [];
 
   return (
-    <div className="space-y-6 mt-6">
+    <div className="gfm-feed-view mt-6 space-y-6">
       {/* Milestone badges */}
       {milestones.length > 0 && (
         <div className="flex gap-2 flex-wrap">
           {milestones.map((m) => (
             <div
               key={m.type}
-              className="bg-gradient-to-br from-[#b2f5d8] to-gfm-green rounded-pill-gfm px-3 py-1.5 text-white text-xs font-bold"
+              className="gfm-feed-badge"
             >
               Crossed {m.type}
             </div>
@@ -71,15 +71,15 @@ export default function CommunityActivityFeed({ communityId }: CommunityActivity
 
       {/* People you follow in this community */}
       {followingInCommunity.length > 0 && (
-        <div className="bg-feed-bg-card border border-black/[0.06] rounded-card shadow-card p-4">
-          <h3 className="text-xs font-semibold text-feed-text-secondary uppercase tracking-wider mb-3">
+        <div className="gfm-feed-card p-4">
+          <h3 className="gfm-feed-meta mb-3 uppercase tracking-[0.08em]">
             People you follow here
           </h3>
           <div className="flex gap-3 flex-wrap">
             {followingInCommunity.map((u) => (
-              <Link key={u.id} href={`/u/${u.username}`} className="flex items-center gap-2 hover:bg-feed-bg-hover rounded-card-sm p-1.5 transition-colors">
+              <Link key={u.id} href={`/u/${u.id ? u.username : ""}`} className="flex items-center gap-2 rounded-full px-3 py-2 transition-colors hover:bg-[#f5f5f5]">
                 <UserAvatar src={u.avatar} size={32} />
-                <span className="text-sm font-medium text-feed-text-heading">{u.name}</span>
+                <span className="text-[16px] leading-6 text-[#232323]">{u.name}</span>
               </Link>
             ))}
           </div>
@@ -88,25 +88,25 @@ export default function CommunityActivityFeed({ communityId }: CommunityActivity
 
       {/* Leaderboard */}
       {leaderboard.length > 0 && (
-        <div className="bg-feed-bg-card border border-black/[0.06] rounded-card shadow-card p-4">
-          <h3 className="text-xs font-semibold text-feed-text-secondary uppercase tracking-wider mb-3">
+        <div className="gfm-feed-card p-4">
+          <h3 className="gfm-feed-meta mb-3 uppercase tracking-[0.08em]">
             Top Donors
           </h3>
           <div className="space-y-2">
             {leaderboard.map(({ user: u, amount, rank }) => (
               <div key={u!.id} className="flex items-center gap-3">
-                <span className="w-6 text-center text-sm font-bold text-feed-text-tertiary">
+                <span className="w-6 text-center text-[14px] leading-5 text-[#b7b7b6]">
                   {rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : `#${rank}`}
                 </span>
                 <Link href={`/u/${u!.username}`} className="flex-shrink-0">
                   <UserAvatar src={u!.avatar} size={32} />
                 </Link>
                 <div className="flex-1 min-w-0">
-                  <Link href={`/u/${u!.username}`} className="text-sm font-semibold text-feed-text-heading hover:underline truncate block">
+                  <Link href={`/u/${u!.username}`} className="block truncate text-[16px] leading-6 text-[#232323]">
                     {u!.name}
                   </Link>
                 </div>
-                <span className="text-sm font-semibold text-gfm-green">${amount.toLocaleString()}</span>
+                <span className="text-[16px] leading-6 text-brand">${amount.toLocaleString()}</span>
               </div>
             ))}
           </div>
@@ -116,7 +116,7 @@ export default function CommunityActivityFeed({ communityId }: CommunityActivity
       {/* Activity feed */}
       {communityEvents.length > 0 && (
         <div>
-          <h3 className="text-heading-sm text-heading mb-3">Community Activity</h3>
+          <h3 className="gfm-feed-heading-md mb-3 text-[#232323]">Community Activity</h3>
           <div className="space-y-4">
             {communityEvents.map((event) => (
               <FeedCard

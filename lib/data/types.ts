@@ -127,7 +127,9 @@ export type EventType =
   | "milestone_reached"
   | "community_milestone"
   | "community_join"
-  | "profile_milestone";
+  | "profile_milestone"
+  | "user_post"
+  | "share";
 
 export interface Comment {
   id: string;

@@ -308,6 +308,112 @@ export const seedFeedEvents: FeedEvent[] = [
     engagement: withHearts(emptyEngagement(), ["user-6", "user-2", "user-3"]),
     causeCategory: "Disaster Relief & Wildfire Safety", createdAt: daysAgo(15, 6),
   },
+
+  // --- User posts (5) ---
+  {
+    id: "sevt-31", type: "user_post", actorId: "user-6", subjectId: "user-6", subjectType: "user",
+    metadata: {
+      text: "So grateful for our community stepping up for wildfire preparedness. Every donation counts — thank you! 🙏",
+    },
+    engagement: withHearts(withComments(emptyEngagement(), [
+      cmt("cmt-1", "user-1", "Amazing work, Priya!", daysAgo(12, 2)),
+    ]), ["user-1", "user-2", "user-7"]),
+    causeCategory: "Disaster Relief & Wildfire Safety", createdAt: daysAgo(13, 4), communityId: "comm-1",
+  },
+  {
+    id: "sevt-32", type: "user_post", actorId: "user-1", subjectId: "user-1", subjectType: "user",
+    metadata: {
+      text: "Watch Duty’s real-time alerts saved my family last season. Supporting this fundraiser is a no-brainer.",
+      imageUrl: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=800&h=450&q=80",
+    },
+    engagement: withHearts(withShares(emptyEngagement(), 12), ["user-6", "user-2", "user-3", "user-7"]),
+    causeCategory: "Disaster Relief & Wildfire Safety", createdAt: daysAgo(11, 8), communityId: "comm-1",
+  },
+  {
+    id: "sevt-33", type: "user_post", actorId: "user-4", subjectId: "user-4", subjectType: "user",
+    metadata: {
+      text: "Healthcare costs shouldn’t break families. If you can, please consider supporting the Martinez fund. Every bit helps.",
+    },
+    engagement: withHearts(emptyEngagement(), ["user-5", "user-6"]),
+    causeCategory: "Medical & Healthcare", createdAt: daysAgo(9, 3), communityId: "comm-2",
+  },
+  {
+    id: "sevt-34", type: "user_post", actorId: "user-2", subjectId: "user-2", subjectType: "user",
+    metadata: {
+      text: "Our evacuation hub is almost ready. Thanks to everyone who donated supplies and time! Community power. 💪",
+    },
+    engagement: withHearts(emptyEngagement(), ["user-1", "user-6", "user-3"]),
+    causeCategory: "Disaster Relief & Wildfire Safety", createdAt: daysAgo(7, 5), communityId: "comm-1",
+  },
+  {
+    id: "sevt-35", type: "user_post", actorId: "user-6", subjectId: "user-6", subjectType: "user",
+    metadata: {
+      text: "Feeling inspired by all the mutual aid happening in our networks. What cause are you passionate about?",
+    },
+    engagement: withHearts(withComments(emptyEngagement(), [
+      cmt("cmt-2", "user-3", "Disaster prep and medical relief — both!", daysAgo(5, 1)),
+      cmt("cmt-3", "user-4", "Healthcare equity 💚", daysAgo(5, 0)),
+    ]), ["user-3", "user-4"]),
+    causeCategory: "Community & Neighbors", createdAt: daysAgo(6, 2),
+  },
+
+  // --- Shares (2) ---
+  {
+    id: "sevt-36", type: "share", actorId: "user-6", subjectId: "sevt-6", subjectType: "user",
+    metadata: { commentary: "Proud to support this cause!", sharedEventId: "sevt-6" },
+    engagement: withHearts(emptyEngagement(), ["user-1"]),
+    causeCategory: "Disaster Relief & Wildfire Safety", createdAt: daysAgo(4, 3), fundraiserId: "fund-1",
+  },
+  {
+    id: "sevt-37", type: "share", actorId: "user-3", subjectId: "sevt-12", subjectType: "user",
+    metadata: { commentary: "This family needs our help. Sharing widely.", sharedEventId: "sevt-12" },
+    engagement: emptyEngagement(),
+    causeCategory: "Medical & Healthcare", createdAt: daysAgo(3, 1), fundraiserId: "fund-4",
+  },
+
+  // --- Additional user posts (4) ---
+  {
+    id: "sevt-38", type: "user_post", actorId: "user-3", subjectId: "user-3", subjectType: "user",
+    metadata: {
+      text: "Dropped off the first batch of firefighter radios today. Seeing volunteers test gear they have needed for years was powerful.",
+      imageUrl: "https://images.unsplash.com/photo-1511884642898-4c92249e20b6?auto=format&fit=crop&w=800&h=450&q=80",
+    },
+    engagement: withHearts(withComments(emptyEngagement(), [
+      cmt("cmt-4", "user-1", "This is exactly why people keep showing up for this campaign.", daysAgo(2, 2)),
+      cmt("cmt-5", "user-6", "Love seeing the donations turn into something tangible.", daysAgo(2, 1)),
+    ]), ["user-1", "user-2", "user-6", "user-7"]),
+    causeCategory: "Disaster Relief & Wildfire Safety", createdAt: daysAgo(2, 4), communityId: "comm-1", fundraiserId: "fund-2",
+  },
+  {
+    id: "sevt-39", type: "user_post", actorId: "user-5", subjectId: "user-5", subjectType: "user",
+    metadata: {
+      text: "We approved our first support request from the cancer treatment fund this week. Thank you to everyone helping families breathe a little easier.",
+    },
+    engagement: withHearts(withComments(emptyEngagement(), [
+      cmt("cmt-6", "user-8", "This is why community funds matter so much.", daysAgo(1, 6)),
+    ]), ["user-4", "user-6", "user-8"]),
+    causeCategory: "Medical & Healthcare", createdAt: daysAgo(1, 9), communityId: "comm-2", fundraiserId: "fund-5",
+  },
+  {
+    id: "sevt-40", type: "user_post", actorId: "user-8", subjectId: "user-8", subjectType: "user",
+    metadata: {
+      text: "I started following more organizers here because the updates feel real. You can actually see where the money is going and who it is helping.",
+    },
+    engagement: withHearts(withShares(emptyEngagement(), 2), ["user-5", "user-6", "user-4"]),
+    causeCategory: "Community & Neighbors", createdAt: daysAgo(1, 3), communityId: "comm-2",
+  },
+  {
+    id: "sevt-41", type: "user_post", actorId: "user-1", subjectId: "user-1", subjectType: "user",
+    metadata: {
+      text: "Tonight's volunteer training covered evacuation routes, go-bag checklists, and how to help neighbors sign up for alerts before peak fire season.",
+      imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&h=450&q=80",
+    },
+    engagement: withHearts(withComments(emptyEngagement(), [
+      cmt("cmt-7", "user-7", "This kind of prep work saves lives.", daysAgo(0, 12)),
+      cmt("cmt-8", "user-2", "Proud of this community.", daysAgo(0, 10)),
+    ]), ["user-2", "user-3", "user-6", "user-7", "user-8"]),
+    causeCategory: "Disaster Relief & Wildfire Safety", createdAt: daysAgo(0, 14), communityId: "comm-1", fundraiserId: "fund-1",
+  },
 ];
 
 // Priya's bookmarks — 3 events she bookmarked

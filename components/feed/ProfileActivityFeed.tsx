@@ -27,25 +27,25 @@ export default function ProfileActivityFeed({ userId }: ProfileActivityFeedProps
   const recommendations = getRecommendations(userId, state, 3);
 
   return (
-    <div className="space-y-6 mt-6">
+    <div className="gfm-feed-view mt-6 space-y-6">
       {/* Giving streak + cause identity */}
       {(user.givingStreak || user.causeIdentity) && (
         <div className="flex gap-3 flex-wrap">
           {user.givingStreak && user.givingStreak > 0 && (
-            <div className="bg-gfm-green-light rounded-card-sm px-3 py-2 flex items-center gap-2">
+            <div className="gfm-feed-badge px-4 py-2">
               <span className="text-lg">🔥</span>
               <div>
-                <p className="text-sm font-bold text-feed-text-heading">{user.givingStreak}-month streak</p>
-                <p className="text-[11px] text-feed-text-secondary">Consecutive giving</p>
+                <p className="text-[16px] leading-6 text-[#232323]">{user.givingStreak}-month streak</p>
+                <p className="text-[14px] leading-5 text-[#232323]">Consecutive giving</p>
               </div>
             </div>
           )}
           {user.causeIdentity && (
-            <div className="bg-gfm-green-light rounded-card-sm px-3 py-2 flex items-center gap-2">
+            <div className="gfm-feed-badge px-4 py-2">
               <span className="text-lg">💚</span>
               <div>
-                <p className="text-sm font-bold text-feed-text-heading">{user.causeIdentity}</p>
-                <p className="text-[11px] text-feed-text-secondary">Primary cause</p>
+                <p className="text-[16px] leading-6 text-[#232323]">{user.causeIdentity}</p>
+                <p className="text-[14px] leading-5 text-[#232323]">Primary cause</p>
               </div>
             </div>
           )}
@@ -54,16 +54,16 @@ export default function ProfileActivityFeed({ userId }: ProfileActivityFeedProps
 
       {/* Impact summary */}
       {user.impactSummary && (
-        <div className="bg-feed-bg-card border border-black/[0.06] rounded-card shadow-card p-4">
-          <h3 className="text-xs font-semibold text-feed-text-secondary uppercase tracking-wider mb-2">Impact Summary</h3>
-          <p className="text-sm text-feed-text-body leading-relaxed">{user.impactSummary}</p>
+        <div className="gfm-feed-card p-4">
+          <h3 className="gfm-feed-meta mb-2 uppercase tracking-[0.08em]">Impact Summary</h3>
+          <p className="gfm-feed-body">{user.impactSummary}</p>
         </div>
       )}
 
       {/* Activity feed */}
       {userEvents.length > 0 && (
         <div>
-          <h3 className="text-heading-sm text-heading mb-3">Activity</h3>
+          <h3 className="gfm-feed-heading-md mb-3 text-[#232323]">Activity</h3>
           <div className="space-y-4">
             {userEvents.map((event) => (
               <FeedCard
@@ -78,15 +78,15 @@ export default function ProfileActivityFeed({ userId }: ProfileActivityFeedProps
 
       {/* Recommendations */}
       {recommendations.length > 0 && (
-        <div className="bg-feed-bg-card border border-black/[0.06] rounded-card shadow-card p-4">
-          <h3 className="text-xs font-semibold text-feed-text-secondary uppercase tracking-wider mb-3">
+        <div className="gfm-feed-card p-4">
+          <h3 className="gfm-feed-meta mb-3 uppercase tracking-[0.08em]">
             People like you also supported
           </h3>
           <div className="space-y-3">
             {recommendations.map((rec) => (
               <div key={rec.fundraiser.id}>
                 <FundraiserMiniCard fundraiserId={rec.fundraiser.id} />
-                <p className="text-[11px] text-feed-text-tertiary mt-1">{rec.reason}</p>
+                <p className="gfm-feed-meta mt-2">{rec.reason}</p>
               </div>
             ))}
           </div>

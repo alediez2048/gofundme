@@ -83,10 +83,10 @@ export default function FeedColumn() {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   return (
-    <div ref={columnRef} className="space-y-4">
+    <div ref={columnRef} className="gfm-feed-view space-y-4">
       <PostComposer />
 
-      <div className="bg-feed-bg-card border border-black/[0.06] rounded-card shadow-card overflow-hidden">
+      <div className="gfm-feed-card overflow-hidden p-1">
         <FeedTabs activeTab={activeTab} onTabChange={handleTabChange} />
       </div>
 
@@ -97,8 +97,8 @@ export default function FeedColumn() {
         className="space-y-4"
       >
         {visibleItems.length === 0 && (
-          <div className="bg-feed-bg-card border border-black/[0.06] rounded-card shadow-card p-8 text-center">
-            <p className="text-feed-text-secondary text-sm">
+          <div className="gfm-feed-card p-8 text-center">
+            <p className="gfm-feed-meta">
               {activeTab === "following"
                 ? "Follow people to see their activity here."
                 : "No events yet. Check back soon!"}
@@ -117,7 +117,7 @@ export default function FeedColumn() {
 
         {hasMore && (
           <div ref={sentinelRef} className="flex justify-center py-4">
-            <div className="w-6 h-6 border-2 border-gfm-green border-t-transparent rounded-full animate-spin" />
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand-strong border-t-transparent" />
           </div>
         )}
       </div>
@@ -125,7 +125,7 @@ export default function FeedColumn() {
       {showBackToTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 z-40 bg-gfm-green text-white w-10 h-10 rounded-full shadow-medium flex items-center justify-center hover:bg-gfm-green-hover transition-colors"
+          className="fixed bottom-6 right-6 z-40 flex h-10 w-10 items-center justify-center rounded-full bg-brand-strong text-brand-lime shadow-medium transition-colors hover:bg-[#315d41]"
           aria-label="Back to top"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>

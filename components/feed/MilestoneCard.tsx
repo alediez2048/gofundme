@@ -20,17 +20,17 @@ export default memo(function MilestoneCard({ event }: MilestoneCardProps) {
 
   return (
     <div className="space-y-3">
-      <div className="bg-gradient-to-br from-[#b2f5d8] via-[#6ee7a8] to-gfm-green rounded-card-sm p-4 text-center">
-        <p className="text-3xl font-bold text-white">{percentage ?? "Milestone"}</p>
-        <p className="text-sm text-white/90 font-medium mt-1">
+      <div className="rounded-xl bg-[#e9fcce] p-4 text-center">
+        <p className="gfm-feed-heading-lg text-brand-strong">{percentage ?? "Milestone"}</p>
+        <p className="mt-1 text-[16px] leading-6 text-[#232323]">
           {fundraiser?.title ?? "Fundraiser"} reached {percentage} of its goal!
         </p>
       </div>
       {fundraiser && (
         <div className="px-1">
           <ProgressBar raised={amount ?? fundraiser.raisedAmount} goal={goalAmount} />
-          <p className="text-xs text-feed-text-secondary mt-1">
-            <span className="font-semibold text-feed-text-heading">
+          <p className="mt-2 text-[14px] leading-5 text-[#b7b7b6]">
+            <span className="text-[#232323]">
               ${(amount ?? fundraiser.raisedAmount).toLocaleString()}
             </span>{" "}
             raised of ${goalAmount.toLocaleString()} goal

@@ -125,6 +125,42 @@ describe("donation event generation", () => {
   });
 });
 
+describe("post and share event generation", () => {
+  it("addUserPost creates a user_post event with optional image", () => {
+    const user = Object.values(getState().users)[0];
+
+    const eventId = getState().addUserPost(
+      user.id,
+      "Posting an update from the field",
+      "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1200&h=675&q=80"
+    );
+
+    expect(eventId).toBeTruthy();
+    expect(getState().feedEvents[eventId!].type).toBe("user_post");
+    expect(getState().feedEvents[eventId!].metadata.text).toBe("Posting an update from the field");
+    expect(getState().feedEvents[eventId!].metadata.imageUrl).toBeTruthy();
+  });
+
+  it("addSharePost creates a share event and increments original share count", () => {
+    const user = Object.values(getState().users)[1];
+    const sourceEventId = getState().addUserPost(
+      Object.values(getState().users)[0].id,
+      "Original post to share"
+    );
+
+    const shareEventId = getState().addSharePost(
+      user.id,
+      sourceEventId!,
+      "Worth sharing with more people"
+    );
+
+    expect(shareEventId).toBeTruthy();
+    expect(getState().feedEvents[sourceEventId!].engagement.shareCount).toBe(1);
+    expect(getState().feedEvents[shareEventId!].type).toBe("share");
+    expect(getState().feedEvents[shareEventId!].metadata.sharedEventId).toBe(sourceEventId);
+  });
+});
+
 // ---------------------------------------------------------------------------
 // Engagement actions (~10 tests)
 // ---------------------------------------------------------------------------

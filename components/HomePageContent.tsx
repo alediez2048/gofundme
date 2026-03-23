@@ -83,6 +83,200 @@ function FundraiserCardBlock({
   );
 }
 
+function MobileAppMockup({
+  featuredFundraiser,
+  secondaryFundraiser,
+  featuredOrganizer,
+  secondaryOrganizer,
+}: {
+  featuredFundraiser?: Fundraiser;
+  secondaryFundraiser?: Fundraiser;
+  featuredOrganizer?: User;
+  secondaryOrganizer?: User;
+}) {
+  return (
+    <div className="relative mx-auto w-full max-w-[140px] sm:max-w-[150px]">
+      <div className="rounded-[2.4rem] border-[7px] border-[#d9d9d9] bg-white p-3 shadow-strong">
+        <div className="overflow-hidden rounded-[2rem] bg-white">
+          <div className="flex items-center justify-between px-4 pt-3 text-[11px] font-bold text-heading">
+            <span>9:41</span>
+            <div className="flex items-center gap-1 text-supporting" aria-hidden>
+              <span className="h-2 w-2 rounded-full border border-current" />
+              <span className="h-2.5 w-3 rounded-[2px] border border-current" />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between px-4 pb-3 pt-2">
+            <Link
+              href="/"
+              className="text-[20px] leading-none tracking-tight text-brand"
+            >
+              fund<span className="font-bold">right</span>
+            </Link>
+            <div className="flex items-center gap-3 text-supporting" aria-hidden>
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5" />
+                <path d="M10 17a2 2 0 0 0 4 0" />
+              </svg>
+            </div>
+          </div>
+
+          <div className="flex justify-between border-b border-black/5 px-3 pb-2 text-[10px] text-supporting">
+            <span className="rounded-full bg-brand-subtle px-3 py-1 font-bold text-brand-strong">
+              For You
+            </span>
+            <span className="px-2 py-1">Following</span>
+            <span className="px-2 py-1">Trending</span>
+          </div>
+
+          <div className="space-y-3 bg-[#fbfbfb] px-3 py-3">
+            <div className="overflow-hidden rounded-2xl bg-white shadow-soft ring-1 ring-black/5">
+              <div className="flex items-center gap-2 px-3 pb-2 pt-3">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand text-[11px] font-bold text-white">
+                  W
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-[11px] font-bold text-heading">
+                    Watch Duty community
+                  </p>
+                  <p className="text-[10px] text-supporting">hit a major milestone</p>
+                </div>
+                <span className="ml-auto text-[10px] text-supporting">15m</span>
+              </div>
+              <div className="mx-3 mb-3 rounded-2xl bg-gradient-to-br from-brand to-brand-strong px-4 py-5 text-white">
+                <p className="text-[15px] font-bold leading-tight">
+                  Community crossed $1,000,000 raised
+                </p>
+                <p className="mt-1 text-[11px] text-white/85">
+                  423 fundraisers · 2,847 members · 12 months
+                </p>
+              </div>
+              <div className="flex items-center gap-4 border-t border-black/5 px-3 py-2 text-[10px] text-supporting">
+                <span>189</span>
+                <span>42</span>
+                <span>Share</span>
+              </div>
+            </div>
+
+            {featuredFundraiser && (
+              <div className="overflow-hidden rounded-2xl bg-white shadow-soft ring-1 ring-black/5">
+                <div className="flex items-center gap-2 px-3 pb-2 pt-3">
+                  <UserAvatar
+                    src={featuredOrganizer?.avatar}
+                    name={featuredOrganizer?.name}
+                    size={34}
+                  />
+                  <div className="min-w-0">
+                    <p className="truncate text-[11px] font-bold text-heading">
+                      {featuredOrganizer?.name ?? "Organizer"}
+                    </p>
+                    <p className="text-[10px] text-supporting">started a fundraiser</p>
+                  </div>
+                  <span className="ml-auto text-[10px] text-supporting">26m</span>
+                </div>
+                <div className="relative aspect-[4/3] w-full bg-surface-medium">
+                  <Image
+                    src={featuredFundraiser.heroImageUrl}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    sizes="280px"
+                    placeholder="blur"
+                    blurDataURL={BLUR_DATA_URL}
+                  />
+                </div>
+                <div className="px-3 pb-3 pt-2">
+                  <p className="line-clamp-2 text-[14px] font-bold leading-5 text-heading">
+                    {featuredFundraiser.title}
+                  </p>
+                  <p className="mt-1 text-[11px] text-supporting">
+                    by {featuredOrganizer?.name ?? "Organizer"}
+                  </p>
+                  <p className="mt-2 text-[12px] font-bold text-brand">
+                    {formatCurrency(featuredFundraiser.raisedAmount)} raised
+                  </p>
+                  <div className="mt-2">
+                    <ProgressBar
+                      raised={featuredFundraiser.raisedAmount}
+                      goal={featuredFundraiser.goalAmount}
+                      animate={false}
+                      height="h-1.5"
+                    />
+                  </div>
+                  <div className="mt-2 flex items-center justify-between text-[10px] text-supporting">
+                    <span>{featuredOrganizer?.name ?? "Organizer"}</span>
+                    <span>of {formatCurrency(featuredFundraiser.goalAmount)}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {secondaryFundraiser && (
+              <div className="overflow-hidden rounded-2xl bg-white shadow-soft ring-1 ring-black/5">
+                <div className="flex items-center gap-2 px-3 pb-2 pt-3">
+                  <UserAvatar
+                    src={secondaryOrganizer?.avatar}
+                    name={secondaryOrganizer?.name}
+                    size={30}
+                  />
+                  <div className="min-w-0">
+                    <p className="truncate text-[11px] font-bold text-heading">
+                      {secondaryOrganizer?.name ?? "Organizer"}
+                    </p>
+                    <p className="text-[10px] text-supporting">shared a new update</p>
+                  </div>
+                </div>
+                <div className="px-3 pb-3 text-[11px] leading-4 text-supporting">
+                  Follow momentum, post updates, and bring your community along for the journey.
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between border-t border-black/5 px-4 py-3 text-[10px] text-supporting">
+            <div className="flex flex-col items-center gap-1 text-brand-strong">
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              </svg>
+              <span>Feed</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+              </svg>
+              <span>Communities</span>
+            </div>
+            <div className="-mt-6 flex h-11 w-11 items-center justify-center rounded-full bg-brand-strong text-brand-lime shadow-medium">
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <span>Explore</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              <span>Profile</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function HomePageContent() {
   const router = useRouter();
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -114,6 +308,8 @@ export default function HomePageContent() {
     () => sortedForDiscover.slice(0, 6),
     [sortedForDiscover]
   );
+  const mockupFeaturedFundraiser = discoverCards[0];
+  const mockupSecondaryFundraiser = discoverCards[1];
 
   const totalRaised = fundraisers.reduce((sum, f) => sum + f.raisedAmount, 0);
   const totalDonations = fundraisers.reduce((sum, f) => sum + f.donationCount, 0);
@@ -126,42 +322,12 @@ export default function HomePageContent() {
     if (q) router.push(`/search?q=${encodeURIComponent(q)}`);
   };
 
-  const orbitRadiusPx = 130;
-
   return (
     <PageTransition>
       <div className="overflow-x-hidden">
         {/* Hero — green band, light CTA, serif headline, avatar halo */}
         <section className="relative -mx-4 rounded-b-3xl bg-gradient-to-b from-brand via-brand to-brand-strong px-4 pb-14 pt-10 text-white sm:-mx-6 sm:mx-0 sm:rounded-3xl sm:px-8 sm:pb-20 sm:pt-14">
           <div className="relative mx-auto max-w-3xl">
-            {/* Avatar orbit */}
-            <div
-              className="pointer-events-none absolute left-1/2 top-1/2 z-0 hidden -translate-x-1/2 -translate-y-1/2 sm:block"
-              style={{ width: orbitRadiusPx * 2 + 80, height: orbitRadiusPx * 2 + 80 }}
-              aria-hidden
-            >
-              {orbitUsers.map((u, i) => {
-                const angle = (i / Math.max(orbitUsers.length, 1)) * 2 * Math.PI - Math.PI / 2;
-                const x = Math.cos(angle) * orbitRadiusPx;
-                const y = Math.sin(angle) * orbitRadiusPx;
-                return (
-                  <div
-                    key={u.id}
-                    className="absolute left-1/2 top-1/2"
-                    style={{
-                      transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
-                    }}
-                  >
-                    <UserAvatar
-                      src={u.avatar}
-                      size={48}
-                      className="ring-[3px] ring-white shadow-medium ring-offset-2 ring-offset-brand"
-                    />
-                  </div>
-                );
-              })}
-            </div>
-
             {/* Mobile: overlapping avatar strip */}
             <div className="mb-6 flex justify-center sm:hidden">
               <div className="flex -space-x-3">
@@ -177,6 +343,17 @@ export default function HomePageContent() {
             </div>
 
             <div className="relative z-10 text-center">
+              {/* Desktop: distributed avatar row */}
+              <div className="mb-8 hidden flex-wrap justify-center gap-4 sm:flex">
+                {orbitUsers.map((u) => (
+                  <UserAvatar
+                    key={u.id}
+                    src={u.avatar}
+                    size={52}
+                    className="ring-[3px] ring-white shadow-medium ring-offset-2 ring-offset-brand"
+                  />
+                ))}
+              </div>
               <p className="text-body-sm font-bold uppercase tracking-wider text-brand-lime">
                 Discover the best platform
               </p>
@@ -216,6 +393,19 @@ export default function HomePageContent() {
               </form>
             </div>
           </div>
+        </section>
+
+        {/* Sign in to post — visible when logged out */}
+        <section className="mx-auto mt-6 max-w-2xl">
+          <button
+            type="button"
+            onClick={() => {
+              document.getElementById("sign-in-trigger")?.scrollIntoView({ behavior: "smooth", block: "center" });
+            }}
+            className="w-full rounded-card border border-black/[0.06] bg-white px-4 py-3 text-left text-sm text-supporting shadow-card transition-colors hover:bg-surface-subtle hover:text-heading"
+          >
+            Sign in to share what matters
+          </button>
         </section>
 
         {/* Trust bar — warm strip with icon links (GFM pattern) */}
@@ -274,16 +464,20 @@ export default function HomePageContent() {
           </p>
           <div className="mt-10 grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
             <div className="flex justify-center lg:justify-end">
-              <div className="relative w-full max-w-[280px] sm:max-w-[300px]">
-                <Image
-                  src="/assets/mobile-app-mock.png"
-                  alt="FundRight mobile app — For You feed with community milestones and fundraiser cards"
-                  width={481}
-                  height={1024}
-                  className="h-auto w-full rounded-xxl shadow-strong"
-                  sizes="(max-width: 1024px) 280px, 300px"
-                />
-              </div>
+              <MobileAppMockup
+                featuredFundraiser={mockupFeaturedFundraiser}
+                secondaryFundraiser={mockupSecondaryFundraiser}
+                featuredOrganizer={
+                  mockupFeaturedFundraiser
+                    ? users[mockupFeaturedFundraiser.organizerId]
+                    : undefined
+                }
+                secondaryOrganizer={
+                  mockupSecondaryFundraiser
+                    ? users[mockupSecondaryFundraiser.organizerId]
+                    : undefined
+                }
+              />
             </div>
             <ol className="mx-auto max-w-md space-y-8 lg:mx-0">
               {[
@@ -377,7 +571,7 @@ export default function HomePageContent() {
           <h2 className="text-heading-xl sm:text-display-sm text-heading">Active communities</h2>
           <p className="mt-2 text-supporting">Causes and communities you can support</p>
           <ul className="mt-8 grid gap-6 sm:grid-cols-2">
-            {communities.map((c) => (
+            {communities.slice(0, 4).map((c) => (
               <li key={c.id}>
                 <Link
                   href={`/communities/${c.slug}`}

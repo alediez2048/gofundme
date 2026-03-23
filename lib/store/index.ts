@@ -60,6 +60,66 @@ function getInitialState(): StoreState {
   };
 }
 
+function mergeFollowRelationships(
+  seeded: FollowRelationship[],
+  persisted?: FollowRelationship[]
+): FollowRelationship[] {
+  if (!persisted?.length) return seeded;
+
+  const seen = new Set(seeded.map((rel) => `${rel.followerId}:${rel.followeeId}`));
+  const merged = [...seeded];
+
+  for (const rel of persisted) {
+    const key = `${rel.followerId}:${rel.followeeId}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    merged.push(rel);
+  }
+
+  return merged;
+}
+
+function mergePersistedState(persisted: unknown, current: Store): Store {
+  if (!persisted || typeof persisted !== "object") {
+    return current;
+  }
+
+  const persistedState = persisted as Partial<StoreState>;
+
+  return {
+    ...current,
+    ...persistedState,
+    users: {
+      ...current.users,
+      ...(persistedState.users ?? {}),
+    },
+    fundraisers: {
+      ...current.fundraisers,
+      ...(persistedState.fundraisers ?? {}),
+    },
+    communities: {
+      ...current.communities,
+      ...(persistedState.communities ?? {}),
+    },
+    donations: {
+      ...current.donations,
+      ...(persistedState.donations ?? {}),
+    },
+    feedEvents: {
+      ...current.feedEvents,
+      ...(persistedState.feedEvents ?? {}),
+    },
+    behaviorSignals: {
+      ...current.behaviorSignals,
+      ...(persistedState.behaviorSignals ?? {}),
+    },
+    followRelationships: mergeFollowRelationships(
+      current.followRelationships,
+      persistedState.followRelationships
+    ),
+  };
+}
+
 function generateDonationId(): string {
   return `don-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
@@ -119,6 +179,8 @@ export interface StoreActions {
   joinCommunity: (userId: string, communityId: string) => void;
   toggleHeart: (eventId: string, userId: string) => void;
   addComment: (eventId: string, authorId: string, text: string, parentId?: string) => string | null;
+  addUserPost: (userId: string, text: string, imageUrl?: string) => string | null;
+  addSharePost: (userId: string, sharedEventId: string, commentary?: string) => string | null;
   toggleBookmark: (eventId: string, userId: string) => void;
   incrementShare: (eventId: string) => void;
   updateBehaviorSignals: (userId: string, action: BehaviorAction, eventId: string) => void;
@@ -552,6 +614,83 @@ export const createFundRightStore = () => {
           return valid ? commentId : null;
         },
 
+        addUserPost: (userId, text, imageUrl) => {
+          const trimmed = text.trim();
+          if (!trimmed && !imageUrl) return null;
+          let eventId: string | null = null;
+          set((state) => {
+            const user = state.users[userId];
+            if (!user) return state;
+            let causeCategory: CauseCategory = "Community & Neighbors";
+            if (user.causeIdentity) causeCategory = user.causeIdentity;
+            else if (user.communityIds[0]) {
+              const comm = state.communities[user.communityIds[0]];
+              if (comm) causeCategory = comm.causeCategory;
+            }
+            const event = buildFeedEvent({
+              type: "user_post",
+              actorId: userId,
+              subjectId: userId,
+              subjectType: "user",
+              metadata: {
+                ...(trimmed ? { text: trimmed } : {}),
+                ...(imageUrl ? { imageUrl } : {}),
+              },
+              causeCategory,
+              communityId: user.communityIds[0] || undefined,
+            });
+            eventId = event.id;
+            return {
+              feedEvents: { ...state.feedEvents, [event.id]: event },
+              lastModified: new Date().toISOString(),
+            };
+          });
+          return eventId;
+        },
+
+        addSharePost: (userId, sharedEventId, commentary) => {
+          const trimmedCommentary = commentary?.trim();
+          let eventId: string | null = null;
+
+          set((state) => {
+            const user = state.users[userId];
+            const sharedEvent = state.feedEvents[sharedEventId];
+            if (!user || !sharedEvent) return state;
+
+            const shareEvent = buildFeedEvent({
+              type: "share",
+              actorId: userId,
+              subjectId: sharedEventId,
+              subjectType: "user",
+              metadata: {
+                sharedEventId,
+                ...(trimmedCommentary ? { commentary: trimmedCommentary } : {}),
+              },
+              causeCategory: sharedEvent.causeCategory,
+              communityId: sharedEvent.communityId,
+              fundraiserId: sharedEvent.fundraiserId,
+            });
+            eventId = shareEvent.id;
+
+            return {
+              feedEvents: {
+                ...state.feedEvents,
+                [sharedEventId]: {
+                  ...sharedEvent,
+                  engagement: {
+                    ...sharedEvent.engagement,
+                    shareCount: sharedEvent.engagement.shareCount + 1,
+                  },
+                },
+                [shareEvent.id]: shareEvent,
+              },
+              lastModified: new Date().toISOString(),
+            };
+          });
+
+          return eventId;
+        },
+
         toggleBookmark: (eventId, userId) => {
           set((state) => {
             const event = state.feedEvents[eventId];
@@ -622,6 +761,8 @@ export const createFundRightStore = () => {
       {
         // Bump when seed data (e.g. image URLs) must reset for all clients; old key is left in localStorage unused.
         name: "fundright-store-v5",
+        merge: (persistedState, currentState) =>
+          mergePersistedState(persistedState, currentState),
         partialize: (state) => ({
           users: state.users,
           fundraisers: state.fundraisers,

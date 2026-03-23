@@ -48,7 +48,7 @@ export default function BottomTabBar() {
     },
     {
       href: "/browse",
-      label: "Explore",
+      label: "Fundraisers",
       icon: (
         <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
           <circle cx="11" cy="11" r="8" />
@@ -72,7 +72,7 @@ export default function BottomTabBar() {
     <nav
       role="navigation"
       aria-label="Main navigation"
-      className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-feed-border md:hidden"
+      className="gfm-feed-view fixed bottom-0 left-0 right-0 z-50 border-t border-black/5 bg-white md:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
     >
       <div className="flex items-end justify-around px-2 pt-1 pb-1">
@@ -87,10 +87,10 @@ export default function BottomTabBar() {
                 aria-label={tab.label}
                 className="flex flex-col items-center justify-center -mt-4"
               >
-                <span className="w-12 h-12 rounded-full bg-gfm-green text-white flex items-center justify-center shadow-medium">
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-strong text-brand-lime shadow-medium">
                   {tab.icon}
                 </span>
-                <span className="text-[10px] font-semibold text-gfm-green mt-0.5">{tab.label}</span>
+                <span className="mt-0.5 text-[11px] text-brand-strong">{tab.label}</span>
               </Link>
             );
           }
@@ -102,11 +102,11 @@ export default function BottomTabBar() {
               aria-label={tab.label}
               aria-current={isActive ? "page" : undefined}
               className={`flex flex-col items-center justify-center py-1 min-w-[48px] min-h-[44px] ${
-                isActive ? "text-gfm-green" : "text-feed-text-tertiary"
+                isActive ? "text-brand-strong" : "text-[#6f6f6f]"
               }`}
             >
               {tab.icon}
-              <span className="text-[10px] font-semibold mt-0.5">{tab.label}</span>
+              <span className="mt-0.5 text-[11px]">{tab.label}</span>
             </Link>
           );
         })}

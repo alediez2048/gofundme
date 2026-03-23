@@ -148,10 +148,10 @@ export default function BrowsePageContent({ activeCategory }: BrowsePageContentP
 
       <div>
         <h1 className="text-display-sm text-heading">
-          Browse fundraisers
+          All fundraisers
         </h1>
         <p className="mt-2 text-body-md text-supporting">
-          Explore fundraisers by cause and find campaigns aligned with your interests.
+          Explore every fundraiser on FundRight by cause and find campaigns aligned with your interests.
         </p>
       </div>
 

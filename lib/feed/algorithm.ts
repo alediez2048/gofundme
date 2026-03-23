@@ -42,6 +42,9 @@ function computeSocialProximity(event: FeedEvent, userId: string, state: Store):
   if (!user) return 0;
   const following = user.followingIds ?? [];
 
+  // A user's own posts should remain visible in their personalized feed.
+  if (event.actorId === userId) return 1.0;
+
   // Direct follow
   if (following.includes(event.actorId)) return 1.0;
 
@@ -222,7 +225,8 @@ export function getFollowingFeed(userId: string, state: Store): ScoredFeedEvent[
   const user = state.users[userId];
   if (!user) return [];
   const following = new Set(user.followingIds ?? []);
-  if (following.size === 0) return [];
+  // Include own posts so users see their content when posting
+  following.add(userId);
 
   return Object.values(state.feedEvents)
     .filter((e) => following.has(e.actorId))

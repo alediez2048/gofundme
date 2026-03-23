@@ -16,11 +16,11 @@ export default memo(function DonationCard({ event }: DonationCardProps) {
   return (
     <div className="space-y-3">
       {amount != null && (
-        <p className="text-2xl font-bold text-gfm-green">${amount.toLocaleString()}</p>
+        <p className="gfm-feed-heading-md text-brand">${amount.toLocaleString()} donated</p>
       )}
       {message && (
-        <div className="bg-gfm-green-light p-3 rounded-card-sm border-l-[3px] border-gfm-green">
-          <p className="text-sm text-feed-text-body italic">&ldquo;{message}&rdquo;</p>
+        <div className="rounded-xl bg-[#f5f5f5] p-4">
+          <p className="gfm-feed-body italic">&ldquo;{message}&rdquo;</p>
         </div>
       )}
       {event.fundraiserId && <FundraiserMiniCard fundraiserId={event.fundraiserId} />}

@@ -31,42 +31,42 @@ export default function LeftSidebar() {
     .filter(Boolean);
 
   return (
-    <aside className="space-y-4 hidden lg:block">
+    <aside className="gfm-feed-view hidden space-y-4 self-start lg:sticky lg:top-24 lg:block">
       {/* Identity card */}
-      <div className="bg-feed-bg-card border border-black/[0.06] rounded-card shadow-card overflow-hidden">
+      <div className="gfm-feed-card overflow-hidden">
         {/* Banner gradient */}
-        <div className="h-16 bg-gradient-to-br from-[#b2f5d8] via-[#6ee7a8] to-gfm-green" />
+        <div className="h-[132px] bg-gradient-to-br from-[#9af2ba] via-brand to-brand-strong" />
         <div className="px-4 pb-4 -mt-6">
           <Link href={`/u/${user.username}`}>
-            <UserAvatar src={user.avatar} size={56} className="border-2 border-white" />
+            <UserAvatar src={user.avatar} size={96} className="border-4 border-white shadow-medium" />
           </Link>
           <Link href={`/u/${user.username}`} className="block mt-2">
-            <p className="text-sm font-semibold text-feed-text-heading hover:underline">{user.name}</p>
+            <p className="gfm-feed-heading-sm text-[#232323] hover:underline">{user.name}</p>
           </Link>
-          <p className="text-xs text-feed-text-secondary mt-0.5 line-clamp-2">{user.bio}</p>
+          <p className="gfm-feed-meta mt-1 line-clamp-2">{user.bio}</p>
           {inspiredSet.size > 0 && (
-            <p className="text-xs text-gfm-green font-semibold mt-2">
+            <p className="mt-3 text-[16px] leading-6 text-brand">
               Inspired {inspiredSet.size} {inspiredSet.size === 1 ? "person" : "people"} to help
             </p>
           )}
         </div>
 
         {/* Stats */}
-        <div className="border-t border-feed-border px-4 py-3 grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-2 border-t border-black/5 px-4 py-3">
           <div>
-            <p className="text-sm font-bold text-feed-text-heading">{followerCount}</p>
-            <p className="text-[11px] text-feed-text-tertiary">Followers</p>
+            <p className="text-[16px] leading-6 text-[#232323]">{followerCount}</p>
+            <p className="gfm-feed-meta">Followers</p>
           </div>
           <div>
-            <p className="text-sm font-bold text-feed-text-heading">{followingCount}</p>
-            <p className="text-[11px] text-feed-text-tertiary">Following</p>
+            <p className="text-[16px] leading-6 text-[#232323]">{followingCount}</p>
+            <p className="gfm-feed-meta">Following</p>
           </div>
         </div>
 
         {/* Bookmarks */}
         {bookmarkedCount > 0 && (
-          <div className="border-t border-feed-border px-4 py-3">
-            <p className="text-xs font-semibold text-feed-text-secondary">
+          <div className="border-t border-black/5 px-4 py-3">
+            <p className="text-[14px] leading-5 text-[#232323]">
               <svg className="w-3.5 h-3.5 inline mr-1" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth={0}>
                 <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
               </svg>
@@ -78,19 +78,19 @@ export default function LeftSidebar() {
 
       {/* My communities */}
       {userCommunities.length > 0 && (
-        <div className="bg-feed-bg-card border border-black/[0.06] rounded-card shadow-card p-4">
-          <p className="text-xs font-semibold text-feed-text-secondary uppercase tracking-wider mb-3">My Communities</p>
+        <div className="gfm-feed-card p-4">
+          <p className="mb-3 text-[14px] leading-5 uppercase tracking-[0.08em] text-[#6f6f6f]">My Communities</p>
           <div className="space-y-2">
             {userCommunities.map((c) => (
               <Link
                 key={c.id}
                 href={`/communities/${c.slug}`}
-                className="flex items-center gap-2 py-1.5 px-2 rounded-card-sm hover:bg-feed-bg-hover transition-colors"
+                className="flex items-center gap-2 rounded-xl px-2 py-2 transition-colors hover:bg-[#f5f5f5]"
               >
-                <div className="w-7 h-7 rounded-full bg-gfm-green-light flex items-center justify-center text-gfm-green text-xs font-bold">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#ccf88e] text-[14px] text-brand-strong">
                   {c.name[0]}
                 </div>
-                <span className="text-xs font-medium text-feed-text-heading truncate">{c.name}</span>
+                <span className="truncate text-[16px] leading-6 text-[#232323]">{c.name}</span>
               </Link>
             ))}
           </div>

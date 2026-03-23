@@ -9,6 +9,9 @@ import DonationCard from "./DonationCard";
 import MilestoneCard from "./MilestoneCard";
 import CommunityEventCard from "./CommunityEventCard";
 import ProfileMilestoneCard from "./ProfileMilestoneCard";
+import UserPostCard from "./UserPostCard";
+import ShareCard from "./ShareCard";
+import FundraiserMiniCard from "./FundraiserMiniCard";
 
 interface FeedCardProps {
   event: FeedEvent;
@@ -23,6 +26,8 @@ const ACTION_TEXT: Record<FeedEvent["type"], string> = {
   community_milestone: "community milestone",
   community_join: "joined a community",
   profile_milestone: "reached a milestone",
+  user_post: "shared a post",
+  share: "shared",
 };
 
 function relativeTime(iso: string): string {
@@ -50,6 +55,10 @@ function CardBody({ event }: { event: FeedEvent }) {
       return <CommunityEventCard event={event} />;
     case "profile_milestone":
       return <ProfileMilestoneCard event={event} />;
+    case "user_post":
+      return <UserPostCard event={event} />;
+    case "share":
+      return <ShareCard event={event} />;
     default:
       return null;
   }
@@ -57,23 +66,9 @@ function CardBody({ event }: { event: FeedEvent }) {
 
 function MilestoneCardOrLaunch({ event }: { event: FeedEvent }) {
   if (event.type === "fundraiser_launch") {
-    const title = event.metadata.title as string | undefined;
-    const goalAmount = event.metadata.goalAmount as number | undefined;
     return (
       <div className="space-y-2">
-        <div className="bg-gfm-green-light rounded-card-sm p-4">
-          <p className="text-lg font-bold text-feed-text-heading">{title ?? "New Fundraiser"}</p>
-          {goalAmount != null && (
-            <p className="text-sm text-feed-text-secondary mt-1">
-              Goal: <span className="font-semibold">${goalAmount.toLocaleString()}</span>
-            </p>
-          )}
-        </div>
-        {event.fundraiserId && (
-          <Link href={`/f/${event.fundraiserId}`} className="text-sm text-gfm-green font-semibold hover:underline">
-            View fundraiser
-          </Link>
-        )}
+        {event.fundraiserId && <FundraiserMiniCard fundraiserId={event.fundraiserId} />}
       </div>
     );
   }
@@ -82,43 +77,45 @@ function MilestoneCardOrLaunch({ event }: { event: FeedEvent }) {
 
 export default function FeedCard({ event, reason, currentUserId }: FeedCardProps) {
   const actor = useFundRightStore((s) => s.users[event.actorId]);
-  const fundraiser = useFundRightStore((s) =>
-    event.fundraiserId ? s.fundraisers[event.fundraiserId] : undefined
-  );
-
-  // For fundraiser_launch, link to the fundraiser slug
-  const launchSlug = event.type === "fundraiser_launch" && fundraiser ? fundraiser.slug : null;
+  const reasonText = reason?.replace(/^Discover:\s*/i, "").replace(/^Trending\s+[—-]\s*/i, "");
 
   return (
-    <article className="bg-feed-bg-card border border-black/[0.06] rounded-card shadow-card overflow-hidden">
+    <article className="gfm-feed-card overflow-hidden">
       {/* Header */}
       <div className="flex items-start gap-3 p-4 pb-0">
         {actor ? (
           <Link href={`/u/${actor.username}`} className="flex-shrink-0">
-            <UserAvatar src={actor.avatar} size={44} />
+            <UserAvatar src={actor.avatar} name={actor.name} size={44} />
           </Link>
         ) : (
           <div className="w-11 h-11 rounded-full bg-gray-200 flex-shrink-0" />
         )}
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
             {actor ? (
-              <Link href={`/u/${actor.username}`} className="text-sm font-semibold text-feed-text-heading hover:underline truncate">
+              <Link href={`/u/${actor.username}`} className="truncate text-[16px] leading-6 text-[#232323]">
                 {actor.name}
               </Link>
             ) : (
-              <span className="text-sm font-semibold text-feed-text-heading">Someone</span>
+              <span className="text-[16px] leading-6 text-[#232323]">Someone</span>
             )}
-            <span className="text-xs text-feed-text-tertiary flex-shrink-0">{relativeTime(event.createdAt)}</span>
+            <span className="gfm-feed-meta shrink-0">{relativeTime(event.createdAt)}</span>
           </div>
-          <p className="text-xs text-feed-text-secondary">{ACTION_TEXT[event.type]}</p>
+          <p className="gfm-feed-meta">{ACTION_TEXT[event.type]}</p>
         </div>
       </div>
 
       {/* Reason badge */}
-      {reason && (
+      {reasonText && (
         <div className="px-4 pt-2">
-          <span className="text-[11px] text-feed-text-tertiary">{reason}</span>
+          <span className="gfm-feed-badge text-[14px] leading-5">
+            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} aria-hidden>
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 10v5" />
+              <path d="M12 7.5h.01" />
+            </svg>
+            Inspired by {reasonText}
+          </span>
         </div>
       )}
 

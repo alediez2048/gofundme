@@ -94,12 +94,14 @@ describe("feed algorithm", () => {
     }
   });
 
-  it("getFollowingFeed only includes followed users' events", () => {
+  it("getFollowingFeed only includes followed users or the current user", () => {
     const state = getState();
     const following = new Set(state.users["user-6"].followingIds ?? []);
     const feed = getFollowingFeed("user-6", state);
     for (const item of feed) {
-      expect(following.has(item.event.actorId)).toBe(true);
+      expect(
+        following.has(item.event.actorId) || item.event.actorId === "user-6"
+      ).toBe(true);
     }
   });
 
@@ -125,7 +127,7 @@ describe("feed algorithm", () => {
     expect(feed).toHaveLength(0);
   });
 
-  it("user with no follows gets empty following feed", () => {
+  it("user with no follows only sees their own following feed events", () => {
     store.setState((s) => ({
       users: {
         ...s.users,
@@ -133,7 +135,9 @@ describe("feed algorithm", () => {
       },
     }));
     const feed = getFollowingFeed("user-6", getState());
-    expect(feed).toHaveLength(0);
+    for (const item of feed) {
+      expect(item.event.actorId).toBe("user-6");
+    }
   });
 });
 

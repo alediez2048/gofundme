@@ -687,13 +687,15 @@ describe("feed tabs", () => {
     }
   });
 
-  it("getFollowingFeed only includes events from followed users", () => {
+  it("getFollowingFeed only includes events from followed users or the current user", () => {
     seedMultipleEvents();
     const state = getState();
     const following = new Set(state.users["user-1"].followingIds ?? []);
     const feed = getFollowingFeed("user-1", state);
     for (const item of feed) {
-      expect(following.has(item.event.actorId)).toBe(true);
+      expect(
+        following.has(item.event.actorId) || item.event.actorId === "user-1"
+      ).toBe(true);
     }
   });
 
@@ -705,14 +707,13 @@ describe("feed tabs", () => {
     }
   });
 
-  it("getFollowingFeed returns empty for user with no follows", () => {
-    // user-4 has follows in seed data, so create a fresh user scenario
-    // by checking a user that follows nobody — but seed data has follows for most users
-    // Instead, test that feed only contains events from followed users
+  it("getFollowingFeed for user with no follows only includes their own events", () => {
     const feed = getFollowingFeed("user-8", getState());
     const following = new Set(getState().users["user-8"].followingIds ?? []);
     for (const item of feed) {
-      expect(following.has(item.event.actorId)).toBe(true);
+      expect(
+        following.has(item.event.actorId) || item.event.actorId === "user-8"
+      ).toBe(true);
     }
   });
 });
